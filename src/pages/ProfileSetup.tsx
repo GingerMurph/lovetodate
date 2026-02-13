@@ -42,7 +42,7 @@ const ProfileSetup = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle().then(({ data }) => {
+    supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle().then(async ({ data }) => {
       if (data) {
         setForm({
           display_name: data.display_name || "",
@@ -63,7 +63,15 @@ const ProfileSetup = () => {
           drinking: data.drinking || "",
           children: data.children || "",
         });
-        if (data.avatar_url) setAvatarPreview(data.avatar_url);
+        if (data.avatar_url) {
+          // Generate signed URL for preview
+          const { data: signedData } = await supabase.storage
+            .from("profile-photos")
+            .createSignedUrl(data.avatar_url.includes("/object/public/") 
+              ? data.avatar_url.split("/object/public/profile-photos/")[1] 
+              : data.avatar_url, 3600);
+          if (signedData?.signedUrl) setAvatarPreview(signedData.signedUrl);
+        }
       }
     });
   }, [user]);
@@ -89,8 +97,7 @@ const ProfileSetup = () => {
         const path = `${user.id}/avatar.${ext}`;
         const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, avatarFile, { upsert: true });
         if (uploadError) throw uploadError;
-        const { data: { publicUrl } } = supabase.storage.from("profile-photos").getPublicUrl(path);
-        avatar_url = publicUrl;
+        avatar_url = path;
       }
 
       const { error } = await supabase.from("profiles").update({

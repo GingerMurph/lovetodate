@@ -54,12 +54,28 @@ Deno.serve(async (req) => {
     }
 
     // Calculate age from date_of_birth, then strip the raw field
-    const sanitized = (profiles || []).map(({ date_of_birth, ...rest }) => ({
-      ...rest,
-      age: date_of_birth
-        ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
-        : null,
-    }));
+    // Generate signed URLs for avatars since bucket is private
+    const sanitized = await Promise.all(
+      (profiles || []).map(async ({ date_of_birth, avatar_url, ...rest }) => {
+        let signedAvatarUrl: string | null = null;
+        if (avatar_url) {
+          const path = avatar_url.includes("/object/public/")
+            ? avatar_url.split("/object/public/profile-photos/")[1]
+            : avatar_url;
+          const { data: signedData } = await adminClient.storage
+            .from("profile-photos")
+            .createSignedUrl(path, 3600);
+          signedAvatarUrl = signedData?.signedUrl || null;
+        }
+        return {
+          ...rest,
+          avatar_url: signedAvatarUrl,
+          age: date_of_birth
+            ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
+            : null,
+        };
+      })
+    );
 
     return new Response(JSON.stringify(sanitized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

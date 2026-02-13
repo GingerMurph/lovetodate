@@ -3,9 +3,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Heart, User as UserIcon, MapPin } from "lucide-react";
+import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import { AvatarImage } from "@/components/AvatarImage";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Profile = Tables<"profiles">;
@@ -53,11 +54,7 @@ const Likes = () => {
       <Card className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30">
         <div className="flex items-center gap-4 p-4">
           <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-secondary">
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt={profile.display_name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center"><UserIcon className="h-6 w-6 text-muted-foreground/30" /></div>
-            )}
+            <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} iconSize="h-6 w-6" />
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="font-serif text-lg font-semibold truncate">
