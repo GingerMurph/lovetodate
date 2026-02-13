@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 240 10% 4%;
-    --foreground: 40 20% 92%;
+    --background: 20 20% 97%;
+    --foreground: 350 30% 15%;
 
-    --card: 240 8% 8%;
-    --card-foreground: 40 20% 92%;
+    --card: 20 25% 94%;
+    --card-foreground: 350 30% 15%;
 
-    --popover: 240 8% 10%;
-    --popover-foreground: 40 20% 92%;
+    --popover: 20 20% 96%;
+    --popover-foreground: 350 30% 15%;
 
-    --primary: 38 70% 55%;
-    --primary-foreground: 240 10% 4%;
+    --primary: 350 55% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 240 6% 14%;
-    --secondary-foreground: 40 15% 80%;
+    --secondary: 20 30% 90%;
+    --secondary-foreground: 350 25% 30%;
 
-    --muted: 240 6% 14%;
-    --muted-foreground: 240 5% 55%;
+    --muted: 20 15% 90%;
+    --muted-foreground: 350 10% 45%;
 
-    --accent: 38 50% 20%;
-    --accent-foreground: 38 70% 70%;
+    --accent: 350 40% 92%;
+    --accent-foreground: 350 55% 45%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 6% 18%;
-    --input: 240 6% 18%;
-    --ring: 38 70% 55%;
+    --border: 20 20% 87%;
+    --input: 20 20% 87%;
+    --ring: 350 55% 55%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 240 8% 6%;
-    --sidebar-foreground: 40 15% 80%;
-    --sidebar-primary: 38 70% 55%;
-    --sidebar-primary-foreground: 240 10% 4%;
-    --sidebar-accent: 240 6% 14%;
-    --sidebar-accent-foreground: 40 15% 80%;
-    --sidebar-border: 240 6% 18%;
-    --sidebar-ring: 38 70% 55%;
+    --sidebar-background: 20 25% 95%;
+    --sidebar-foreground: 350 25% 30%;
+    --sidebar-primary: 350 55% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 350 40% 92%;
+    --sidebar-accent-foreground: 350 25% 30%;
+    --sidebar-border: 20 20% 87%;
+    --sidebar-ring: 350 55% 55%;
 
-    --gold: 38 70% 55%;
-    --gold-light: 38 60% 70%;
-    --gold-dark: 38 80% 35%;
+    --rose: 350 55% 55%;
+    --rose-light: 350 50% 75%;
+    --rose-dark: 350 60% 40%;
   }
 }
 
@@ -56,7 +56,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Lora', serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -66,19 +66,19 @@
 
 @layer utilities {
   .text-gold {
-    color: hsl(var(--gold));
+    color: hsl(var(--rose));
   }
   .bg-gold {
-    background-color: hsl(var(--gold));
+    background-color: hsl(var(--rose));
   }
   .border-gold {
-    border-color: hsl(var(--gold));
+    border-color: hsl(var(--rose));
   }
   .gradient-gold {
-    background: linear-gradient(135deg, hsl(38 80% 35%), hsl(38 70% 55%), hsl(38 60% 70%));
+    background: linear-gradient(135deg, hsl(350 60% 40%), hsl(350 55% 55%), hsl(350 50% 75%));
   }
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(38 60% 70%), hsl(38 70% 55%));
+    background: linear-gradient(135deg, hsl(350 50% 75%), hsl(350 55% 55%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
