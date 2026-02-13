@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AvatarImage } from "@/components/AvatarImage";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -98,11 +99,7 @@ const ProfileView = () => {
         {/* Header */}
         <div className="mb-6 flex flex-col items-center">
           <div className="h-40 w-40 overflow-hidden rounded-full border-2 border-gold/30 bg-secondary mb-4">
-            {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt={profile.display_name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full items-center justify-center"><UserIcon className="h-16 w-16 text-muted-foreground/30" /></div>
-            )}
+            <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} />
           </div>
           <h1 className="font-serif text-3xl font-bold">
             {profile.display_name}{age ? `, ${age}` : ""}

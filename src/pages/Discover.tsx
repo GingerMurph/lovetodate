@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Weight, User as UserIcon, Filter, X } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Filter, X } from "lucide-react";
+import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
@@ -155,13 +156,7 @@ const Discover = () => {
               <Card key={profile.user_id} className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
                 <Link to={`/profile/${profile.user_id}`}>
                   <div className="relative aspect-[3/4] bg-secondary">
-                    {profile.avatar_url ? (
-                      <img src={profile.avatar_url} alt={profile.display_name} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <UserIcon className="h-16 w-16 text-muted-foreground/30" />
-                      </div>
-                    )}
+                    <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16">
                       <h3 className="font-serif text-xl font-semibold text-foreground">
                         {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
