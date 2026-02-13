@@ -11,6 +11,7 @@ import Discover from "./pages/Discover";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfileView from "./pages/ProfileView";
 import Likes from "./pages/Likes";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/profile" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
             <Route path="/profile/:userId" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
             <Route path="/likes" element={<ProtectedRoute><Likes /></ProtectedRoute>} />
+            <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

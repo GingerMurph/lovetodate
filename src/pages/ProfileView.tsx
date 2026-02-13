@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import type { Tables } from "@/integrations/supabase/types";
@@ -62,9 +62,22 @@ const ProfileView = () => {
     }
   };
 
+  const [unlocking, setUnlocking] = useState(false);
+
   const handleUnlock = async () => {
     if (!user || !userId) return;
-    toast.error("Payment integration coming soon. Unlocking is temporarily disabled.");
+    setUnlocking(true);
+    const { data, error } = await supabase.functions.invoke("create-unlock-payment", {
+      body: { targetUserId: userId },
+    });
+    setUnlocking(false);
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Payment failed");
+      return;
+    }
+    if (data?.url) {
+      window.open(data.url, "_blank");
+    }
   };
 
   const getAge = (dob: string | null) => {
@@ -111,9 +124,9 @@ const ProfileView = () => {
               {isLiked ? "Liked" : "Like"}
             </Button>
             {!isUnlocked ? (
-              <Button onClick={handleUnlock} className="gradient-gold text-primary-foreground">
-                <Lock className="h-4 w-4 mr-2" />
-                Unlock for £1
+              <Button onClick={handleUnlock} disabled={unlocking} className="gradient-gold text-primary-foreground">
+                {unlocking ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Lock className="h-4 w-4 mr-2" />}
+                {unlocking ? "Processing..." : "Unlock for £1"}
               </Button>
             ) : (
               <Badge className="bg-green-600 text-white px-4 py-2">✓ Connected</Badge>
