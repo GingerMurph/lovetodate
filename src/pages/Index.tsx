@@ -50,7 +50,7 @@ const Index = () => {
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/auth?mode=signup">
                 <Button size="lg" className="gradient-gold text-primary-foreground px-10 py-6 text-lg font-semibold shadow-lg shadow-gold/20">
-                  Start For Free
+                  Start Looking
                 </Button>
               </Link>
               <p className="text-sm text-muted-foreground">No subscriptions. Just £1 per connection.</p>
