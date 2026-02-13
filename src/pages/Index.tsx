@@ -44,8 +44,8 @@ const Index = () => {
               <span className="text-sky-700">Love To </span>
               <span className="text-gradient-gold">Date</span>
             </h1>
-            <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">
-              Only pay for someone you would <span className="text-gold font-medium">Love To Date</span>
+            <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">Only pay when it is someone you would Love To Date
+              <span className="text-gold font-medium">Love To Date</span>
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/auth?mode=signup">
@@ -61,7 +61,7 @@ const Index = () => {
         {/* How it works */}
         <section className="py-24 bg-card/50">
           <div className="container mx-auto px-4">
-            <h2 className="mb-16 text-center font-serif text-4xl font-bold text-foreground">
+            <h2 className="mb-16 text-center font-serif text-4xl font-bold text-[#0369a0]">
               How It <span className="text-gold">Works</span>
             </h2>
             <div className="grid gap-8 md:grid-cols-3">
@@ -74,7 +74,7 @@ const Index = () => {
                   <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent">
                     <item.icon className="h-7 w-7 text-gold" />
                   </div>
-                  <h3 className="mb-3 font-serif text-xl font-semibold text-foreground">{item.title}</h3>
+                  <h3 className="mb-3 font-serif text-xl font-semibold text-[#0369a0]">{item.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
                 </div>
               )}
@@ -85,7 +85,7 @@ const Index = () => {
         {/* Why different */}
         <section className="py-24">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-6 font-serif text-4xl font-bold text-foreground">
+            <h2 className="mb-6 font-serif text-4xl font-bold text-[#0369a0]">
               Why We're <span className="text-gold">Different</span>
             </h2>
             <p className="mx-auto mb-12 max-w-2xl text-muted-foreground">
@@ -102,7 +102,7 @@ const Index = () => {
                     <item.icon className="h-5 w-5 text-gold" />
                   </div>
                   <div>
-                    <h3 className="mb-1 font-serif text-lg font-semibold">{item.title}</h3>
+                    <h3 className="mb-1 font-serif text-lg font-semibold text-[#0369a0]">{item.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>
@@ -115,7 +115,7 @@ const Index = () => {
         <footer className="border-t border-border py-12">
           <div className="container mx-auto px-4 text-center">
             <p className="font-serif text-xl text-gold mb-2">Love To Date</p>
-            <p className="text-sm text-muted-foreground">Only pay for someone you would Love To Date</p>
+            <p className="text-sm text-muted-foreground">Only pay when it is someone you would Love To Date</p>
             <p className="mt-4 text-xs text-muted-foreground">© {new Date().getFullYear()} lovetodate.co.uk. All rights reserved.</p>
           </div>
         </footer>
