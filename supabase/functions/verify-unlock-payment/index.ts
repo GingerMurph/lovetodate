@@ -30,7 +30,12 @@ serve(async (req) => {
     if (!user) throw new Error("User not authenticated");
 
     const { sessionId } = await req.json();
-    if (!sessionId) throw new Error("sessionId is required");
+    if (!sessionId || typeof sessionId !== "string") throw new Error("sessionId is required");
+
+    // Validate sessionId format (Stripe session IDs start with cs_)
+    if (!sessionId.startsWith("cs_") || sessionId.length > 255) {
+      throw new Error("Invalid sessionId format");
+    }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
