@@ -27,6 +27,16 @@ serve(async (req) => {
     const { targetUserId } = await req.json();
     if (!targetUserId) throw new Error("targetUserId is required");
 
+    // Validate origin against allowed list to prevent open redirect
+    const ALLOWED_ORIGINS = [
+      "https://id-preview--9fe98a5a-3a19-4985-a69b-54fbadb91a5f.lovable.app",
+      "http://localhost:8080",
+    ];
+    const origin = req.headers.get("origin");
+    const baseUrl = (origin && ALLOWED_ORIGINS.includes(origin))
+      ? origin
+      : ALLOWED_ORIGINS[0];
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -47,8 +57,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}&target=${targetUserId}`,
-      cancel_url: `${req.headers.get("origin")}/profile/${targetUserId}`,
+      success_url: `${baseUrl}/payment-success?session_id={CHECKOUT_SESSION_ID}&target=${targetUserId}`,
+      cancel_url: `${baseUrl}/profile/${targetUserId}`,
       metadata: {
         unlocker_id: user.id,
         target_id: targetUserId,
