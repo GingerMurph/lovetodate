@@ -76,7 +76,7 @@ const Auth = () => {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
               </div>
-              <Button type="submit" className="w-full gradient-gold text-primary-foreground font-semibold" disabled={loading}>
+              <Button type="submit" className="w-full gradient-gold text-[hsl(220,60%,20%)] font-semibold" disabled={loading}>
                 {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
               </Button>
             </form>
