@@ -27,6 +27,44 @@ serve(async (req) => {
     const { targetUserId } = await req.json();
     if (!targetUserId) throw new Error("targetUserId is required");
 
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (typeof targetUserId !== "string" || !uuidRegex.test(targetUserId)) {
+      throw new Error("Invalid targetUserId format");
+    }
+
+    // Prevent self-unlocking
+    if (targetUserId === user.id) {
+      throw new Error("Cannot unlock your own profile");
+    }
+
+    // Check if already unlocked
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    const { data: existing } = await supabaseAdmin
+      .from("unlocked_connections")
+      .select("id")
+      .or(`and(unlocker_id.eq.${user.id},target_id.eq.${targetUserId}),and(unlocker_id.eq.${targetUserId},target_id.eq.${user.id})`)
+      .maybeSingle();
+
+    if (existing) {
+      throw new Error("Connection already unlocked");
+    }
+
+    // Verify target profile exists
+    const { data: targetProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("user_id", targetUserId)
+      .maybeSingle();
+
+    if (!targetProfile) {
+      throw new Error("Target profile not found");
+    }
+
     // Validate origin against allowed list to prevent open redirect
     const ALLOWED_ORIGINS = [
       "https://id-preview--9fe98a5a-3a19-4985-a69b-54fbadb91a5f.lovable.app",
