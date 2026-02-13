@@ -1,1 +1,4 @@
 project_id = "cpzorgklfjuntwslvuoz"
+
+[functions.discover-profiles]
+verify_jwt = false

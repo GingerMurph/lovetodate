@@ -9,13 +9,33 @@ import { Heart, MapPin, Ruler, Weight, User as UserIcon, Filter, X } from "lucid
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Profile = Tables<"profiles">;
+type DiscoverProfile = {
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  bio: string | null;
+  gender: string | null;
+  body_build: string | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  location_city: string | null;
+  location_country: string | null;
+  nationality: string | null;
+  occupation: string | null;
+  education: string | null;
+  smoking: string | null;
+  drinking: string | null;
+  children: string | null;
+  interests: string[] | null;
+  relationship_goal: string | null;
+  looking_for: string | null;
+  age: number | null;
+};
 
 const Discover = () => {
   const { user } = useAuth();
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -39,12 +59,12 @@ const Discover = () => {
     if (!user) return;
     setLoading(true);
 
-    const [profilesRes, likesRes] = await Promise.all([
-      supabase.from("profiles").select("*").neq("user_id", user.id),
+    const [discoverRes, likesRes] = await Promise.all([
+      supabase.functions.invoke("discover-profiles"),
       supabase.from("likes").select("liked_id").eq("liker_id", user.id),
     ]);
 
-    if (profilesRes.data) setProfiles(profilesRes.data);
+    if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
     setLoading(false);
   };
@@ -75,11 +95,7 @@ const Discover = () => {
     return true;
   });
 
-  const getAge = (dob: string | null) => {
-    if (!dob) return null;
-    const diff = Date.now() - new Date(dob).getTime();
-    return Math.floor(diff / 31557600000);
-  };
+  // Age is now returned directly from the edge function
 
   return (
     <AppLayout>
@@ -136,7 +152,7 @@ const Discover = () => {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((profile) => (
-              <Card key={profile.id} className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
+              <Card key={profile.user_id} className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
                 <Link to={`/profile/${profile.user_id}`}>
                   <div className="relative aspect-[3/4] bg-secondary">
                     {profile.avatar_url ? (
@@ -148,7 +164,7 @@ const Discover = () => {
                     )}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16">
                       <h3 className="font-serif text-xl font-semibold text-foreground">
-                        {profile.display_name}{getAge(profile.date_of_birth) ? `, ${getAge(profile.date_of_birth)}` : ""}
+                        {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
                       </h3>
                       <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                         {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location_city}</span>}
