@@ -41,7 +41,7 @@ const Index = () => {
           <div className="relative z-10 container mx-auto px-4 text-center">
             <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">Affordable Dating</p>
             <h1 className="mb-6 font-serif text-5xl font-bold leading-tight md:text-7xl lg:text-8xl">
-              <span className="text-foreground">Love To </span>
+              <span className="text-sky-700">Love To </span>
               <span className="text-gradient-gold">Date</span>
             </h1>
             <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">
