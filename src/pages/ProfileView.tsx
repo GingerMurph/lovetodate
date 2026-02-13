@@ -64,11 +64,7 @@ const ProfileView = () => {
 
   const handleUnlock = async () => {
     if (!user || !userId) return;
-    // TODO: Integrate Stripe payment of £1 here
-    const { error } = await supabase.from("unlocked_connections").insert({ unlocker_id: user.id, target_id: userId });
-    if (error) { toast.error(error.message); return; }
-    setIsUnlocked(true);
-    toast.success("Connection unlocked! You can now exchange contact details.");
+    toast.error("Payment integration coming soon. Unlocking is temporarily disabled.");
   };
 
   const getAge = (dob: string | null) => {
