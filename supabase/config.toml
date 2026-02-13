@@ -2,3 +2,9 @@ project_id = "cpzorgklfjuntwslvuoz"
 
 [functions.discover-profiles]
 verify_jwt = false
+
+[functions.create-unlock-payment]
+verify_jwt = false
+
+[functions.verify-unlock-payment]
+verify_jwt = false
