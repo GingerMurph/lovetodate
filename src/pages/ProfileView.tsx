@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { AvatarImage } from "@/components/AvatarImage";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 
@@ -35,7 +36,8 @@ type ViewProfile = {
 
 const ProfileView = () => {
   const { userId } = useParams();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<ViewProfile | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLikedBack, setIsLikedBack] = useState(false);
@@ -81,6 +83,21 @@ const ProfileView = () => {
   };
 
   const [unlocking, setUnlocking] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setDeleting(true);
+    const { data, error } = await supabase.functions.invoke("delete-account");
+    setDeleting(false);
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Failed to delete account");
+      return;
+    }
+    await signOut();
+    navigate("/");
+    toast.success("Your account has been deleted.");
+  };
 
   const handleUnlock = async () => {
     if (!user || !userId) return;
@@ -212,6 +229,38 @@ const ProfileView = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Delete Account - own profile only */}
+        {isOwnProfile && (
+          <Card className="mt-6 border-destructive/30">
+            <CardHeader><CardTitle className="font-serif text-lg text-destructive">Danger Zone</CardTitle></CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" disabled={deleting}>
+                    {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                    {deleting ? "Deleting..." : "Delete My Account"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your account, profile, photos, likes, and connections. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Yes, delete my account
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Contact details - only if unlocked */}
         {isUnlocked && !isOwnProfile && (
