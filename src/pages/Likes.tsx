@@ -1,20 +1,26 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { AvatarImage } from "@/components/AvatarImage";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Profile = Tables<"profiles">;
+type LikeProfile = {
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  location_city: string | null;
+  nationality: string | null;
+  age: number | null;
+};
 
 const Likes = () => {
   const { user } = useAuth();
-  const [likedByMe, setLikedByMe] = useState<Profile[]>([]);
-  const [likedMe, setLikedMe] = useState<Profile[]>([]);
+  const [likedByMe, setLikedByMe] = useState<LikeProfile[]>([]);
+  const [likedMe, setLikedMe] = useState<LikeProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,30 +32,16 @@ const Likes = () => {
     if (!user) return;
     setLoading(true);
 
-    const [sentRes, receivedRes] = await Promise.all([
-      supabase.from("likes").select("liked_id").eq("liker_id", user.id),
-      supabase.from("likes").select("liker_id").eq("liked_id", user.id),
-    ]);
+    const { data, error } = await supabase.functions.invoke("likes-profiles");
 
-    const sentIds = sentRes.data?.map((l) => l.liked_id) || [];
-    const receivedIds = receivedRes.data?.map((l) => l.liker_id) || [];
-
-    const [sentProfiles, receivedProfiles] = await Promise.all([
-      sentIds.length > 0 ? supabase.from("profiles").select("*").in("user_id", sentIds) : { data: [] },
-      receivedIds.length > 0 ? supabase.from("profiles").select("*").in("user_id", receivedIds) : { data: [] },
-    ]);
-
-    setLikedByMe(sentProfiles.data || []);
-    setLikedMe(receivedProfiles.data || []);
+    if (!error && data) {
+      setLikedByMe(data.sent || []);
+      setLikedMe(data.received || []);
+    }
     setLoading(false);
   };
 
-  const getAge = (dob: string | null) => {
-    if (!dob) return null;
-    return Math.floor((Date.now() - new Date(dob).getTime()) / 31557600000);
-  };
-
-  const ProfileCard = ({ profile }: { profile: Profile }) => (
+  const ProfileCard = ({ profile }: { profile: LikeProfile }) => (
     <Link to={`/profile/${profile.user_id}`}>
       <Card className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30">
         <div className="flex items-center gap-4 p-4">
@@ -58,7 +50,7 @@ const Likes = () => {
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="font-serif text-lg font-semibold truncate">
-              {profile.display_name}{getAge(profile.date_of_birth) ? `, ${getAge(profile.date_of_birth)}` : ""}
+              {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
             </h3>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location_city}</span>}
@@ -90,7 +82,7 @@ const Likes = () => {
             ) : likedMe.length === 0 ? (
               <p className="text-center text-muted-foreground py-12">No one has liked you yet. Complete your profile to attract more attention!</p>
             ) : (
-              likedMe.map((p) => <ProfileCard key={p.id} profile={p} />)
+              likedMe.map((p) => <ProfileCard key={p.user_id} profile={p} />)
             )}
           </TabsContent>
 
@@ -100,7 +92,7 @@ const Likes = () => {
             ) : likedByMe.length === 0 ? (
               <p className="text-center text-muted-foreground py-12">You haven't liked anyone yet. Start discovering people!</p>
             ) : (
-              likedByMe.map((p) => <ProfileCard key={p.id} profile={p} />)
+              likedByMe.map((p) => <ProfileCard key={p.user_id} profile={p} />)
             )}
           </TabsContent>
         </Tabs>
