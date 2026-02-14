@@ -53,19 +53,14 @@ serve(async (req) => {
     if (!unlockerId || !targetId) throw new Error("Invalid session metadata");
     if (unlockerId !== user.id) throw new Error("Unauthorized");
 
-    // Check if already unlocked
-    const { data: existing } = await supabaseAdmin
+    // Upsert to handle race conditions idempotently
+    const { error: upsertError } = await supabaseAdmin
       .from("unlocked_connections")
-      .select("id")
-      .or(`and(unlocker_id.eq.${unlockerId},target_id.eq.${targetId}),and(unlocker_id.eq.${targetId},target_id.eq.${unlockerId})`)
-      .maybeSingle();
-
-    if (!existing) {
-      const { error } = await supabaseAdmin
-        .from("unlocked_connections")
-        .insert({ unlocker_id: unlockerId, target_id: targetId });
-      if (error) throw new Error(`Failed to unlock: ${error.message}`);
-    }
+      .upsert(
+        { unlocker_id: unlockerId, target_id: targetId },
+        { onConflict: "unlocker_id,target_id", ignoreDuplicates: true }
+      );
+    if (upsertError) throw new Error("Failed to unlock connection");
 
     return new Response(JSON.stringify({ success: true, targetId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
