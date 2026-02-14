@@ -46,7 +46,7 @@ Deno.serve(async (req) => {
     const adminClient = createClient(supabaseUrl, serviceKey);
 
     // Fetch the profile, like status, and connection status in parallel
-    const [profileRes, likeRes, likeBackRes, connectionRes] = await Promise.all([
+    const [profileRes, likeRes, likeBackRes, connForward, connReverse] = await Promise.all([
       adminClient.from("profiles")
         .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth")
         .eq("user_id", userId)
@@ -54,9 +54,11 @@ Deno.serve(async (req) => {
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", userId).eq("liked_id", user.id).maybeSingle(),
       adminClient.from("unlocked_connections").select("id")
-        .or(`and(unlocker_id.eq.${user.id},target_id.eq.${userId}),and(unlocker_id.eq.${userId},target_id.eq.${user.id})`)
-        .maybeSingle(),
+        .eq("unlocker_id", user.id).eq("target_id", userId).maybeSingle(),
+      adminClient.from("unlocked_connections").select("id")
+        .eq("unlocker_id", userId).eq("target_id", user.id).maybeSingle(),
     ]);
+    const connectionRes = { data: connForward.data || connReverse.data };
 
     if (!profileRes.data) {
       return new Response(JSON.stringify({ error: "Profile not found" }), {
