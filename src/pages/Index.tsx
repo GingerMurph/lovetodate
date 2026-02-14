@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Shield, CreditCard, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/logo.jpeg";
 
 const Index = () => {
   const { user } = useAuth();
@@ -11,7 +12,10 @@ const Index = () => {
       {/* Nav */}
       <header className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/" className="font-serif text-2xl text-gold">LoveToDate.co.uk</Link>
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="Love To Date logo" className="h-10 w-10 rounded-full object-cover" />
+            <span className="font-serif text-2xl text-gold">LoveToDate.co.uk</span>
+          </Link>
           <div className="flex items-center gap-3">
             {user ?
             <Link to="/discover">
