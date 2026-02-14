@@ -12,25 +12,25 @@ const Index = () => {
       {/* Nav */}
       <header className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Love To Date logo" className="h-10 w-10 rounded-full object-cover" />
-            <span className="font-serif text-2xl text-gold">LoveToDate.co.uk</span>
+          <Link to="/" className="flex items-center gap-2 min-w-0">
+            <img src={logo} alt="Love To Date logo" className="h-10 w-10 rounded-full object-cover shrink-0" />
+            <span className="font-serif text-gold text-lg sm:text-2xl">LoveToDate<span className="hidden sm:inline">.co.uk</span></span>
           </Link>
-          <div className="flex items-center gap-3">
-            {user ?
-            <Link to="/discover">
-                <Button className="gradient-gold text-primary-foreground font-semibold">Browse Profiles</Button>
-              </Link> :
-
-            <>
+          <div className="flex items-center gap-2 shrink-0">
+            {user ? (
+              <Link to="/discover">
+                <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">Browse Profiles</Button>
+              </Link>
+            ) : (
+              <>
                 <Link to="/auth?mode=login">
-                  <Button variant="ghost" className="text-foreground">Sign In</Button>
+                  <Button variant="ghost" size="sm" className="text-foreground">Sign In</Button>
                 </Link>
                 <Link to="/auth?mode=signup">
-                  <Button className="gradient-gold text-primary-foreground font-semibold">Join Free</Button>
+                  <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">Join Free</Button>
                 </Link>
               </>
-            }
+            )}
           </div>
         </div>
       </header>
