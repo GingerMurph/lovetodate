@@ -9,20 +9,39 @@ import { Badge } from "@/components/ui/badge";
 import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
-import type { Tables } from "@/integrations/supabase/types";
 
-type Profile = Tables<"profiles">;
+type ViewProfile = {
+  user_id: string;
+  display_name: string;
+  avatar_url: string | null;
+  bio: string | null;
+  gender: string | null;
+  body_build: string | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  location_city: string | null;
+  location_country: string | null;
+  nationality: string | null;
+  occupation: string | null;
+  education: string | null;
+  smoking: string | null;
+  drinking: string | null;
+  children: string | null;
+  interests: string[] | null;
+  relationship_goal: string | null;
+  looking_for: string | null;
+  age: number | null;
+};
 
 const ProfileView = () => {
   const { userId } = useParams();
   const { user } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<ViewProfile | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLikedBack, setIsLikedBack] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  const isOwnProfile = user?.id === userId;
 
   useEffect(() => {
     if (!userId || !user) return;
@@ -33,19 +52,17 @@ const ProfileView = () => {
     if (!userId || !user) return;
     setLoading(true);
 
-    const [profileRes, likeRes, likeBackRes, connectionRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
-      supabase.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
-      supabase.from("likes").select("id").eq("liker_id", userId).eq("liked_id", user.id).maybeSingle(),
-      supabase.from("unlocked_connections").select("id")
-        .or(`and(unlocker_id.eq.${user.id},target_id.eq.${userId}),and(unlocker_id.eq.${userId},target_id.eq.${user.id})`)
-        .maybeSingle(),
-    ]);
+    const { data, error } = await supabase.functions.invoke("view-profile", {
+      body: { userId },
+    });
 
-    setProfile(profileRes.data);
-    setIsLiked(!!likeRes.data);
-    setIsLikedBack(!!likeBackRes.data);
-    setIsUnlocked(!!connectionRes.data);
+    if (!error && data && !data.error) {
+      setProfile(data.profile);
+      setIsLiked(data.isLiked);
+      setIsLikedBack(data.isLikedBack);
+      setIsUnlocked(data.isUnlocked);
+      setIsOwnProfile(data.isOwnProfile);
+    }
     setLoading(false);
   };
 
@@ -81,17 +98,10 @@ const ProfileView = () => {
     }
   };
 
-  const getAge = (dob: string | null) => {
-    if (!dob) return null;
-    return Math.floor((Date.now() - new Date(dob).getTime()) / 31557600000);
-  };
-
   const formatEnum = (val: string | null) => val?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || null;
 
   if (loading) return <AppLayout><div className="flex h-64 items-center justify-center text-muted-foreground">Loading...</div></AppLayout>;
   if (!profile) return <AppLayout><div className="flex h-64 items-center justify-center text-muted-foreground">Profile not found</div></AppLayout>;
-
-  const age = getAge(profile.date_of_birth);
 
   return (
     <AppLayout>
@@ -102,7 +112,7 @@ const ProfileView = () => {
             <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} />
           </div>
           <h1 className="font-serif text-3xl font-bold">
-            {profile.display_name}{age ? `, ${age}` : ""}
+            {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
           </h1>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}
