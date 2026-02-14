@@ -79,18 +79,49 @@ Deno.serve(async (req) => {
       signedAvatarUrl = signedData?.signedUrl || null;
     }
 
-    return new Response(JSON.stringify({
-      profile: {
-        ...rest,
+    const isOwnProfile = user.id === userId;
+    const isLiked = !!likeRes.data;
+    const isLikedBack = !!likeBackRes.data;
+    const isUnlocked = !!connectionRes.data;
+
+    const age = date_of_birth
+      ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
+      : null;
+
+    // Tiered data access:
+    // - Own profile or unlocked: full details
+    // - Liked (either direction): basic + bio, interests, relationship info
+    // - Discovery only: basic info (name, age, city, avatar, gender, build)
+    let profile: Record<string, unknown>;
+
+    if (isOwnProfile || isUnlocked) {
+      // Full access
+      profile = { ...rest, avatar_url: signedAvatarUrl, age };
+    } else if (isLiked || isLikedBack) {
+      // Medium access — bio, interests, relationship info, but not occupation/education/lifestyle
+      const { occupation, education, smoking, drinking, children, weight_kg, ...medium } = rest;
+      profile = { ...medium, avatar_url: signedAvatarUrl, age };
+    } else {
+      // Basic access — discovery-level info only
+      profile = {
+        user_id: rest.user_id,
+        display_name: rest.display_name,
         avatar_url: signedAvatarUrl,
-        age: date_of_birth
-          ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
-          : null,
-      },
-      isLiked: !!likeRes.data,
-      isLikedBack: !!likeBackRes.data,
-      isUnlocked: !!connectionRes.data,
-      isOwnProfile: user.id === userId,
+        age,
+        gender: rest.gender,
+        body_build: rest.body_build,
+        height_cm: rest.height_cm,
+        location_city: rest.location_city,
+        nationality: rest.nationality,
+      };
+    }
+
+    return new Response(JSON.stringify({
+      profile,
+      isLiked,
+      isLikedBack,
+      isUnlocked,
+      isOwnProfile,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
