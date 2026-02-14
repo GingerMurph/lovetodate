@@ -36,13 +36,13 @@ Deno.serve(async (req) => {
     }
 
     // Use service role to bypass RLS and fetch all profiles except the user's own
+    // Only return basic discovery fields — detailed info requires like/unlock
     const adminClient = createClient(supabaseUrl, serviceKey);
     const { data: profiles, error } = await adminClient
       .from("profiles")
       .select(
-        "user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, " +
-        "location_city, location_country, nationality, occupation, education, smoking, drinking, " +
-        "children, interests, relationship_goal, looking_for, date_of_birth"
+        "user_id, display_name, avatar_url, gender, body_build, height_cm, " +
+        "location_city, nationality, date_of_birth"
       )
       .neq("user_id", user.id);
 

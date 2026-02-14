@@ -15,22 +15,11 @@ type DiscoverProfile = {
   user_id: string;
   display_name: string;
   avatar_url: string | null;
-  bio: string | null;
   gender: string | null;
   body_build: string | null;
   height_cm: number | null;
-  weight_kg: number | null;
   location_city: string | null;
-  location_country: string | null;
   nationality: string | null;
-  occupation: string | null;
-  education: string | null;
-  smoking: string | null;
-  drinking: string | null;
-  children: string | null;
-  interests: string[] | null;
-  relationship_goal: string | null;
-  looking_for: string | null;
   age: number | null;
 };
 
@@ -46,8 +35,6 @@ const Discover = () => {
     nationality: "",
     minHeight: "",
     maxHeight: "",
-    minWeight: "",
-    maxWeight: "",
     city: "",
   });
 
@@ -90,8 +77,6 @@ const Discover = () => {
     if (filters.nationality && p.nationality !== filters.nationality) return false;
     if (filters.minHeight && p.height_cm && p.height_cm < parseInt(filters.minHeight)) return false;
     if (filters.maxHeight && p.height_cm && p.height_cm > parseInt(filters.maxHeight)) return false;
-    if (filters.minWeight && p.weight_kg && p.weight_kg < parseInt(filters.minWeight)) return false;
-    if (filters.maxWeight && p.weight_kg && p.weight_kg > parseInt(filters.maxWeight)) return false;
     if (filters.city && p.location_city && !p.location_city.toLowerCase().includes(filters.city.toLowerCase())) return false;
     return true;
   });
@@ -140,8 +125,6 @@ const Discover = () => {
               <Input placeholder="City" value={filters.city} onChange={(e) => setFilters(f => ({ ...f, city: e.target.value }))} />
               <Input placeholder="Min Height (cm)" type="number" value={filters.minHeight} onChange={(e) => setFilters(f => ({ ...f, minHeight: e.target.value }))} />
               <Input placeholder="Max Height (cm)" type="number" value={filters.maxHeight} onChange={(e) => setFilters(f => ({ ...f, maxHeight: e.target.value }))} />
-              <Input placeholder="Min Weight (kg)" type="number" value={filters.minWeight} onChange={(e) => setFilters(f => ({ ...f, minWeight: e.target.value }))} />
-              <Input placeholder="Max Weight (kg)" type="number" value={filters.maxWeight} onChange={(e) => setFilters(f => ({ ...f, maxWeight: e.target.value }))} />
             </CardContent>
           </Card>
         )}
@@ -171,7 +154,7 @@ const Discover = () => {
                   </div>
                 </Link>
                 <CardContent className="flex items-center justify-between p-3">
-                  <span className="text-xs text-muted-foreground truncate max-w-[60%]">{profile.bio?.slice(0, 60) || "No bio yet"}</span>
+                  <span className="text-xs text-muted-foreground truncate max-w-[60%]">{profile.gender ? profile.gender : "No details yet"}</span>
                   <Button
                     variant="ghost"
                     size="icon"
