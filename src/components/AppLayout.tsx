@@ -2,6 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Heart, Search, User, LogOut } from "lucide-react";
+import logo from "@/assets/logo.jpeg";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
@@ -23,7 +24,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
-          <Link to="/discover" className="font-serif text-xl text-gold">Love To Date</Link>
+          <Link to="/discover" className="flex items-center gap-2">
+            <img src={logo} alt="Love To Date logo" className="h-8 w-8 rounded-full object-cover" />
+            <span className="font-serif text-xl text-gold">Love To Date</span>
+          </Link>
           <nav className="flex items-center gap-1">
             {nav.map((item) => (
               <Link key={item.to} to={item.to}>
