@@ -37,8 +37,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </Button>
               </Link>
             ))}
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="ml-2">
+            <Button variant="ghost" size="sm" onClick={handleSignOut} className="ml-2 gap-1.5">
               <LogOut className="h-4 w-4" />
+              <span className="text-xs">Logout</span>
             </Button>
           </nav>
         </div>
