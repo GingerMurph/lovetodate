@@ -44,11 +44,21 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { data: existing } = await supabaseAdmin
-      .from("unlocked_connections")
-      .select("id")
-      .or(`and(unlocker_id.eq.${user.id},target_id.eq.${targetUserId}),and(unlocker_id.eq.${targetUserId},target_id.eq.${user.id})`)
-      .maybeSingle();
+    const [forward, reverse] = await Promise.all([
+      supabaseAdmin
+        .from("unlocked_connections")
+        .select("id")
+        .eq("unlocker_id", user.id)
+        .eq("target_id", targetUserId)
+        .maybeSingle(),
+      supabaseAdmin
+        .from("unlocked_connections")
+        .select("id")
+        .eq("unlocker_id", targetUserId)
+        .eq("target_id", user.id)
+        .maybeSingle(),
+    ]);
+    const existing = forward.data || reverse.data;
 
     if (existing) {
       throw new Error("Connection already unlocked");
