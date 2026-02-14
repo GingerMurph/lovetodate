@@ -143,7 +143,7 @@ const ProfileSetup = () => {
           {/* Avatar */}
           <Card className="border-border bg-card">
             <CardContent className="flex flex-col items-center py-8">
-              <label htmlFor="avatar" className="group cursor-pointer">
+              <label htmlFor="avatar" className="group cursor-pointer flex flex-col items-center">
                 <div className="relative h-32 w-32 overflow-hidden rounded-full border-2 border-gold/30 bg-secondary flex items-center justify-center">
                   {avatarPreview ? (
                     <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
@@ -154,9 +154,9 @@ const ProfileSetup = () => {
                     <Camera className="h-6 w-6 text-gold" />
                   </div>
                 </div>
+                <p className="mt-3 text-sm text-muted-foreground">Click to upload your photo</p>
               </label>
               <input id="avatar" type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
-              <p className="mt-3 text-sm text-muted-foreground">Click to upload your photo</p>
             </CardContent>
           </Card>
 
