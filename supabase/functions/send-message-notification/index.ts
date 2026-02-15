@@ -111,8 +111,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Send SMS notification
-    if (smsEnabled && phoneNumber) {
+    // Send SMS notification (validate E.164 format)
+    const e164Regex = /^\+[1-9]\d{1,14}$/;
+    if (smsEnabled && phoneNumber && e164Regex.test(phoneNumber)) {
       try {
         const twilioSid = Deno.env.get("TWILIO_ACCOUNT_SID");
         const twilioToken = Deno.env.get("TWILIO_AUTH_TOKEN");
