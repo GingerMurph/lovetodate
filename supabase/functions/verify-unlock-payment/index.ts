@@ -29,12 +29,31 @@ serve(async (req) => {
     const user = data.user;
     if (!user) throw new Error("User not authenticated");
 
-    const { sessionId } = await req.json();
-    if (!sessionId || typeof sessionId !== "string") throw new Error("sessionId is required");
+    // Safe JSON parsing
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { sessionId } = body;
+    if (!sessionId || typeof sessionId !== "string") {
+      return new Response(JSON.stringify({ error: "sessionId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Validate sessionId format (Stripe session IDs start with cs_)
     if (!sessionId.startsWith("cs_") || sessionId.length > 255) {
-      throw new Error("Invalid sessionId format");
+      return new Response(JSON.stringify({ error: "Invalid sessionId format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
