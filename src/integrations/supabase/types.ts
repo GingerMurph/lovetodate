@@ -50,6 +50,7 @@ export type Database = {
           height_cm: number | null
           id: string
           interests: string[] | null
+          is_paused: boolean
           location_city: string | null
           location_country: string | null
           looking_for: Database["public"]["Enums"]["looking_for"] | null
@@ -77,6 +78,7 @@ export type Database = {
           height_cm?: number | null
           id?: string
           interests?: string[] | null
+          is_paused?: boolean
           location_city?: string | null
           location_country?: string | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
@@ -104,6 +106,7 @@ export type Database = {
           height_cm?: number | null
           id?: string
           interests?: string[] | null
+          is_paused?: boolean
           location_city?: string | null
           location_country?: string | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
