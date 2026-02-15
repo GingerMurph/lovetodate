@@ -134,16 +134,36 @@ const Chat = () => {
     if (!newMessage.trim() || !user || !partnerId) return;
     setSending(true);
     const msgContent = newMessage.trim();
+    setNewMessage("");
+
+    // Optimistic: show the message immediately
+    const optimisticId = crypto.randomUUID();
+    const optimisticMsg: Message = {
+      id: optimisticId,
+      sender_id: user.id,
+      recipient_id: partnerId,
+      content: msgContent,
+      is_read: false,
+      created_at: new Date().toISOString(),
+    };
+    setMessages((prev) => [...prev, optimisticMsg]);
+
     const { error } = await supabase.from("messages").insert({
       sender_id: user.id,
       recipient_id: partnerId,
       content: msgContent,
     });
     setSending(false);
+
     if (error) {
+      // Remove optimistic message on failure
+      setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
       toast.error("Failed to send message. Make sure you have an unlocked connection.");
       return;
     }
+
+    toast.success("Message sent!", { duration: 1500 });
+
     // Trigger notification (fire and forget)
     supabase.functions.invoke("send-message-notification", {
       body: {
@@ -152,7 +172,6 @@ const Chat = () => {
         messagePreview: msgContent,
       },
     }).catch(() => {}); // Silent fail
-    setNewMessage("");
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
