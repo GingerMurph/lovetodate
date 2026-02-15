@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2 } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 
@@ -169,7 +169,13 @@ const ProfileView = () => {
                 {unlocking ? "Processing..." : "Unlock for £1"}
               </Button>
             ) : (
-              <Badge className="bg-green-600 text-white px-4 py-2">✓ Connected</Badge>
+              <>
+                <Badge className="bg-green-600 text-white px-4 py-2">✓ Connected</Badge>
+                <Button onClick={() => navigate(`/messages/${userId}`)} className="gradient-gold text-primary-foreground">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Message
+                </Button>
+              </>
             )}
           </div>
         )}

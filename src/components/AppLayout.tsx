@@ -1,7 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, User, LogOut } from "lucide-react";
+import { Heart, Search, User, LogOut, MessageSquare } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -17,6 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const nav = [
     { to: "/discover", icon: Search, label: "Discover" },
     { to: "/likes", icon: Heart, label: "Likes" },
+    { to: "/messages", icon: MessageSquare, label: "Messages" },
     { to: "/profile", icon: User, label: "Profile" },
   ];
 
