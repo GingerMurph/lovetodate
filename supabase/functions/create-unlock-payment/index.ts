@@ -24,13 +24,40 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated");
 
-    const { targetUserId } = await req.json();
-    if (!targetUserId) throw new Error("targetUserId is required");
+    // Safe JSON parsing
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: "Invalid request body" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { targetUserId } = body;
+    if (!targetUserId || typeof targetUserId !== "string") {
+      return new Response(JSON.stringify({ error: "targetUserId is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Length check before regex to prevent ReDoS
+    if (targetUserId.length > 36) {
+      return new Response(JSON.stringify({ error: "Invalid targetUserId format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Validate UUID format
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (typeof targetUserId !== "string" || !uuidRegex.test(targetUserId)) {
-      throw new Error("Invalid targetUserId format");
+    if (!uuidRegex.test(targetUserId)) {
+      return new Response(JSON.stringify({ error: "Invalid targetUserId format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Prevent self-unlocking
@@ -95,6 +122,9 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
+    // Use idempotency key to prevent duplicate payment sessions for same user+target
+    const idempotencyKey = `unlock-${user.id}-${targetUserId}`;
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -111,6 +141,8 @@ serve(async (req) => {
         unlocker_id: user.id,
         target_id: targetUserId,
       },
+    }, {
+      idempotencyKey,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
