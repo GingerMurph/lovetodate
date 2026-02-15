@@ -44,7 +44,8 @@ Deno.serve(async (req) => {
         "user_id, display_name, avatar_url, gender, body_build, height_cm, " +
         "location_city, nationality, date_of_birth"
       )
-      .neq("user_id", user.id);
+      .neq("user_id", user.id)
+      .neq("is_paused", true);
 
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {

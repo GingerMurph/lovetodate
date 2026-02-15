@@ -32,6 +32,7 @@ type ViewProfile = {
   relationship_goal: string | null;
   looking_for: string | null;
   age: number | null;
+  is_paused: boolean;
 };
 
 const ProfileView = () => {
@@ -84,6 +85,21 @@ const ProfileView = () => {
 
   const [unlocking, setUnlocking] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pausing, setPausing] = useState(false);
+
+  const handleTogglePause = async () => {
+    if (!user || !profile) return;
+    setPausing(true);
+    const newPaused = !profile.is_paused;
+    const { error } = await supabase.from("profiles").update({ is_paused: newPaused } as any).eq("user_id", user.id);
+    setPausing(false);
+    if (error) {
+      toast.error("Failed to update account status");
+      return;
+    }
+    setProfile({ ...profile, is_paused: newPaused });
+    toast.success(newPaused ? "Account paused" : "Account unpaused");
+  };
 
   const handleDeleteAccount = async () => {
     if (!user) return;
@@ -230,34 +246,56 @@ const ProfileView = () => {
           </CardContent>
         </Card>
 
-        {/* Delete Account - own profile only */}
+        {/* Account Management - own profile only */}
         {isOwnProfile && (
-          <Card className="mt-6 border-destructive/30">
-            <CardHeader><CardTitle className="font-serif text-lg text-destructive">Danger Zone</CardTitle></CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">Permanently delete your account and all associated data. This action cannot be undone.</p>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" disabled={deleting}>
-                    {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
-                    {deleting ? "Deleting..." : "Delete My Account"}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will permanently delete your account, profile, photos, likes, and connections. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                      Yes, delete my account
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+          <Card className="mt-6 border-border">
+            <CardHeader><CardTitle className="font-serif text-lg">Account Management</CardTitle></CardHeader>
+            <CardContent className="space-y-6">
+              {/* Pause Account */}
+              <div>
+                <h3 className="text-sm font-medium mb-1">Pause Account</h3>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {profile.is_paused
+                    ? "Your account is paused. Your profile is hidden from discovery. Unpause to become visible again."
+                    : "Temporarily hide your profile from discovery. Your data will be kept safe."}
+                </p>
+                <Button
+                  variant={profile.is_paused ? "default" : "outline"}
+                  disabled={pausing}
+                  onClick={handleTogglePause}
+                >
+                  {pausing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                  {profile.is_paused ? "Unpause Account" : "Pause Account"}
+                </Button>
+              </div>
+
+              {/* Delete Account */}
+              <div className="border-t border-destructive/30 pt-6">
+                <h3 className="text-sm font-medium text-destructive mb-1">Delete Account</h3>
+                <p className="text-sm text-muted-foreground mb-3">Permanently delete your account and all associated data. This action cannot be undone.</p>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" disabled={deleting}>
+                      {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                      {deleting ? "Deleting..." : "Delete My Account"}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete your account, profile, photos, likes, and connections. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                        Yes, delete my account
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </CardContent>
           </Card>
         )}
