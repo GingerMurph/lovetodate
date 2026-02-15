@@ -10,9 +10,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase("opening"), 800),
-      setTimeout(() => setPhase("heart"), 2800),
-      setTimeout(() => setPhase("fadeout"), 4200),
-      setTimeout(() => onComplete(), 4800),
+      setTimeout(() => setPhase("heart"), 1600),
+      setTimeout(() => setPhase("fadeout"), 3000),
+      setTimeout(() => onComplete(), 3600),
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete]);
@@ -135,8 +135,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       <p
         className="font-serif text-lg sm:text-xl mt-6 text-muted-foreground italic transition-opacity duration-500"
         style={{
-          opacity: phase === "heart" || phase === "fadeout" ? 1 : 0,
-          transition: "opacity 0.6s ease-in",
+          opacity: phase === "fadeout" ? 0 : 1,
+          transition: "opacity 0.5s ease-in",
         }}
       >
         From little acorns grow mighty oaks
