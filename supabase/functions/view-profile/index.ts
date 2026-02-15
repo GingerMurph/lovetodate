@@ -98,45 +98,8 @@ Deno.serve(async (req) => {
       ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
       : null;
 
-    // Tiered data access based on relationship
-    let profile: Record<string, unknown>;
-
-    if (isOwnProfile || isUnlocked) {
-      // Full profile for own profile or unlocked connections
-      profile = { ...rest, avatar_url: signedAvatarUrl, age };
-    } else if (isLiked || isLikedBack) {
-      // Medium data for liked profiles
-      profile = {
-        user_id: rest.user_id,
-        display_name: rest.display_name,
-        avatar_url: signedAvatarUrl,
-        age,
-        bio: rest.bio,
-        gender: rest.gender,
-        body_build: rest.body_build,
-        height_cm: rest.height_cm,
-        location_city: rest.location_city,
-        nationality: rest.nationality,
-        interests: rest.interests,
-        relationship_goal: rest.relationship_goal,
-        looking_for: rest.looking_for,
-        is_paused: rest.is_paused,
-      };
-    } else {
-      // Basic discovery data only
-      profile = {
-        user_id: rest.user_id,
-        display_name: rest.display_name,
-        avatar_url: signedAvatarUrl,
-        age,
-        gender: rest.gender,
-        body_build: rest.body_build,
-        height_cm: rest.height_cm,
-        location_city: rest.location_city,
-        nationality: rest.nationality,
-        is_paused: rest.is_paused,
-      };
-    }
+    // Full profile data for all viewers
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, age };
 
     return new Response(JSON.stringify({
       profile,
