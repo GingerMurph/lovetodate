@@ -55,9 +55,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  html {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+  html, body {
     overscroll-behavior-y: none;
     height: 100%;
   }
@@ -65,16 +63,10 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Lora', serif;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
-    height: 100%;
-    position: relative;
   }
 
   #root {
     min-height: 100%;
-    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4, h5, h6 {
