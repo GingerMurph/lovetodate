@@ -135,8 +135,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       <p
         className="font-serif text-lg sm:text-xl mt-6 text-muted-foreground italic transition-opacity duration-500"
         style={{
-          opacity: phase === "fadeout" ? 0 : 1,
-          transition: "opacity 0.5s ease-in",
+          opacity: phase === "acorn" || phase === "fadeout" ? 0 : 1,
+          transition: "opacity 0.6s ease-in-out",
         }}
       >
         From little acorns grow mighty oaks
