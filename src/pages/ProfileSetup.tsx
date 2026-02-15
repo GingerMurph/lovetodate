@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { toast } from "sonner";
 import { Camera, Loader2, Trash2 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import NotificationPreferences from "@/components/NotificationPreferences";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
@@ -372,8 +373,13 @@ const ProfileSetup = () => {
           </Button>
         </form>
 
+        {/* Notification Preferences */}
+        <div className="mt-8">
+          <NotificationPreferences />
+        </div>
+
         {/* Account Management */}
-        <Card className="mt-8 border-border">
+        <Card className="mt-6 border-border">
           <CardHeader><CardTitle className="font-serif text-lg">Account Management</CardTitle></CardHeader>
           <CardContent className="space-y-6">
             {/* Pause Account */}

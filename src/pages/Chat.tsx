@@ -133,16 +133,25 @@ const Chat = () => {
   const handleSend = async () => {
     if (!newMessage.trim() || !user || !partnerId) return;
     setSending(true);
+    const msgContent = newMessage.trim();
     const { error } = await supabase.from("messages").insert({
       sender_id: user.id,
       recipient_id: partnerId,
-      content: newMessage.trim(),
+      content: msgContent,
     });
     setSending(false);
     if (error) {
       toast.error("Failed to send message. Make sure you have an unlocked connection.");
       return;
     }
+    // Trigger notification (fire and forget)
+    supabase.functions.invoke("send-message-notification", {
+      body: {
+        recipientId: partnerId,
+        senderName: partner?.display_name || "Someone",
+        messagePreview: msgContent,
+      },
+    }).catch(() => {}); // Silent fail
     setNewMessage("");
   };
 

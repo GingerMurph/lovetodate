@@ -1,11 +1,13 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Button } from "@/components/ui/button";
 import { Heart, Search, User, LogOut, MessageSquare } from "lucide-react";
 import logo from "@/assets/logo.jpeg";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
+  const { unreadCount } = useUnreadMessages();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -15,10 +17,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   };
 
   const nav = [
-    { to: "/discover", icon: Search, label: "Discover" },
-    { to: "/likes", icon: Heart, label: "Likes" },
-    { to: "/messages", icon: MessageSquare, label: "Messages" },
-    { to: "/profile", icon: User, label: "Profile" },
+    { to: "/discover", icon: Search, label: "Discover", badge: 0 },
+    { to: "/likes", icon: Heart, label: "Likes", badge: 0 },
+    { to: "/messages", icon: MessageSquare, label: "Messages", badge: unreadCount },
+    { to: "/profile", icon: User, label: "Profile", badge: 0 },
   ];
 
   return (
@@ -31,11 +33,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
           <nav className="flex items-center gap-1">
             {nav.map((item) => (
-              <Link key={item.to} to={item.to}>
+              <Link key={item.to} to={item.to} className="relative">
                 <Button variant={location.pathname === item.to ? "secondary" : "ghost"} size="sm" className="gap-2">
                   <item.icon className="h-4 w-4" />
                   <span className="hidden sm:inline">{item.label}</span>
                 </Button>
+                {item.badge > 0 && (
+                  <span className="absolute -top-1 -right-1 gradient-gold text-primary-foreground text-[10px] font-bold rounded-full h-4 min-w-4 flex items-center justify-center px-1">
+                    {item.badge > 99 ? "99+" : item.badge}
+                  </span>
+                )}
               </Link>
             ))}
             <Button variant="ghost" size="sm" onClick={handleSignOut} className="ml-2 gap-1.5">
