@@ -8,6 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Bell, Mail, Phone, Volume2 } from "lucide-react";
 import { toast } from "sonner";
 
+const E164_REGEX = /^\+[1-9]\d{1,14}$/;
+
+const isValidPhoneNumber = (phone: string): boolean => {
+  return E164_REGEX.test(phone.replace(/\s/g, ""));
+};
+
 export default function NotificationPreferences() {
   const { user } = useAuth();
   const [prefs, setPrefs] = useState({
@@ -40,6 +46,17 @@ export default function NotificationPreferences() {
 
   const savePrefs = async (updated: typeof prefs) => {
     if (!user) return;
+
+    // Validate phone number if SMS is enabled and a number is provided
+    if (updated.sms_notifications && updated.phone_number) {
+      const cleaned = updated.phone_number.replace(/\s/g, "");
+      if (!isValidPhoneNumber(cleaned)) {
+        toast.error("Please enter a valid phone number in international format (e.g. +447700900000)");
+        return;
+      }
+      updated = { ...updated, phone_number: cleaned };
+    }
+
     setPrefs(updated);
 
     const { error } = await supabase
