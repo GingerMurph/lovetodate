@@ -8,18 +8,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Camera } from "lucide-react";
+import { Camera, Loader2, Trash2 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
 const ProfileSetup = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState("");
+  const [storedAvatarPath, setStoredAvatarPath] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const [pausing, setPausing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
     display_name: "",
     date_of_birth: "",
@@ -63,13 +68,24 @@ const ProfileSetup = () => {
           drinking: data.drinking || "",
           children: data.children || "",
         });
+        setIsPaused(data.is_paused || false);
+
         if (data.avatar_url) {
+          // Extract the storage path from any URL format
+          let path = data.avatar_url;
+          if (path.includes("/object/public/profile-photos/")) {
+            path = path.split("/object/public/profile-photos/")[1];
+          } else if (path.includes("/object/sign/profile-photos/")) {
+            path = path.split("/object/sign/profile-photos/")[1];
+            // Remove query params (token etc.)
+            path = path.split("?")[0];
+          }
+          setStoredAvatarPath(path);
+
           // Generate signed URL for preview
           const { data: signedData } = await supabase.storage
             .from("profile-photos")
-            .createSignedUrl(data.avatar_url.includes("/object/public/") 
-              ? data.avatar_url.split("/object/public/profile-photos/")[1] 
-              : data.avatar_url, 3600);
+            .createSignedUrl(path, 3600);
           if (signedData?.signedUrl) setAvatarPreview(signedData.signedUrl);
         }
       }
@@ -90,7 +106,8 @@ const ProfileSetup = () => {
     setLoading(true);
 
     try {
-      let avatar_url = avatarPreview;
+      // Use stored path by default, only change if new file uploaded
+      let avatar_url = storedAvatarPath;
 
       if (avatarFile) {
         const ext = avatarFile.name.split(".").pop();
@@ -128,6 +145,34 @@ const ProfileSetup = () => {
       toast.error(err.message);
     }
     setLoading(false);
+  };
+
+  const handleTogglePause = async () => {
+    if (!user) return;
+    setPausing(true);
+    const newPaused = !isPaused;
+    const { error } = await supabase.from("profiles").update({ is_paused: newPaused } as any).eq("user_id", user.id);
+    setPausing(false);
+    if (error) {
+      toast.error("Failed to update account status");
+      return;
+    }
+    setIsPaused(newPaused);
+    toast.success(newPaused ? "Account paused" : "Account unpaused");
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+    setDeleting(true);
+    const { data, error } = await supabase.functions.invoke("delete-account");
+    setDeleting(false);
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Failed to delete account");
+      return;
+    }
+    await signOut();
+    navigate("/");
+    toast.success("Your account has been deleted.");
   };
 
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
@@ -326,6 +371,58 @@ const ProfileSetup = () => {
             {loading ? "Saving..." : "Save Profile"}
           </Button>
         </form>
+
+        {/* Account Management */}
+        <Card className="mt-8 border-border">
+          <CardHeader><CardTitle className="font-serif text-lg">Account Management</CardTitle></CardHeader>
+          <CardContent className="space-y-6">
+            {/* Pause Account */}
+            <div>
+              <h3 className="text-sm font-medium mb-1">Pause Account</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                {isPaused
+                  ? "Your account is paused. Your profile is hidden from discovery. Unpause to become visible again."
+                  : "Temporarily hide your profile from discovery. Your data will be kept safe."}
+              </p>
+              <Button
+                variant={isPaused ? "default" : "outline"}
+                disabled={pausing}
+                onClick={handleTogglePause}
+              >
+                {pausing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                {isPaused ? "Unpause Account" : "Pause Account"}
+              </Button>
+            </div>
+
+            {/* Delete Account */}
+            <div className="border-t border-destructive/30 pt-6">
+              <h3 className="text-sm font-medium text-destructive mb-1">Delete Account</h3>
+              <p className="text-sm text-muted-foreground mb-3">Permanently delete your account and all associated data. This action cannot be undone.</p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" disabled={deleting}>
+                    {deleting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Trash2 className="h-4 w-4 mr-2" />}
+                    {deleting ? "Deleting..." : "Delete My Account"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete your account, profile, photos, likes, and connections. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Yes, delete my account
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );
