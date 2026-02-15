@@ -35,37 +35,56 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           className="origin-bottom"
         />
 
-        {/* Acorn cap - lifts up */}
+        {/* Acorn cap - left half swings open */}
         <g
-          className={`transition-all duration-700 ease-in-out origin-center ${
-            phase === "acorn"
-              ? "translate-y-0 opacity-100"
-              : "translate-y-[-40px] opacity-0"
-          }`}
           style={{
-            transition: "transform 0.7s ease-in-out, opacity 0.7s ease-in-out",
+            transition: "transform 0.8s ease-in-out",
+            transformOrigin: "48px 85px",
             transform:
               phase !== "acorn"
-                ? "translateY(-40px)"
-                : "translateY(0)",
-            opacity: phase !== "acorn" ? 0 : 1,
+                ? "rotate(-60deg)"
+                : "rotate(0deg)",
           }}
         >
-          {/* Cap base */}
-          <ellipse cx="100" cy="85" rx="52" ry="20" fill="hsl(30, 45%, 30%)" />
-          {/* Cap dome with cross-hatch texture */}
           <path
-            d="M48 85 Q48 40 100 30 Q152 40 152 85"
+            d="M48 85 Q48 40 100 30 Q100 60 100 85 Z"
             fill="hsl(30, 40%, 35%)"
             stroke="hsl(30, 35%, 28%)"
             strokeWidth="1"
           />
-          {/* Cap texture lines */}
-          <path d="M60 75 Q80 50 100 45 Q120 50 140 75" fill="none" stroke="hsl(30, 30%, 28%)" strokeWidth="0.8" opacity="0.5" />
-          <path d="M65 80 Q85 58 100 53 Q115 58 135 80" fill="none" stroke="hsl(30, 30%, 28%)" strokeWidth="0.8" opacity="0.4" />
-          {/* Cap nub */}
-          <circle cx="100" cy="28" r="5" fill="hsl(30, 40%, 32%)" />
+          <ellipse cx="74" cy="85" rx="26" ry="20" fill="hsl(30, 45%, 30%)" />
+          <path d="M60 75 Q80 50 100 45 Q100 60 100 75" fill="none" stroke="hsl(30, 30%, 28%)" strokeWidth="0.8" opacity="0.5" />
         </g>
+
+        {/* Acorn cap - right half swings open */}
+        <g
+          style={{
+            transition: "transform 0.8s ease-in-out",
+            transformOrigin: "152px 85px",
+            transform:
+              phase !== "acorn"
+                ? "rotate(60deg)"
+                : "rotate(0deg)",
+          }}
+        >
+          <path
+            d="M152 85 Q152 40 100 30 Q100 60 100 85 Z"
+            fill="hsl(30, 40%, 35%)"
+            stroke="hsl(30, 35%, 28%)"
+            strokeWidth="1"
+          />
+          <ellipse cx="126" cy="85" rx="26" ry="20" fill="hsl(30, 45%, 30%)" />
+          <path d="M140 75 Q120 50 100 45 Q100 60 100 75" fill="none" stroke="hsl(30, 30%, 28%)" strokeWidth="0.8" opacity="0.4" />
+        </g>
+
+        {/* Cap nub on top */}
+        <circle
+          cx="100" cy="28" r="5" fill="hsl(30, 40%, 32%)"
+          style={{
+            transition: "opacity 0.5s ease-in-out",
+            opacity: phase === "acorn" ? 1 : 0,
+          }}
+        />
 
         {/* Acorn body */}
         <path
@@ -113,15 +132,15 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
       </svg>
 
       {/* Brand text */}
-      <h1
-        className="font-serif text-2xl sm:text-3xl mt-6 text-gold transition-opacity duration-500"
+      <p
+        className="font-serif text-lg sm:text-xl mt-6 text-muted-foreground italic transition-opacity duration-500"
         style={{
           opacity: phase === "heart" || phase === "fadeout" ? 1 : 0,
           transition: "opacity 0.6s ease-in",
         }}
       >
-        Love To Date
-      </h1>
+        From little acorns mighty oaks grow
+      </p>
     </div>
   );
 };
