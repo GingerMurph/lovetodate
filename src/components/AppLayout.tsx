@@ -22,7 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm will-change-transform" style={{ transform: 'translateZ(0)' }}>
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link to="/discover" className="flex items-center gap-2">
             <img src={logo} alt="Love To Date logo" className="h-8 w-8 rounded-full object-cover" />
