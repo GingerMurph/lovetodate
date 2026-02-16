@@ -25,8 +25,10 @@ type PartnerProfile = {
 };
 
 const Chat = () => {
-  const { userId: partnerId } = useParams();
+  const { userId: rawPartnerId } = useParams();
   const { user } = useAuth();
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const partnerId = rawPartnerId && uuidRegex.test(rawPartnerId) ? rawPartnerId : null;
   const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [partner, setPartner] = useState<PartnerProfile | null>(null);
