@@ -45,7 +45,7 @@ const Messages = () => {
   const loadConversations = async () => {
     if (!user) return;
 
-    // Get all messages involving the current user
+    // Get all messages involving the current user (user.id from auth session is trusted)
     const { data: msgs, error } = await supabase
       .from("messages")
       .select("*")
