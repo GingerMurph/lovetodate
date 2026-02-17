@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Shield, CreditCard, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import logo from "@/assets/logo.jpeg";
+import logo from "@/assets/logo.png";
 
 const Index = () => {
   const { user } = useAuth();
