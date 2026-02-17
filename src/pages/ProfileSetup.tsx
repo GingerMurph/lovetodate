@@ -62,6 +62,21 @@ const ProfileSetup = () => {
     personality_type: "",
   });
 
+  // Capture GPS location
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          if (user) {
+            supabase.from("profiles").update({ latitude, longitude } as any).eq("user_id", user.id).then();
+          }
+        },
+        () => { /* user denied or unavailable, no-op */ }
+      );
+    }
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle().then(async ({ data }) => {
@@ -98,18 +113,15 @@ const ProfileSetup = () => {
         setIsPaused(data.is_paused || false);
 
         if (data.avatar_url) {
-          // Extract the storage path from any URL format
           let path = data.avatar_url;
           if (path.includes("/object/public/profile-photos/")) {
             path = path.split("/object/public/profile-photos/")[1];
           } else if (path.includes("/object/sign/profile-photos/")) {
             path = path.split("/object/sign/profile-photos/")[1];
-            // Remove query params (token etc.)
             path = path.split("?")[0];
           }
           setStoredAvatarPath(path);
 
-          // Generate signed URL for preview
           const { data: signedData } = await supabase.storage
             .from("profile-photos")
             .createSignedUrl(path, 3600);

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, MapPin, Ruler, Filter, X, ThumbsDown } from "lucide-react";
 import { AvatarImage } from "@/components/AvatarImage";
@@ -11,6 +11,18 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
+
+const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
+const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
+const PERSONALITY_TYPES = ["Introvert", "Extrovert", "Ambivert", "Old Soul", "Free Spirit", "Adventurer", "Empath", "Creative", "Analytical"];
+const DISTANCE_OPTIONS = [
+  { label: "Within 5 miles", value: "5" },
+  { label: "Within 10 miles", value: "10" },
+  { label: "Within 25 miles", value: "25" },
+  { label: "Within 50 miles", value: "50" },
+  { label: "Within 100 miles", value: "100" },
+  { label: "Anywhere", value: "" },
+];
 
 type DiscoverProfile = {
   user_id: string;
@@ -26,7 +38,19 @@ type DiscoverProfile = {
   smoking: string | null;
   drinking: string | null;
   personality_type: string | null;
+  latitude: number | null;
+  longitude: number | null;
 };
+
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959; // Earth's radius in miles
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 const Discover = () => {
   const { user } = useAuth();
@@ -35,18 +59,29 @@ const Discover = () => {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [filters, setFilters] = useState({
     gender: "",
     body_build: "",
     nationality: "",
     minHeight: "",
     maxHeight: "",
-    city: "",
+    distance: "",
     religion: "",
     smoking: "",
     drinking: "",
     personality_type: "",
   });
+
+  // Get user GPS on mount
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setMyLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => { /* denied */ }
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -82,17 +117,25 @@ const Discover = () => {
     toast("Passed");
   };
 
+  const getDistance = (p: DiscoverProfile): number | null => {
+    if (!myLocation || !p.latitude || !p.longitude) return null;
+    return haversineDistance(myLocation.lat, myLocation.lng, p.latitude, p.longitude);
+  };
+
   const filtered = profiles.filter((p) => {
     if (filters.gender && p.gender !== filters.gender) return false;
     if (filters.body_build && p.body_build !== filters.body_build) return false;
-    if (filters.nationality && p.nationality && !p.nationality.toLowerCase().includes(filters.nationality.toLowerCase())) return false;
+    if (filters.nationality && p.nationality !== filters.nationality) return false;
     if (filters.minHeight && p.height_cm && p.height_cm < parseInt(filters.minHeight)) return false;
     if (filters.maxHeight && p.height_cm && p.height_cm > parseInt(filters.maxHeight)) return false;
-    if (filters.city && p.location_city && !p.location_city.toLowerCase().includes(filters.city.toLowerCase())) return false;
-    if (filters.religion && p.religion && !p.religion.toLowerCase().includes(filters.religion.toLowerCase())) return false;
+    if (filters.religion && p.religion !== filters.religion) return false;
     if (filters.smoking && p.smoking !== filters.smoking) return false;
     if (filters.drinking && p.drinking !== filters.drinking) return false;
-    if (filters.personality_type && p.personality_type && !p.personality_type.toLowerCase().includes(filters.personality_type.toLowerCase())) return false;
+    if (filters.personality_type && p.personality_type !== filters.personality_type) return false;
+    if (filters.distance) {
+      const dist = getDistance(p);
+      if (dist === null || dist > parseInt(filters.distance)) return false;
+    }
     return true;
   });
 
@@ -101,6 +144,8 @@ const Discover = () => {
   const advanceCard = () => {
     setCurrentIndex((prev) => prev + 1);
   };
+
+  const currentDistance = currentProfile ? getDistance(currentProfile) : null;
 
   return (
     <AppLayout>
@@ -140,11 +185,30 @@ const Discover = () => {
                   <SelectItem value="petite">Petite</SelectItem>
                 </SelectContent>
               </Select>
-              <Input placeholder="Nationality" value={filters.nationality} onChange={(e) => setFilters(f => ({ ...f, nationality: e.target.value }))} />
-              <Input placeholder="City" value={filters.city} onChange={(e) => setFilters(f => ({ ...f, city: e.target.value }))} />
+              <Select value={filters.nationality} onValueChange={(v) => setFilters(f => ({ ...f, nationality: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Nationality" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Nationalities</SelectItem>
+                  {NATIONALITIES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.distance} onValueChange={(v) => setFilters(f => ({ ...f, distance: v === "anywhere" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Distance from me" /></SelectTrigger>
+                <SelectContent>
+                  {DISTANCE_OPTIONS.map((d) => (
+                    <SelectItem key={d.value || "anywhere"} value={d.value || "anywhere"}>{d.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input placeholder="Min Height (cm)" type="number" value={filters.minHeight} onChange={(e) => setFilters(f => ({ ...f, minHeight: e.target.value }))} />
               <Input placeholder="Max Height (cm)" type="number" value={filters.maxHeight} onChange={(e) => setFilters(f => ({ ...f, maxHeight: e.target.value }))} />
-              <Input placeholder="Religion" value={filters.religion} onChange={(e) => setFilters(f => ({ ...f, religion: e.target.value }))} />
+              <Select value={filters.religion} onValueChange={(v) => setFilters(f => ({ ...f, religion: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Religion" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Religions</SelectItem>
+                  {RELIGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <Select value={filters.smoking} onValueChange={(v) => setFilters(f => ({ ...f, smoking: v === "all" ? "" : v }))}>
                 <SelectTrigger><SelectValue placeholder="Smoking" /></SelectTrigger>
                 <SelectContent>
@@ -165,7 +229,13 @@ const Discover = () => {
                   <SelectItem value="regular">Regular</SelectItem>
                 </SelectContent>
               </Select>
-              <Input placeholder="Personality Type" value={filters.personality_type} onChange={(e) => setFilters(f => ({ ...f, personality_type: e.target.value }))} />
+              <Select value={filters.personality_type} onValueChange={(v) => setFilters(f => ({ ...f, personality_type: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Personality" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  {PERSONALITY_TYPES.map((pt) => <SelectItem key={pt} value={pt}>{pt}</SelectItem>)}
+                </SelectContent>
+              </Select>
             </CardContent>
           </Card>
         )}
@@ -195,6 +265,7 @@ const Discover = () => {
                         </h3>
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                          {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
                           {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
                           {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
                           {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
