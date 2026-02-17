@@ -67,13 +67,13 @@ const Likes = () => {
     <AppLayout>
       <div className="container mx-auto max-w-2xl px-4 py-6">
         <h1 className="mb-6 font-serif text-2xl font-bold">
-          Your <span className="text-gold">Likes</span>
+          Love To <span className="text-gold">Date</span>
         </h1>
 
         <Tabs defaultValue="received">
           <TabsList className="w-full">
-            <TabsTrigger value="received" className="flex-1">Liked You ({likedMe.length})</TabsTrigger>
-            <TabsTrigger value="sent" className="flex-1">You Liked ({likedByMe.length})</TabsTrigger>
+            <TabsTrigger value="received" className="flex-1">Love To Date You ({likedMe.length})</TabsTrigger>
+            <TabsTrigger value="sent" className="flex-1">You'd Love To Date ({likedByMe.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="received" className="mt-4 space-y-3">
