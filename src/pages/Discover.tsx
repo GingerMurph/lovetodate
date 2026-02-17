@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Weight, Filter, X } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown } from "lucide-react";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SwipeCard from "@/components/SwipeCard";
 
 type DiscoverProfile = {
   user_id: string;
@@ -29,6 +30,7 @@ const Discover = () => {
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [filters, setFilters] = useState({
     gender: "",
     body_build: "",
@@ -54,21 +56,22 @@ const Discover = () => {
 
     if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
+    setCurrentIndex(0);
     setLoading(false);
   };
 
   const handleLike = async (targetUserId: string) => {
     if (!user) return;
-    if (likedIds.has(targetUserId)) {
-      await supabase.from("likes").delete().eq("liker_id", user.id).eq("liked_id", targetUserId);
-      setLikedIds((prev) => { const s = new Set(prev); s.delete(targetUserId); return s; });
-      toast("Like removed");
-    } else {
+    if (!likedIds.has(targetUserId)) {
       const { error } = await supabase.from("likes").insert({ liker_id: user.id, liked_id: targetUserId });
       if (error) { toast.error(error.message); return; }
       setLikedIds((prev) => new Set(prev).add(targetUserId));
       toast.success("Liked!");
     }
+  };
+
+  const handlePass = () => {
+    toast("Passed");
   };
 
   const filtered = profiles.filter((p) => {
@@ -81,7 +84,11 @@ const Discover = () => {
     return true;
   });
 
-  // Age is now returned directly from the edge function
+  const currentProfile = filtered[currentIndex];
+
+  const advanceCard = () => {
+    setCurrentIndex((prev) => prev + 1);
+  };
 
   return (
     <AppLayout>
@@ -131,41 +138,64 @@ const Discover = () => {
 
         {loading ? (
           <div className="flex h-64 items-center justify-center text-muted-foreground">Loading profiles...</div>
-        ) : filtered.length === 0 ? (
-          <div className="flex h-64 items-center justify-center text-muted-foreground">No profiles found</div>
+        ) : !currentProfile ? (
+          <div className="flex h-64 flex-col items-center justify-center gap-4 text-muted-foreground">
+            <p>No more profiles to discover</p>
+            <Button variant="outline" onClick={() => { setCurrentIndex(0); loadData(); }}>Refresh</Button>
+          </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((profile) => (
-              <Card key={profile.user_id} className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5">
-                <Link to={`/profile/${profile.user_id}`}>
-                  <div className="relative aspect-[3/4] bg-secondary">
-                    <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16">
-                      <h3 className="font-serif text-xl font-semibold text-foreground">
-                        {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
-                      </h3>
-                      <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                        {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{profile.location_city}</span>}
-                        {profile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{profile.height_cm}cm</span>}
-                        {profile.body_build && <span className="capitalize">{profile.body_build}</span>}
-                        {profile.nationality && <span>{profile.nationality}</span>}
+          <div className="flex flex-col items-center">
+            <div className="relative w-full max-w-sm">
+              <SwipeCard
+                key={currentProfile.user_id}
+                onSwipeRight={() => { handleLike(currentProfile.user_id); advanceCard(); }}
+                onSwipeLeft={() => { handlePass(); advanceCard(); }}
+              >
+                <Card className="overflow-hidden border-border bg-card">
+                  <Link to={`/profile/${currentProfile.user_id}`}>
+                    <div className="relative aspect-[3/4] bg-secondary">
+                      <AvatarImage avatarUrl={currentProfile.avatar_url} displayName={currentProfile.display_name} />
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16">
+                        <h3 className="font-serif text-xl font-semibold text-foreground">
+                          {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
+                        </h3>
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                          {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                          {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
+                          {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
+                          {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-                <CardContent className="flex items-center justify-between p-3">
-                  <span className="text-xs text-muted-foreground truncate max-w-[60%]">{profile.gender ? profile.gender : "No details yet"}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => { e.preventDefault(); handleLike(profile.user_id); }}
-                    className={likedIds.has(profile.user_id) ? "text-red-500" : "text-muted-foreground"}
-                  >
-                    <Heart className={`h-5 w-5 ${likedIds.has(profile.user_id) ? "fill-current" : ""}`} />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  </Link>
+                  <CardContent className="flex items-center justify-between p-3">
+                    <span className="text-xs text-muted-foreground truncate max-w-[60%]">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
+                  </CardContent>
+                </Card>
+              </SwipeCard>
+            </div>
+
+            {/* Action buttons */}
+            <div className="mt-6 flex items-center gap-8">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-14 w-14 rounded-full border-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={() => { handlePass(); advanceCard(); }}
+              >
+                <ThumbsDown className="h-6 w-6" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-14 w-14 rounded-full border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
+                onClick={() => { handleLike(currentProfile.user_id); advanceCard(); }}
+              >
+                <Heart className="h-6 w-6" />
+              </Button>
+            </div>
+
+            <p className="mt-4 text-xs text-muted-foreground">Swipe right to like, left to pass</p>
           </div>
         )}
       </div>
