@@ -408,6 +408,7 @@ const ProfileSetup = () => {
                     <SelectItem value="never">Never</SelectItem>
                     <SelectItem value="social">Socially</SelectItem>
                     <SelectItem value="regular">Regularly</SelectItem>
+                    <SelectItem value="vaper">Vaper</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
