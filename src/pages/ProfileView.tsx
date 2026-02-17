@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
+import acornLogo from "@/assets/logo.png";
 
 type ViewProfile = {
   user_id: string;
@@ -33,6 +34,12 @@ type ViewProfile = {
   looking_for: string | null;
   age: number | null;
   is_paused: boolean;
+  political_beliefs: string | null;
+  favourite_music: string | null;
+  favourite_film: string | null;
+  favourite_sport: string | null;
+  favourite_hobbies: string | null;
+  personality_type: string | null;
 };
 
 const ProfileView = () => {
@@ -251,6 +258,40 @@ const ProfileView = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* In a Nutshell */}
+        {(profile.political_beliefs || profile.favourite_music || profile.favourite_film || profile.favourite_sport || profile.favourite_hobbies || profile.personality_type) && (
+          <Card className="mb-4 border-border bg-card">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <img src={acornLogo} alt="Acorn" className="h-6 w-6 rounded-full object-cover" />
+                In a Nutshell
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-3">
+                {profile.political_beliefs && (
+                  <div className="flex items-center gap-3 text-sm"><Vote className="h-4 w-4 text-gold shrink-0" /><span>Politics: {formatEnum(profile.political_beliefs)}</span></div>
+                )}
+                {profile.favourite_music && (
+                  <div className="flex items-center gap-3 text-sm"><Music className="h-4 w-4 text-gold shrink-0" /><span>Music: {profile.favourite_music}</span></div>
+                )}
+                {profile.favourite_film && (
+                  <div className="flex items-center gap-3 text-sm"><Film className="h-4 w-4 text-gold shrink-0" /><span>Film: {profile.favourite_film}</span></div>
+                )}
+                {profile.favourite_sport && (
+                  <div className="flex items-center gap-3 text-sm"><Dumbbell className="h-4 w-4 text-gold shrink-0" /><span>Sport: {profile.favourite_sport}</span></div>
+                )}
+                {profile.favourite_hobbies && (
+                  <div className="flex items-center gap-3 text-sm"><Gamepad2 className="h-4 w-4 text-gold shrink-0" /><span>Hobbies: {profile.favourite_hobbies}</span></div>
+                )}
+                {profile.personality_type && (
+                  <div className="flex items-center gap-3 text-sm"><Brain className="h-4 w-4 text-gold shrink-0" /><span>Personality: {profile.personality_type}</span></div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Account Management - own profile only */}
         {isOwnProfile && (
