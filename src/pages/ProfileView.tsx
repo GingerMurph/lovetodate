@@ -40,7 +40,19 @@ type ViewProfile = {
   favourite_sport: string | null;
   favourite_hobbies: string | null;
   personality_type: string | null;
+  latitude: number | null;
+  longitude: number | null;
 };
+
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 3959;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 const ProfileView = () => {
   const { userId } = useParams();
@@ -52,6 +64,16 @@ const ProfileView = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setMyLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {}
+      );
+    }
+  }, []);
 
   useEffect(() => {
     if (!userId || !user) return;
@@ -156,6 +178,9 @@ const ProfileView = () => {
           </h1>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}
+            {myLocation && profile.latitude && profile.longitude && !isOwnProfile && (
+              <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{Math.round(haversineDistance(myLocation.lat, myLocation.lng, profile.latitude, profile.longitude))} miles away</span>
+            )}
             {profile.nationality && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{profile.nationality}</span>}
           </div>
           {profile.relationship_goal && (
