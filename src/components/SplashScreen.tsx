@@ -102,7 +102,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           }`}
           style={{ color: "hsl(350, 30%, 40%)" }}
         >
-          Who would you
+          from little acorns
         </p>
         <p
           className={`font-['Playfair_Display'] text-2xl font-bold tracking-wide transition-opacity duration-1000 ${
@@ -110,7 +110,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           }`}
           style={{ color: "hsl(350, 30%, 40%)" }}
         >
-          LoveToDate!?
+          grow mighty oaks
         </p>
       </div>
     </div>
