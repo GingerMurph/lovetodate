@@ -8,15 +8,17 @@ interface SplashScreenProps {
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const called = useRef(false);
   const [showText, setShowText] = useState(false);
+  const [showSecondLine, setShowSecondLine] = useState(false);
 
   const handleEnd = useCallback(() => {
     setShowText(true);
+    setTimeout(() => setShowSecondLine(true), 800);
     setTimeout(() => {
       if (!called.current) {
         called.current = true;
         onComplete();
       }
-    }, 2000);
+    }, 2500);
   }, [onComplete]);
 
   return (
@@ -29,14 +31,24 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
       />
-      <p
-        className={`absolute top-[32%] font-['Playfair_Display'] text-xl tracking-wide transition-opacity duration-1000 ${
-          showText ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ color: "hsl(350, 30%, 40%)" }}
-      >
-        Who would you Love To Date?
-      </p>
+      <div className="absolute top-[30%] flex flex-col items-center gap-1">
+        <p
+          className={`font-['Playfair_Display'] text-xl tracking-wide transition-opacity duration-1000 ${
+            showText ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ color: "hsl(350, 30%, 40%)" }}
+        >
+          Who would you
+        </p>
+        <p
+          className={`font-['Playfair_Display'] text-2xl font-bold tracking-wide transition-opacity duration-1000 ${
+            showSecondLine ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ color: "hsl(350, 30%, 40%)" }}
+        >
+          LoveToDate!?
+        </p>
+      </div>
     </div>
   );
 };
