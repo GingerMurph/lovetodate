@@ -48,7 +48,7 @@ const Index = () => {
               <span className="text-sky-700">Love To </span>
               <span className="text-gradient-gold">Date</span>
             </h1>
-            <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">Only pay when it is someone you would <span className="text-gold font-medium">Love To Date</span></p>
+            <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">Only pay for someone you would <span className="text-gold font-medium">Love To Date</span></p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/auth?mode=signup">
                 <Button size="lg" className="gradient-gold text-primary-foreground px-10 py-6 text-lg font-semibold shadow-lg shadow-gold/20">
