@@ -12,6 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { toast } from "sonner";
 import { Camera, Loader2, Trash2 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
@@ -53,6 +54,12 @@ const ProfileSetup = () => {
     ethnicity: "",
     languages: [] as string[],
     pets: "",
+    political_beliefs: "",
+    favourite_music: "",
+    favourite_film: "",
+    favourite_sport: "",
+    favourite_hobbies: "",
+    personality_type: "",
   });
 
   useEffect(() => {
@@ -81,6 +88,12 @@ const ProfileSetup = () => {
           ethnicity: (data as any).ethnicity || "",
           languages: (data as any).languages || [],
           pets: (data as any).pets || "",
+          political_beliefs: (data as any).political_beliefs || "",
+          favourite_music: (data as any).favourite_music || "",
+          favourite_film: (data as any).favourite_film || "",
+          favourite_sport: (data as any).favourite_sport || "",
+          favourite_hobbies: (data as any).favourite_hobbies || "",
+          personality_type: (data as any).personality_type || "",
         });
         setIsPaused(data.is_paused || false);
 
@@ -153,6 +166,12 @@ const ProfileSetup = () => {
         ethnicity: form.ethnicity,
         languages: form.languages,
         pets: form.pets,
+        political_beliefs: form.political_beliefs,
+        favourite_music: form.favourite_music,
+        favourite_film: form.favourite_film,
+        favourite_sport: form.favourite_sport,
+        favourite_hobbies: form.favourite_hobbies,
+        personality_type: form.personality_type,
         avatar_url,
       } as any).eq("user_id", user.id);
 
@@ -435,6 +454,52 @@ const ProfileSetup = () => {
                     <SelectItem value="not_sure">Not sure</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* In a Nutshell */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <img src={acornLogo} alt="Acorn" className="h-6 w-6 rounded-full object-cover" />
+                In a Nutshell
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Political Beliefs</Label>
+                <Select value={form.political_beliefs} onValueChange={(v) => update("political_beliefs", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="conservative">Conservative</SelectItem>
+                    <SelectItem value="labour">Labour</SelectItem>
+                    <SelectItem value="liberal">Liberal</SelectItem>
+                    <SelectItem value="green">Green</SelectItem>
+                    <SelectItem value="not_political">Not political</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Favourite Music Genre</Label>
+                <Input value={form.favourite_music} onChange={(e) => update("favourite_music", e.target.value)} placeholder="e.g. Rock, Jazz, Pop" />
+              </div>
+              <div className="space-y-2">
+                <Label>Favourite Film</Label>
+                <Input value={form.favourite_film} onChange={(e) => update("favourite_film", e.target.value)} placeholder="e.g. The Shawshank Redemption" />
+              </div>
+              <div className="space-y-2">
+                <Label>Favourite Sport</Label>
+                <Input value={form.favourite_sport} onChange={(e) => update("favourite_sport", e.target.value)} placeholder="e.g. Football, Tennis" />
+              </div>
+              <div className="space-y-2">
+                <Label>Favourite Hobbies</Label>
+                <Input value={form.favourite_hobbies} onChange={(e) => update("favourite_hobbies", e.target.value)} placeholder="e.g. Hiking, Reading, Cooking" />
+              </div>
+              <div className="space-y-2">
+                <Label>Personality Type</Label>
+                <Input value={form.personality_type} onChange={(e) => update("personality_type", e.target.value)} placeholder="e.g. INFJ, Ambivert" />
               </div>
             </CardContent>
           </Card>
