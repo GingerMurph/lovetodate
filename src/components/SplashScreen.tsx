@@ -31,7 +31,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
       />
-      <div className="absolute top-[30%] flex flex-col items-center gap-1">
+      <div className="absolute top-[20%] md:top-[15%] flex flex-col items-center gap-1">
         <p
           className={`font-['Playfair_Display'] text-xl tracking-wide transition-opacity duration-1000 ${
             showText ? "opacity-100" : "opacity-0"
