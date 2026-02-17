@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
 interface SplashScreenProps {
@@ -7,16 +7,20 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const called = useRef(false);
+  const [showText, setShowText] = useState(false);
 
   const handleEnd = useCallback(() => {
-    if (!called.current) {
-      called.current = true;
-      onComplete();
-    }
+    setShowText(true);
+    setTimeout(() => {
+      if (!called.current) {
+        called.current = true;
+        onComplete();
+      }
+    }, 2000);
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
+    <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
       <video
         src={splashVideo}
         autoPlay
@@ -25,6 +29,14 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
       />
+      <p
+        className={`absolute bottom-16 font-['Playfair_Display'] text-xl tracking-wide transition-opacity duration-1000 ${
+          showText ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ color: "hsl(350, 30%, 40%)" }}
+      >
+        LoveToDate.co.uk
+      </p>
     </div>
   );
 };
