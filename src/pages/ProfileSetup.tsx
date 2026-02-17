@@ -409,6 +409,7 @@ const ProfileSetup = () => {
                     <SelectItem value="social">Socially</SelectItem>
                     <SelectItem value="regular">Regularly</SelectItem>
                     <SelectItem value="vaper">Vaper</SelectItem>
+                    <SelectItem value="trying_to_quit">Trying to quit</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
