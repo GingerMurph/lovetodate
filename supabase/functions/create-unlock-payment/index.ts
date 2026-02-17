@@ -102,15 +102,12 @@ serve(async (req) => {
       throw new Error("Target profile not found");
     }
 
-    // Validate origin against allowed list to prevent open redirect
-    const ALLOWED_ORIGINS = [
-      "https://id-preview--9fe98a5a-3a19-4985-a69b-54fbadb91a5f.lovable.app",
-      "http://localhost:8080",
-    ];
-    const origin = req.headers.get("origin");
-    const baseUrl = (origin && ALLOWED_ORIGINS.includes(origin))
-      ? origin
-      : ALLOWED_ORIGINS[0];
+    // Validate origin against allowed patterns to prevent open redirect
+    const origin = req.headers.get("origin") || "";
+    const isLovableApp = /^https:\/\/[\w-]+\.lovable\.app$/.test(origin);
+    const isLocalhost = origin === "http://localhost:8080";
+    const DEFAULT_URL = "https://lovetodate.lovable.app";
+    const baseUrl = (isLovableApp || isLocalhost) ? origin : DEFAULT_URL;
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
