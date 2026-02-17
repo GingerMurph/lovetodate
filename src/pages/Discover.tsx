@@ -71,6 +71,8 @@ const Discover = () => {
     smoking: "",
     drinking: "",
     personality_type: "",
+    minAge: "",
+    maxAge: "",
   });
 
   // Get user GPS on mount
@@ -132,6 +134,8 @@ const Discover = () => {
     if (filters.smoking && p.smoking !== filters.smoking) return false;
     if (filters.drinking && p.drinking !== filters.drinking) return false;
     if (filters.personality_type && p.personality_type !== filters.personality_type) return false;
+    if (filters.minAge && p.age !== null && p.age < parseInt(filters.minAge)) return false;
+    if (filters.maxAge && p.age !== null && p.age > parseInt(filters.maxAge)) return false;
     if (filters.distance) {
       const dist = getDistance(p);
       if (dist === null || dist > parseInt(filters.distance)) return false;
@@ -202,6 +206,8 @@ const Discover = () => {
               </Select>
               <Input placeholder="Min Height (cm)" type="number" value={filters.minHeight} onChange={(e) => setFilters(f => ({ ...f, minHeight: e.target.value }))} />
               <Input placeholder="Max Height (cm)" type="number" value={filters.maxHeight} onChange={(e) => setFilters(f => ({ ...f, maxHeight: e.target.value }))} />
+              <Input placeholder="Min Age" type="number" value={filters.minAge} onChange={(e) => setFilters(f => ({ ...f, minAge: e.target.value }))} />
+              <Input placeholder="Max Age" type="number" value={filters.maxAge} onChange={(e) => setFilters(f => ({ ...f, maxAge: e.target.value }))} />
               <Select value={filters.religion} onValueChange={(v) => setFilters(f => ({ ...f, religion: v === "all" ? "" : v }))}>
                 <SelectTrigger><SelectValue placeholder="Religion" /></SelectTrigger>
                 <SelectContent>
