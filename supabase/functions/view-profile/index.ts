@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     // Fetch the profile, like status, and connection status in parallel
     const [profileRes, likeRes, likeBackRes, connForward, connReverse] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused")
+        .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
