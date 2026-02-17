@@ -16,6 +16,11 @@ import NotificationPreferences from "@/components/NotificationPreferences";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
+const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say", "Other"];
+const ETHNICITIES = ["White", "Black", "Asian", "Hispanic/Latino", "Middle Eastern", "Mixed", "Prefer not to say", "Other"];
+const LANGUAGES = ["English", "French", "Spanish", "German", "Italian", "Portuguese", "Polish", "Romanian", "Arabic", "Hindi", "Urdu", "Chinese", "Japanese", "Korean", "Turkish", "Russian", "Dutch", "Swedish", "Other"];
+const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pets"];
+
 const ProfileSetup = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -44,6 +49,10 @@ const ProfileSetup = () => {
     smoking: "",
     drinking: "",
     children: "",
+    religion: "",
+    ethnicity: "",
+    languages: [] as string[],
+    pets: "",
   });
 
   useEffect(() => {
@@ -68,6 +77,10 @@ const ProfileSetup = () => {
           smoking: data.smoking || "",
           drinking: data.drinking || "",
           children: data.children || "",
+          religion: (data as any).religion || "",
+          ethnicity: (data as any).ethnicity || "",
+          languages: (data as any).languages || [],
+          pets: (data as any).pets || "",
         });
         setIsPaused(data.is_paused || false);
 
@@ -136,8 +149,12 @@ const ProfileSetup = () => {
         smoking: form.smoking,
         drinking: form.drinking,
         children: form.children,
+        religion: form.religion,
+        ethnicity: form.ethnicity,
+        languages: form.languages,
+        pets: form.pets,
         avatar_url,
-      }).eq("user_id", user.id);
+      } as any).eq("user_id", user.id);
 
       if (error) throw error;
       toast.success("Profile updated!");
@@ -315,6 +332,66 @@ const ProfileSetup = () => {
               <div className="space-y-2">
                 <Label>Education</Label>
                 <Input value={form.education} onChange={(e) => update("education", e.target.value)} placeholder="e.g. University degree" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Religion, Ethnicity & Languages */}
+          <Card className="border-border bg-card">
+            <CardHeader><CardTitle className="font-serif text-lg">Identity & Culture</CardTitle></CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Religion</Label>
+                <Select value={form.religion} onValueChange={(v) => update("religion", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {RELIGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Ethnicity</Label>
+                <Select value={form.ethnicity} onValueChange={(v) => update("ethnicity", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {ETHNICITIES.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Pets</Label>
+                <Select value={form.pets} onValueChange={(v) => update("pets", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {PETS_OPTIONS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Languages Spoken</Label>
+                <div className="flex flex-wrap gap-2">
+                  {LANGUAGES.map((lang) => (
+                    <button
+                      key={lang}
+                      type="button"
+                      onClick={() => {
+                        setForm((f) => ({
+                          ...f,
+                          languages: f.languages.includes(lang)
+                            ? f.languages.filter((l) => l !== lang)
+                            : [...f.languages, lang],
+                        }));
+                      }}
+                      className={`px-3 py-1 rounded-full text-xs border transition-colors ${
+                        form.languages.includes(lang)
+                          ? "bg-gold text-primary-foreground border-gold"
+                          : "bg-secondary text-muted-foreground border-border hover:border-gold/50"
+                      }`}
+                    >
+                      {lang}
+                    </button>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>

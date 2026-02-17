@@ -106,19 +106,23 @@ export type Database = {
           display_name: string
           drinking: string | null
           education: string | null
+          ethnicity: string | null
           gender: Database["public"]["Enums"]["gender"] | null
           height_cm: number | null
           id: string
           interests: string[] | null
           is_paused: boolean
+          languages: string[] | null
           location_city: string | null
           location_country: string | null
           looking_for: Database["public"]["Enums"]["looking_for"] | null
           nationality: string | null
           occupation: string | null
+          pets: string | null
           relationship_goal:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
+          religion: string | null
           smoking: string | null
           updated_at: string
           user_id: string
@@ -134,19 +138,23 @@ export type Database = {
           display_name?: string
           drinking?: string | null
           education?: string | null
+          ethnicity?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id?: string
           interests?: string[] | null
           is_paused?: boolean
+          languages?: string[] | null
           location_city?: string | null
           location_country?: string | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
+          pets?: string | null
           relationship_goal?:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
+          religion?: string | null
           smoking?: string | null
           updated_at?: string
           user_id: string
@@ -162,19 +170,23 @@ export type Database = {
           display_name?: string
           drinking?: string | null
           education?: string | null
+          ethnicity?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id?: string
           interests?: string[] | null
           is_paused?: boolean
+          languages?: string[] | null
           location_city?: string | null
           location_country?: string | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
+          pets?: string | null
           relationship_goal?:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
+          religion?: string | null
           smoking?: string | null
           updated_at?: string
           user_id?: string
