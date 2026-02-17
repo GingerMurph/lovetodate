@@ -117,8 +117,10 @@ export type Database = {
           interests: string[] | null
           is_paused: boolean
           languages: string[] | null
+          latitude: number | null
           location_city: string | null
           location_country: string | null
+          longitude: number | null
           looking_for: Database["public"]["Enums"]["looking_for"] | null
           nationality: string | null
           occupation: string | null
@@ -155,8 +157,10 @@ export type Database = {
           interests?: string[] | null
           is_paused?: boolean
           languages?: string[] | null
+          latitude?: number | null
           location_city?: string | null
           location_country?: string | null
+          longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
@@ -193,8 +197,10 @@ export type Database = {
           interests?: string[] | null
           is_paused?: boolean
           languages?: string[] | null
+          latitude?: number | null
           location_city?: string | null
           location_country?: string | null
+          longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
