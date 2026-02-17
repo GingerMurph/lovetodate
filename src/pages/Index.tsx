@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,12 +17,14 @@ const Index = () => {
             <span className="font-serif text-gold text-lg sm:text-2xl">LoveToDate<span className="hidden sm:inline">.co.uk</span></span>
           </Link>
           <div className="flex items-center gap-2 shrink-0">
-            {user ?
-            <Link to="/discover">
+            {loading ? (
+              <div className="h-8 w-24" />
+            ) : user ? (
+              <Link to="/discover">
                 <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">Browse Profiles</Button>
-              </Link> :
-
-            <>
+              </Link>
+            ) : (
+              <>
                 <Link to="/auth?mode=login">
                   <Button variant="ghost" size="sm" className="text-foreground">Sign In</Button>
                 </Link>
@@ -30,7 +32,7 @@ const Index = () => {
                   <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">Join Free</Button>
                 </Link>
               </>
-            }
+            )}
           </div>
         </div>
       </header>
