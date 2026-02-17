@@ -22,6 +22,10 @@ type DiscoverProfile = {
   location_city: string | null;
   nationality: string | null;
   age: number | null;
+  religion: string | null;
+  smoking: string | null;
+  drinking: string | null;
+  personality_type: string | null;
 };
 
 const Discover = () => {
@@ -38,6 +42,10 @@ const Discover = () => {
     minHeight: "",
     maxHeight: "",
     city: "",
+    religion: "",
+    smoking: "",
+    drinking: "",
+    personality_type: "",
   });
 
   useEffect(() => {
@@ -77,10 +85,14 @@ const Discover = () => {
   const filtered = profiles.filter((p) => {
     if (filters.gender && p.gender !== filters.gender) return false;
     if (filters.body_build && p.body_build !== filters.body_build) return false;
-    if (filters.nationality && p.nationality !== filters.nationality) return false;
+    if (filters.nationality && p.nationality && !p.nationality.toLowerCase().includes(filters.nationality.toLowerCase())) return false;
     if (filters.minHeight && p.height_cm && p.height_cm < parseInt(filters.minHeight)) return false;
     if (filters.maxHeight && p.height_cm && p.height_cm > parseInt(filters.maxHeight)) return false;
     if (filters.city && p.location_city && !p.location_city.toLowerCase().includes(filters.city.toLowerCase())) return false;
+    if (filters.religion && p.religion && !p.religion.toLowerCase().includes(filters.religion.toLowerCase())) return false;
+    if (filters.smoking && p.smoking !== filters.smoking) return false;
+    if (filters.drinking && p.drinking !== filters.drinking) return false;
+    if (filters.personality_type && p.personality_type && !p.personality_type.toLowerCase().includes(filters.personality_type.toLowerCase())) return false;
     return true;
   });
 
@@ -132,6 +144,28 @@ const Discover = () => {
               <Input placeholder="City" value={filters.city} onChange={(e) => setFilters(f => ({ ...f, city: e.target.value }))} />
               <Input placeholder="Min Height (cm)" type="number" value={filters.minHeight} onChange={(e) => setFilters(f => ({ ...f, minHeight: e.target.value }))} />
               <Input placeholder="Max Height (cm)" type="number" value={filters.maxHeight} onChange={(e) => setFilters(f => ({ ...f, maxHeight: e.target.value }))} />
+              <Input placeholder="Religion" value={filters.religion} onChange={(e) => setFilters(f => ({ ...f, religion: e.target.value }))} />
+              <Select value={filters.smoking} onValueChange={(v) => setFilters(f => ({ ...f, smoking: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Smoking" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="non_smoker">Non-Smoker</SelectItem>
+                  <SelectItem value="social">Social</SelectItem>
+                  <SelectItem value="regular">Regular</SelectItem>
+                  <SelectItem value="vaper">Vaper</SelectItem>
+                  <SelectItem value="trying_to_quit">Trying to Quit</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filters.drinking} onValueChange={(v) => setFilters(f => ({ ...f, drinking: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Drinking" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="non_drinker">Non-Drinker</SelectItem>
+                  <SelectItem value="social">Social</SelectItem>
+                  <SelectItem value="regular">Regular</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input placeholder="Personality Type" value={filters.personality_type} onChange={(e) => setFilters(f => ({ ...f, personality_type: e.target.value }))} />
             </CardContent>
           </Card>
         )}
