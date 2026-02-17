@@ -40,6 +40,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [started, setStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showSecondLine, setShowSecondLine] = useState(false);
+  const [showUrl, setShowUrl] = useState(false);
 
   const handleStart = () => {
     setStarted(true);
@@ -58,11 +59,15 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     if (video.currentTime >= 1.0 && !showSecondLine) {
       setShowSecondLine(true);
     }
-  }, [showText, showSecondLine]);
+    if (video.currentTime >= 2.0 && !showUrl) {
+      setShowUrl(true);
+    }
+  }, [showText, showSecondLine, showUrl]);
 
   const handleEnd = useCallback(() => {
     setShowText(true);
     setShowSecondLine(true);
+    setShowUrl(true);
     setTimeout(() => {
       if (!called.current) {
         called.current = true;
@@ -111,6 +116,14 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{ color: "hsl(350, 30%, 40%)" }}
         >
           grow mighty oaks
+        </p>
+        <p
+          className={`font-['Playfair_Display'] text-lg tracking-widest transition-opacity duration-1500 ${
+            showUrl ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ color: "hsl(350, 30%, 40%)" }}
+        >
+          LoveToDate.co.uk
         </p>
       </div>
     </div>
