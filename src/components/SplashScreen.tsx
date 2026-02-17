@@ -49,15 +49,27 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     }
   };
 
+  const handleTimeUpdate = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const timeLeft = video.duration - video.currentTime;
+    if (timeLeft <= 2.5 && !showText) {
+      setShowText(true);
+    }
+    if (timeLeft <= 1.7 && !showSecondLine) {
+      setShowSecondLine(true);
+    }
+  }, [showText, showSecondLine]);
+
   const handleEnd = useCallback(() => {
     setShowText(true);
-    setTimeout(() => setShowSecondLine(true), 800);
+    setShowSecondLine(true);
     setTimeout(() => {
       if (!called.current) {
         called.current = true;
         onComplete();
       }
-    }, 2500);
+    }, 1500);
   }, [onComplete]);
 
   return (
@@ -80,6 +92,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         src={splashVideo}
         muted
         playsInline
+        onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
       />
