@@ -35,7 +35,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         }`}
         style={{ color: "hsl(350, 30%, 40%)" }}
       >
-        LoveToDate.co.uk
+        Who would you Love To Date?
       </p>
     </div>
   );
