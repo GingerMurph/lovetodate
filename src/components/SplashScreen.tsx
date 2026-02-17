@@ -52,11 +52,10 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const handleTimeUpdate = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
-    const timeLeft = video.duration - video.currentTime;
-    if (timeLeft <= 2.5 && !showText) {
+    if (video.currentTime >= 0.3 && !showText) {
       setShowText(true);
     }
-    if (timeLeft <= 1.7 && !showSecondLine) {
+    if (video.currentTime >= 1.0 && !showSecondLine) {
       setShowSecondLine(true);
     }
   }, [showText, showSecondLine]);
