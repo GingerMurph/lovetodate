@@ -16,7 +16,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white">
       <video
         src={splashVideo}
         autoPlay
