@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
@@ -291,6 +291,28 @@ const ProfileView = () => {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Love To Date / Not For Me buttons */}
+        {!isOwnProfile && (
+          <div className="mb-6 flex justify-center gap-4">
+            <Button
+              variant="outline"
+              className="flex-1 max-w-[200px] gap-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
+              onClick={() => { navigate("/discover"); toast("Not for me"); }}
+            >
+              <ThumbsDown className="h-5 w-5" />
+              Not For Me
+            </Button>
+            <Button
+              className="flex-1 max-w-[200px] gap-2 gradient-gold text-primary-foreground"
+              onClick={() => { handleLike(); toast.success("Love To Date! ❤️"); }}
+              disabled={isLiked}
+            >
+              <Heart className="h-5 w-5" />
+              {isLiked ? "Already Liked" : "Love To Date"}
+            </Button>
+          </div>
         )}
 
         {/* Account Management - own profile only */}
