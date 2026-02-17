@@ -101,7 +101,8 @@ Deno.serve(async (req) => {
 
             // Send via Supabase Auth (magic link email as a workaround for simple email)
             // For production, integrate a proper email service
-            console.log(`[NOTIFY] Email would be sent to ${recipientEmail}: ${emailBody}`);
+            const maskedEmail = recipientEmail.replace(/(.{2}).*(@.*)/, '$1***$2');
+            console.log(`[NOTIFY] Email notification queued for ${maskedEmail}`);
             results.email = { sent: true, to: recipientEmail };
           }
         }
