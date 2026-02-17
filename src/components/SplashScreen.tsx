@@ -59,7 +59,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
     if (video.currentTime >= 1.0 && !showSecondLine) {
       setShowSecondLine(true);
     }
-    if (video.currentTime >= 2.0 && !showUrl) {
+    if (video.currentTime >= 2.5 && !showUrl) {
       setShowUrl(true);
     }
   }, [showText, showSecondLine, showUrl]);
