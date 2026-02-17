@@ -117,15 +117,15 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         >
           grow mighty oaks
         </p>
-        <p
-          className={`font-['Playfair_Display'] text-lg tracking-widest transition-opacity duration-1500 ${
-            showUrl ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ color: "hsl(350, 30%, 40%)" }}
-        >
-          LoveToDate.co.uk
-        </p>
       </div>
+      <p
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-['Playfair_Display'] text-lg tracking-widest transition-opacity duration-1500 ${
+          showUrl ? "opacity-100" : "opacity-0"
+        }`}
+        style={{ color: "hsl(350, 30%, 40%)" }}
+      >
+        LoveToDate.co.uk
+      </p>
     </div>
   );
 };
