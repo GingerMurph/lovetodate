@@ -107,6 +107,10 @@ export type Database = {
           drinking: string | null
           education: string | null
           ethnicity: string | null
+          favourite_film: string | null
+          favourite_hobbies: string | null
+          favourite_music: string | null
+          favourite_sport: string | null
           gender: Database["public"]["Enums"]["gender"] | null
           height_cm: number | null
           id: string
@@ -118,7 +122,9 @@ export type Database = {
           looking_for: Database["public"]["Enums"]["looking_for"] | null
           nationality: string | null
           occupation: string | null
+          personality_type: string | null
           pets: string | null
+          political_beliefs: string | null
           relationship_goal:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
@@ -139,6 +145,10 @@ export type Database = {
           drinking?: string | null
           education?: string | null
           ethnicity?: string | null
+          favourite_film?: string | null
+          favourite_hobbies?: string | null
+          favourite_music?: string | null
+          favourite_sport?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id?: string
@@ -150,7 +160,9 @@ export type Database = {
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
+          personality_type?: string | null
           pets?: string | null
+          political_beliefs?: string | null
           relationship_goal?:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
@@ -171,6 +183,10 @@ export type Database = {
           drinking?: string | null
           education?: string | null
           ethnicity?: string | null
+          favourite_film?: string | null
+          favourite_hobbies?: string | null
+          favourite_music?: string | null
+          favourite_sport?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           height_cm?: number | null
           id?: string
@@ -182,7 +198,9 @@ export type Database = {
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           nationality?: string | null
           occupation?: string | null
+          personality_type?: string | null
           pets?: string | null
+          political_beliefs?: string | null
           relationship_goal?:
             | Database["public"]["Enums"]["relationship_goal"]
             | null
