@@ -95,7 +95,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
       />
-      <div className="absolute bottom-[20%] md:bottom-[15%] flex flex-col items-center gap-1">
+      <div className="absolute bottom-[28%] md:bottom-[15%] flex flex-col items-center gap-1">
         <p
           className={`font-['Playfair_Display'] text-xl tracking-wide transition-opacity duration-1000 ${
             showText ? "opacity-100" : "opacity-0"
