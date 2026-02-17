@@ -36,8 +36,18 @@ interface SplashScreenProps {
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const called = useRef(false);
   const soundPlayed = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [started, setStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showSecondLine, setShowSecondLine] = useState(false);
+
+  const handleStart = () => {
+    setStarted(true);
+    playSplashChime();
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  };
 
   const handleEnd = useCallback(() => {
     setShowText(true);
@@ -52,18 +62,25 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   return (
     <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white">
+      {!started && (
+        <button
+          onClick={handleStart}
+          className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer bg-white"
+        >
+          <p
+            className="font-['Playfair_Display'] text-xl tracking-wide animate-pulse"
+            style={{ color: "hsl(350, 30%, 40%)" }}
+          >
+            Tap to begin
+          </p>
+        </button>
+      )}
       <video
+        ref={videoRef}
         src={splashVideo}
-        autoPlay
         muted
         playsInline
         onEnded={handleEnd}
-        onPlay={() => {
-          if (!soundPlayed.current) {
-            soundPlayed.current = true;
-            playSplashChime();
-          }
-        }}
         className="max-w-full max-h-full object-contain"
       />
       <div className="absolute top-[20%] md:top-[15%] flex flex-col items-center gap-1">
