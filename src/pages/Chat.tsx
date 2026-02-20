@@ -64,15 +64,21 @@ const Chat = () => {
   // Load messages
   useEffect(() => {
     if (!partnerId || !user) return;
+    // Validate user.id before use (partnerId is already validated at component level)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(user.id)) return;
+    const safeUserId = user.id;
     const loadMessages = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("messages")
-        .select("*")
-        .or(
-          `and(sender_id.eq.${user.id},recipient_id.eq.${partnerId}),and(sender_id.eq.${partnerId},recipient_id.eq.${user.id})`
-        )
-        .order("created_at", { ascending: true });
+      // Fetch both directions separately to avoid string interpolation in .or()
+      const [sentResult, receivedResult] = await Promise.all([
+        supabase.from("messages").select("*").eq("sender_id", safeUserId).eq("recipient_id", partnerId).order("created_at", { ascending: true }),
+        supabase.from("messages").select("*").eq("sender_id", partnerId).eq("recipient_id", safeUserId).order("created_at", { ascending: true }),
+      ]);
+      const data = [...(sentResult.data ?? []), ...(receivedResult.data ?? [])].sort(
+        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      const error = sentResult.error || receivedResult.error;
 
       if (!error && data) {
         setMessages(data);
