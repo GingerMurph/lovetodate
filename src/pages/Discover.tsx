@@ -38,19 +38,8 @@ type DiscoverProfile = {
   smoking: string | null;
   drinking: string | null;
   personality_type: string | null;
-  latitude: number | null;
-  longitude: number | null;
+  distance_miles: number | null;
 };
-
-function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 3959; // Earth's radius in miles
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
 
 const Discover = () => {
   const { user } = useAuth();
@@ -75,7 +64,7 @@ const Discover = () => {
     maxAge: "",
   });
 
-  // Get user GPS on mount
+  // Get user GPS on mount — sent to edge function for server-side distance, never used client-side
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -88,14 +77,16 @@ const Discover = () => {
   useEffect(() => {
     if (!user) return;
     loadData();
-  }, [user]);
+  }, [user, myLocation]);
 
   const loadData = async () => {
     if (!user) return;
     setLoading(true);
 
     const [discoverRes, likesRes] = await Promise.all([
-      supabase.functions.invoke("discover-profiles"),
+      supabase.functions.invoke("discover-profiles", {
+        body: myLocation ? { lat: myLocation.lat, lng: myLocation.lng } : {},
+      }),
       supabase.from("likes").select("liked_id").eq("liker_id", user.id),
     ]);
 
@@ -119,11 +110,6 @@ const Discover = () => {
     toast("Passed");
   };
 
-  const getDistance = (p: DiscoverProfile): number | null => {
-    if (!myLocation || !p.latitude || !p.longitude) return null;
-    return haversineDistance(myLocation.lat, myLocation.lng, p.latitude, p.longitude);
-  };
-
   const filtered = profiles.filter((p) => {
     if (filters.gender && p.gender !== filters.gender) return false;
     if (filters.body_build && p.body_build !== filters.body_build) return false;
@@ -137,8 +123,7 @@ const Discover = () => {
     if (filters.minAge && p.age !== null && p.age < parseInt(filters.minAge)) return false;
     if (filters.maxAge && p.age !== null && p.age > parseInt(filters.maxAge)) return false;
     if (filters.distance) {
-      const dist = getDistance(p);
-      if (dist === null || dist > parseInt(filters.distance)) return false;
+      if (p.distance_miles === null || p.distance_miles > parseInt(filters.distance)) return false;
     }
     return true;
   });
@@ -149,7 +134,8 @@ const Discover = () => {
     setCurrentIndex((prev) => prev + 1);
   };
 
-  const currentDistance = currentProfile ? getDistance(currentProfile) : null;
+  const currentDistance = currentProfile?.distance_miles ?? null;
+
 
   return (
     <AppLayout>

@@ -20,7 +20,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { userId } = await req.json();
+    const body = await req.json();
+    const { userId } = body;
+    // Optional viewer coordinates for server-side distance calculation
+    const viewerLat: number | null = typeof body.lat === "number" ? body.lat : null;
+    const viewerLng: number | null = typeof body.lng === "number" ? body.lng : null;
+
     if (!userId || typeof userId !== "string") {
       return new Response(JSON.stringify({ error: "userId is required" }), {
         status: 400,
@@ -54,9 +59,10 @@ Deno.serve(async (req) => {
     const adminClient = createClient(supabaseUrl, serviceKey);
 
     // Fetch the profile, like status, and connection status in parallel
+    // Include latitude/longitude for server-side distance calculation only — never returned to client
     const [profileRes, likeRes, likeBackRes, connForward, connReverse] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type")
+        .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, latitude, longitude")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
@@ -75,7 +81,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { date_of_birth, avatar_url, ...rest } = profileRes.data;
+    // Strip latitude/longitude — used only for server-side distance, never exposed
+    const { date_of_birth, avatar_url, latitude, longitude, ...rest } = profileRes.data;
 
     // Sign avatar URL
     let signedAvatarUrl: string | null = null;
@@ -98,8 +105,23 @@ Deno.serve(async (req) => {
       ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
       : null;
 
-    // Full profile data for all viewers
-    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, age };
+    // Server-side distance calculation — raw GPS never leaves the server
+    function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 3959;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+    let distanceMiles: number | null = null;
+    if (!isOwnProfile && viewerLat !== null && viewerLng !== null && latitude !== null && longitude !== null) {
+      distanceMiles = Math.round(haversineDistance(viewerLat, viewerLng, latitude, longitude));
+    }
+
+    // Full profile data for all viewers — no raw coordinates included
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, age, distance_miles: distanceMiles };
 
     return new Response(JSON.stringify({
       profile,

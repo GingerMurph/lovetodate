@@ -20,6 +20,17 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Parse optional viewer coordinates for server-side distance calculation
+    let viewerLat: number | null = null;
+    let viewerLng: number | null = null;
+    try {
+      const body = await req.json().catch(() => ({}));
+      if (typeof body.lat === "number" && typeof body.lng === "number") {
+        viewerLat = body.lat;
+        viewerLng = body.lng;
+      }
+    } catch { /* no body */ }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -37,7 +48,7 @@ Deno.serve(async (req) => {
     }
 
     // Use service role to bypass RLS and fetch all profiles except the user's own
-    // Only return basic discovery fields — detailed info requires like/unlock
+    // Latitude/longitude are fetched only for server-side distance calculation — never returned to client
     const adminClient = createClient(supabaseUrl, serviceKey);
     const { data: profiles, error } = await adminClient
       .from("profiles")
@@ -55,10 +66,21 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Calculate age from date_of_birth, then strip the raw field
+    // Server-side haversine distance (miles) — raw coords are never exposed
+    function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 3959;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    // Calculate age from date_of_birth and distance server-side, then strip raw coords and dob
     // Generate signed URLs for avatars since bucket is private
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, ...rest }) => {
+      (profiles || []).map(async ({ date_of_birth, avatar_url, latitude, longitude, ...rest }) => {
         let signedAvatarUrl: string | null = null;
         if (avatar_url) {
           const path = avatar_url.includes("/object/public/")
@@ -69,12 +91,20 @@ Deno.serve(async (req) => {
             .createSignedUrl(path, 3600);
           signedAvatarUrl = signedData?.signedUrl || null;
         }
+
+        // Compute distance server-side; never expose raw coordinates
+        let distanceMiles: number | null = null;
+        if (viewerLat !== null && viewerLng !== null && latitude !== null && longitude !== null) {
+          distanceMiles = Math.round(haversineDistance(viewerLat, viewerLng, latitude, longitude));
+        }
+
         return {
           ...rest,
           avatar_url: signedAvatarUrl,
           age: date_of_birth
             ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
             : null,
+          distance_miles: distanceMiles,
         };
       })
     );
