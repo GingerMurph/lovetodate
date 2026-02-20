@@ -45,7 +45,11 @@ const Messages = () => {
   const loadConversations = async () => {
     if (!user) return;
 
-    // Get all messages involving the current user (user.id from auth session is trusted)
+    // Validate user.id is a proper UUID (defense in depth, even though it comes from auth session)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(user.id)) return;
+
+    // Use separate filter clauses instead of string interpolation
     const { data: msgs, error } = await supabase
       .from("messages")
       .select("*")
