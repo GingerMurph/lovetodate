@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
             // For production, integrate a proper email service
             const maskedEmail = recipientEmail.replace(/(.{2}).*(@.*)/, '$1***$2');
             console.log(`[NOTIFY] Email notification queued for ${maskedEmail}`);
-            results.email = { sent: true, to: recipientEmail };
+            results.email = { sent: true };
           }
         }
       } catch (err) {
