@@ -55,11 +55,18 @@ Deno.serve(async (req) => {
       await adminClient.storage.from("profile-photos").remove(paths);
     }
 
-    // Delete likes (both directions)
-    await adminClient.from("likes").delete().or(`liker_id.eq.${user.id},liked_id.eq.${user.id}`);
+    // Delete likes (both directions) - use separate deletes to avoid string interpolation
+    const safeUserId = user.id; // UUID-validated above
+    await Promise.all([
+      adminClient.from("likes").delete().eq("liker_id", safeUserId),
+      adminClient.from("likes").delete().eq("liked_id", safeUserId),
+    ]);
 
     // Delete unlocked connections (both directions)
-    await adminClient.from("unlocked_connections").delete().or(`unlocker_id.eq.${user.id},target_id.eq.${user.id}`);
+    await Promise.all([
+      adminClient.from("unlocked_connections").delete().eq("unlocker_id", safeUserId),
+      adminClient.from("unlocked_connections").delete().eq("target_id", safeUserId),
+    ]);
 
     // Delete profile
     await adminClient.from("profiles").delete().eq("user_id", user.id);

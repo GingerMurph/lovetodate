@@ -45,16 +45,29 @@ const Messages = () => {
   const loadConversations = async () => {
     if (!user) return;
 
-    // Validate user.id is a proper UUID (defense in depth, even though it comes from auth session)
+    // Strict UUID validation must pass before ANY query using this value
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(user.id)) return;
 
-    // Use separate filter clauses instead of string interpolation
-    const { data: msgs, error } = await supabase
-      .from("messages")
-      .select("*")
-      .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
-      .order("created_at", { ascending: false });
+    // Use the validated, safe userId for queries
+    const safeUserId = user.id;
+
+    // Fetch sent and received messages separately to avoid string interpolation in .or()
+    const [sentResult, receivedResult] = await Promise.all([
+      supabase.from("messages").select("*").eq("sender_id", safeUserId).order("created_at", { ascending: false }),
+      supabase.from("messages").select("*").eq("recipient_id", safeUserId).order("created_at", { ascending: false }),
+    ]);
+
+    const sentMsgs = sentResult.data ?? [];
+    const receivedMsgs = receivedResult.data ?? [];
+
+    // Merge and deduplicate
+    const allMsgs = [...sentMsgs, ...receivedMsgs].filter(
+      (msg, idx, arr) => arr.findIndex(m => m.id === msg.id) === idx
+    ).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+    const msgs = allMsgs;
+    const error = sentResult.error || receivedResult.error;
 
     if (error || !msgs) {
       setLoading(false);
