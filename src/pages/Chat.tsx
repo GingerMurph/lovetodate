@@ -27,6 +27,7 @@ type PartnerProfile = {
 const Chat = () => {
   const { userId: rawPartnerId } = useParams();
   const { user } = useAuth();
+  // Validate UUID format strictly before using in any query
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const partnerId = rawPartnerId && uuidRegex.test(rawPartnerId) ? rawPartnerId : null;
   const navigate = useNavigate();
