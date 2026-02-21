@@ -68,9 +68,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [showSecondLine, setShowSecondLine] = useState(false);
   const [showUrl, setShowUrl] = useState(false);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setStarted(true);
-    playSplashCheer();
+    await playSplashCheer();
     if (videoRef.current) {
       videoRef.current.play();
     }
