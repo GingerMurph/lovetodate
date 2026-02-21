@@ -2,63 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
 const playSplashCheer = () => {
-  try {
-    const sampleRate = 44100;
-    const duration = 2.0;
-    const numSamples = Math.floor(sampleRate * duration);
-    const numChannels = 1;
-    const bitsPerSample = 16;
-    const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
-    const blockAlign = numChannels * (bitsPerSample / 8);
-    const dataSize = numSamples * blockAlign;
-    const headerSize = 44;
-    const buf = new ArrayBuffer(headerSize + dataSize);
-    const view = new DataView(buf);
-
-    // WAV header
-    const writeStr = (offset: number, str: string) => {
-      for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-    };
-    writeStr(0, "RIFF");
-    view.setUint32(4, 36 + dataSize, true);
-    writeStr(8, "WAVE");
-    writeStr(12, "fmt ");
-    view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true);
-    view.setUint16(22, numChannels, true);
-    view.setUint32(24, sampleRate, true);
-    view.setUint32(28, byteRate, true);
-    view.setUint16(32, blockAlign, true);
-    view.setUint16(34, bitsPerSample, true);
-    writeStr(36, "data");
-    view.setUint32(40, dataSize, true);
-
-    // Generate cheer samples
-    for (let i = 0; i < numSamples; i++) {
-      const t = i / sampleRate;
-      let sample = (Math.random() * 2 - 1) * 0.6;
-      // Envelope
-      let env = 0;
-      if (t < 0.1) env = t / 0.1;
-      else if (t < 1.0) env = 1.0;
-      else env = Math.max(0, 1.0 - (t - 1.0));
-      // Crowd tonal "wooo"
-      sample += 0.4 * Math.sin(2 * Math.PI * 300 * t + Math.sin(t * 6) * 2);
-      sample += 0.3 * Math.sin(2 * Math.PI * 500 * t + Math.sin(t * 8) * 1.5);
-      sample += 0.2 * Math.sin(2 * Math.PI * 700 * t + Math.sin(t * 4) * 3);
-      const val = Math.max(-1, Math.min(1, sample * env * 0.7));
-      view.setInt16(headerSize + i * 2, val * 32767, true);
-    }
-
-    const blob = new Blob([buf], { type: "audio/wav" });
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    audio.volume = 1.0;
-    audio.play().catch((e) => console.error("Audio play failed:", e));
-    audio.onended = () => URL.revokeObjectURL(url);
-  } catch (e) {
-    console.error("Audio cheer error:", e);
-  }
+  const audio = new Audio("/cheer.mp3");
+  audio.volume = 1.0;
+  audio.play().catch((e) => console.error("Audio play failed:", e));
 };
 
 interface SplashScreenProps {
