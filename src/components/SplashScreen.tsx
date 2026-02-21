@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
-const playSplashCheer = () => {
+const playSplashCheer = async () => {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    // Ensure context is running (required after user gesture on some browsers)
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
     const duration = 2.0;
     const sampleRate = ctx.sampleRate;
     const bufferSize = sampleRate * duration;
@@ -13,31 +18,28 @@ const playSplashCheer = () => {
       const data = buffer.getChannelData(channel);
       for (let i = 0; i < bufferSize; i++) {
         const t = i / sampleRate;
-        // Layer white noise shaped like a crowd roar
         let sample = (Math.random() * 2 - 1);
         // Envelope: quick rise, sustain, then fade
         let envelope = 0;
         if (t < 0.15) {
-          envelope = t / 0.15; // rise
+          envelope = t / 0.15;
         } else if (t < 1.2) {
-          envelope = 1.0 - (t - 0.15) * 0.15; // slow decay
+          envelope = 1.0 - (t - 0.15) * 0.15;
         } else {
           envelope = Math.max(0, (1.0 - (1.2 - 0.15) * 0.15) * (1 - (t - 1.2) / 0.8));
         }
-        // Add tonal "wooo" crowd components
+        // Tonal crowd "wooo" components
         sample += 0.3 * Math.sin(2 * Math.PI * 320 * t + Math.sin(t * 5) * 2);
         sample += 0.2 * Math.sin(2 * Math.PI * 480 * t + Math.sin(t * 7) * 1.5);
         sample += 0.15 * Math.sin(2 * Math.PI * 640 * t + Math.sin(t * 3) * 3);
-        // Slight stereo variation
         sample += (channel === 0 ? 0.1 : -0.1) * Math.sin(2 * Math.PI * 400 * t);
-        data[i] = sample * envelope * 0.12;
+        data[i] = sample * envelope * 0.45;
       }
     }
 
     const source = ctx.createBufferSource();
     source.buffer = buffer;
 
-    // Bandpass filter to make it sound more like voices
     const filter = ctx.createBiquadFilter();
     filter.type = "bandpass";
     filter.frequency.value = 800;
