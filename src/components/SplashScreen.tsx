@@ -1,29 +1,53 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
-const playSplashChime = () => {
+const playSplashCheer = () => {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const notes = [
-      { freq: 523.25, start: 0, dur: 0.3 },    // C5
-      { freq: 659.25, start: 0.15, dur: 0.3 },  // E5
-      { freq: 783.99, start: 0.3, dur: 0.4 },   // G5
-      { freq: 1046.5, start: 0.5, dur: 0.6 },   // C6
-    ];
-    notes.forEach(({ freq, start, dur }) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, ctx.currentTime + start);
-      gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + start + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + start);
-      osc.stop(ctx.currentTime + start + dur);
-    });
-    setTimeout(() => ctx.close(), 2000);
+    const duration = 2.0;
+    const sampleRate = ctx.sampleRate;
+    const bufferSize = sampleRate * duration;
+    const buffer = ctx.createBuffer(2, bufferSize, sampleRate);
+
+    for (let channel = 0; channel < 2; channel++) {
+      const data = buffer.getChannelData(channel);
+      for (let i = 0; i < bufferSize; i++) {
+        const t = i / sampleRate;
+        // Layer white noise shaped like a crowd roar
+        let sample = (Math.random() * 2 - 1);
+        // Envelope: quick rise, sustain, then fade
+        let envelope = 0;
+        if (t < 0.15) {
+          envelope = t / 0.15; // rise
+        } else if (t < 1.2) {
+          envelope = 1.0 - (t - 0.15) * 0.15; // slow decay
+        } else {
+          envelope = Math.max(0, (1.0 - (1.2 - 0.15) * 0.15) * (1 - (t - 1.2) / 0.8));
+        }
+        // Add tonal "wooo" crowd components
+        sample += 0.3 * Math.sin(2 * Math.PI * 320 * t + Math.sin(t * 5) * 2);
+        sample += 0.2 * Math.sin(2 * Math.PI * 480 * t + Math.sin(t * 7) * 1.5);
+        sample += 0.15 * Math.sin(2 * Math.PI * 640 * t + Math.sin(t * 3) * 3);
+        // Slight stereo variation
+        sample += (channel === 0 ? 0.1 : -0.1) * Math.sin(2 * Math.PI * 400 * t);
+        data[i] = sample * envelope * 0.12;
+      }
+    }
+
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+
+    // Bandpass filter to make it sound more like voices
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 800;
+    filter.Q.value = 0.5;
+
+    source.connect(filter);
+    filter.connect(ctx.destination);
+    source.start();
+
+    setTimeout(() => ctx.close(), 3000);
   } catch (e) {
     console.log("Audio not supported");
   }
@@ -44,7 +68,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   const handleStart = () => {
     setStarted(true);
-    playSplashChime();
+    playSplashCheer();
     if (videoRef.current) {
       videoRef.current.play();
     }
