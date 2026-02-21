@@ -96,6 +96,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         src={splashVideo}
         muted
         playsInline
+        disablePictureInPicture
+        controlsList="nodownload nofullscreen noremoteplayback noplaybackrate"
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleEnd}
         className="max-w-full max-h-full object-contain"
