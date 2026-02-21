@@ -1,17 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
-const playSplashCheer = async () => {
+const playSplashCheer = () => {
   try {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    // Ensure context is running (required after user gesture on some browsers)
-    if (ctx.state === "suspended") {
-      await ctx.resume();
-    }
 
     const duration = 2.0;
     const sampleRate = ctx.sampleRate;
-    const bufferSize = sampleRate * duration;
+    const bufferSize = Math.floor(sampleRate * duration);
     const buffer = ctx.createBuffer(2, bufferSize, sampleRate);
 
     for (let channel = 0; channel < 2; channel++) {
@@ -19,7 +15,6 @@ const playSplashCheer = async () => {
       for (let i = 0; i < bufferSize; i++) {
         const t = i / sampleRate;
         let sample = (Math.random() * 2 - 1);
-        // Envelope: quick rise, sustain, then fade
         let envelope = 0;
         if (t < 0.15) {
           envelope = t / 0.15;
@@ -28,12 +23,11 @@ const playSplashCheer = async () => {
         } else {
           envelope = Math.max(0, (1.0 - (1.2 - 0.15) * 0.15) * (1 - (t - 1.2) / 0.8));
         }
-        // Tonal crowd "wooo" components
         sample += 0.3 * Math.sin(2 * Math.PI * 320 * t + Math.sin(t * 5) * 2);
         sample += 0.2 * Math.sin(2 * Math.PI * 480 * t + Math.sin(t * 7) * 1.5);
         sample += 0.15 * Math.sin(2 * Math.PI * 640 * t + Math.sin(t * 3) * 3);
         sample += (channel === 0 ? 0.1 : -0.1) * Math.sin(2 * Math.PI * 400 * t);
-        data[i] = sample * envelope * 0.45;
+        data[i] = sample * envelope * 0.5;
       }
     }
 
@@ -45,13 +39,19 @@ const playSplashCheer = async () => {
     filter.frequency.value = 800;
     filter.Q.value = 0.5;
 
-    source.connect(filter);
-    filter.connect(ctx.destination);
-    source.start();
+    const gain = ctx.createGain();
+    gain.gain.value = 1.0;
 
-    setTimeout(() => ctx.close(), 3000);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    // Start immediately — synchronous, no await
+    source.start(0);
+
+    source.onended = () => ctx.close();
   } catch (e) {
-    console.log("Audio not supported");
+    console.error("Audio cheer error:", e);
   }
 };
 
@@ -68,9 +68,10 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [showSecondLine, setShowSecondLine] = useState(false);
   const [showUrl, setShowUrl] = useState(false);
 
-  const handleStart = async () => {
+  const handleStart = () => {
     setStarted(true);
-    await playSplashCheer();
+    // Both must be synchronous within the click handler
+    playSplashCheer();
     if (videoRef.current) {
       videoRef.current.play();
     }
