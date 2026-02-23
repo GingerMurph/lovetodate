@@ -166,7 +166,7 @@ const ProfileView = () => {
     <AppLayout>
       <div className="container mx-auto max-w-3xl px-4 py-6">
         {/* Go Back */}
-        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate("/discover")}>
           <ArrowLeft className="h-4 w-4" />
           Go Back
         </Button>
