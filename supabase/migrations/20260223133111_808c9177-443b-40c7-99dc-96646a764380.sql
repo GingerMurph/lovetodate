@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN max_distance_miles integer NULL DEFAULT NULL;

@@ -122,6 +122,7 @@ export type Database = {
           location_country: string | null
           longitude: number | null
           looking_for: Database["public"]["Enums"]["looking_for"] | null
+          max_distance_miles: number | null
           nationality: string | null
           occupation: string | null
           personality_type: string | null
@@ -162,6 +163,7 @@ export type Database = {
           location_country?: string | null
           longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
+          max_distance_miles?: number | null
           nationality?: string | null
           occupation?: string | null
           personality_type?: string | null
@@ -202,6 +204,7 @@ export type Database = {
           location_country?: string | null
           longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
+          max_distance_miles?: number | null
           nationality?: string | null
           occupation?: string | null
           personality_type?: string | null

@@ -39,6 +39,8 @@ type DiscoverProfile = {
   drinking: string | null;
   personality_type: string | null;
   distance_miles: number | null;
+  max_distance_miles: number | null;
+  too_far: boolean;
 };
 
 const Discover = () => {
@@ -98,6 +100,11 @@ const Discover = () => {
 
   const handleLike = async (targetUserId: string) => {
     if (!user) return;
+    const profile = filtered.find(p => p.user_id === targetUserId);
+    if (profile?.too_far) {
+      toast.error("Sorry but you live too far away!");
+      return;
+    }
     if (!likedIds.has(targetUserId)) {
       const { error } = await supabase.from("likes").insert({ liker_id: user.id, liked_id: targetUserId });
       if (error) { toast.error(error.message); return; }
@@ -244,7 +251,14 @@ const Discover = () => {
             <div className="relative w-full max-w-sm">
               <SwipeCard
                 key={currentProfile.user_id}
-                onSwipeRight={() => { handleLike(currentProfile.user_id); advanceCard(); }}
+                onSwipeRight={() => {
+                  if (currentProfile.too_far) {
+                    toast.error("Sorry but you live too far away!");
+                  } else {
+                    handleLike(currentProfile.user_id);
+                  }
+                  advanceCard();
+                }}
                 onSwipeLeft={() => { handlePass(); advanceCard(); }}
               >
                 <Card className="overflow-hidden border-border bg-card">
@@ -286,7 +300,15 @@ const Discover = () => {
                 variant="outline"
                 size="icon"
                 className="h-14 w-14 rounded-full border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
-                onClick={() => { handleLike(currentProfile.user_id); advanceCard(); }}
+                onClick={() => {
+                  if (currentProfile.too_far) {
+                    toast.error("Sorry but you live too far away!");
+                    advanceCard();
+                  } else {
+                    handleLike(currentProfile.user_id);
+                    advanceCard();
+                  }
+                }}
               >
                 <Heart className="h-6 w-6" />
               </Button>
