@@ -25,7 +25,8 @@ const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pe
 const COUNTRIES = ["United Kingdom", "Ireland", "United States", "Canada", "Australia", "France", "Germany", "Italy", "Spain", "Portugal", "Poland", "Romania", "India", "Pakistan", "China", "Japan", "South Korea", "Brazil", "Nigeria", "South Africa", "Other"];
 const OCCUPATIONS = ["Student", "Teacher", "Engineer", "Doctor", "Nurse", "Lawyer", "Accountant", "Designer", "Developer", "Manager", "Entrepreneur", "Freelancer", "Artist", "Writer", "Chef", "Retail", "Finance", "Marketing", "Sales", "HR", "Consultant", "Scientist", "Researcher", "Civil Servant", "Military", "Retired", "Other"];
 const EDUCATION_LEVELS = ["Secondary School", "College", "Undergraduate Degree", "Postgraduate Degree", "Master's Degree", "PhD / Doctorate", "Professional Qualification", "Self-taught", "Prefer not to say", "Other"];
-const MUSIC_GENRES = ["Pop", "Rock", "Hip-Hop", "R&B", "Jazz", "Classical", "Country", "Electronic", "Indie", "Reggae", "Latin", "Metal", "Folk", "Soul", "Blues", "Punk", "Afrobeats", "K-Pop", "Other"];
+const MUSIC_GENRES = ["Pop", "Rock", "Hip-Hop", "R&B", "Jazz", "Classical", "Country", "Electronic", "House", "Chillout", "Drum & Bass", "Indie", "Reggae", "Latin", "Metal", "Folk", "Soul", "Blues", "Punk", "Afrobeats", "K-Pop", "Other"];
+const CITIES = ["London", "Manchester", "Birmingham", "Leeds", "Liverpool", "Bristol", "Sheffield", "Newcastle", "Nottingham", "Glasgow", "Edinburgh", "Cardiff", "Belfast", "Dublin", "Brighton", "Southampton", "Leicester", "Coventry", "Oxford", "Cambridge", "York", "Bath", "Reading", "Aberdeen", "Dundee", "Swansea", "Plymouth", "Exeter", "Norwich", "Bournemouth", "Wolverhampton", "Derby", "Stoke-on-Trent", "Sunderland", "Portsmouth", "Preston", "Blackpool", "Milton Keynes", "Luton", "Ipswich", "Other"];
 const FILM_GENRES = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance", "Thriller", "Documentary", "Animation", "Fantasy", "Musical", "Crime", "Western", "Indie", "Other"];
 const SPORTS = ["Football", "Rugby", "Cricket", "Tennis", "Basketball", "Swimming", "Running", "Cycling", "Boxing", "Golf", "Yoga", "Gym / Weightlifting", "Martial Arts", "Hiking", "Dancing", "None", "Other"];
 const HOBBIES = ["Reading", "Cooking", "Travelling", "Photography", "Gaming", "Music", "Art", "Writing", "Gardening", "DIY", "Volunteering", "Fitness", "Movies & TV", "Board Games", "Socialising", "Shopping", "Other"];
@@ -64,10 +65,10 @@ const ProfileSetup = () => {
     languages: [] as string[],
     pets: "",
     political_beliefs: "",
-    favourite_music: "",
-    favourite_film: "",
-    favourite_sport: "",
-    favourite_hobbies: "",
+    favourite_music: [] as string[],
+    favourite_film: [] as string[],
+    favourite_sport: [] as string[],
+    favourite_hobbies: [] as string[],
     personality_type: "",
     max_distance_miles: "",
   });
@@ -114,10 +115,10 @@ const ProfileSetup = () => {
           languages: (data as any).languages || [],
           pets: (data as any).pets || "",
           political_beliefs: (data as any).political_beliefs || "",
-          favourite_music: (data as any).favourite_music || "",
-          favourite_film: (data as any).favourite_film || "",
-          favourite_sport: (data as any).favourite_sport || "",
-          favourite_hobbies: (data as any).favourite_hobbies || "",
+          favourite_music: (data as any).favourite_music || [],
+          favourite_film: (data as any).favourite_film || [],
+          favourite_sport: (data as any).favourite_sport || [],
+          favourite_hobbies: (data as any).favourite_hobbies || [],
           personality_type: (data as any).personality_type || "",
           max_distance_miles: (data as any).max_distance_miles?.toString() || "",
         });
@@ -424,8 +425,13 @@ const ProfileSetup = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>City</Label>
-                <Input value={form.location_city} onChange={(e) => update("location_city", e.target.value)} placeholder="London" />
+                <Label>City / Town</Label>
+                <Select value={form.location_city} onValueChange={(v) => update("location_city", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {CITIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Country</Label>
@@ -583,41 +589,37 @@ const ProfileSetup = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Favourite Music Genre</Label>
-                <Select value={form.favourite_music} onValueChange={(v) => update("favourite_music", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {MUSIC_GENRES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Favourite Music (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {MUSIC_GENRES.map((m) => (
+                    <button key={m} type="button" onClick={() => setForm((f) => ({ ...f, favourite_music: f.favourite_music.includes(m) ? f.favourite_music.filter((x) => x !== m) : [...f.favourite_music, m] }))} className={`px-3 py-1 rounded-full text-xs border transition-colors ${form.favourite_music.includes(m) ? "bg-gold text-primary-foreground border-gold" : "bg-secondary text-muted-foreground border-border hover:border-gold/50"}`}>{m}</button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Favourite Film Genre</Label>
-                <Select value={form.favourite_film} onValueChange={(v) => update("favourite_film", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {FILM_GENRES.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Favourite Films (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {FILM_GENRES.map((f) => (
+                    <button key={f} type="button" onClick={() => setForm((prev) => ({ ...prev, favourite_film: prev.favourite_film.includes(f) ? prev.favourite_film.filter((x) => x !== f) : [...prev.favourite_film, f] }))} className={`px-3 py-1 rounded-full text-xs border transition-colors ${form.favourite_film.includes(f) ? "bg-gold text-primary-foreground border-gold" : "bg-secondary text-muted-foreground border-border hover:border-gold/50"}`}>{f}</button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Favourite Sport</Label>
-                <Select value={form.favourite_sport} onValueChange={(v) => update("favourite_sport", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {SPORTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Favourite Sports (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {SPORTS.map((s) => (
+                    <button key={s} type="button" onClick={() => setForm((f) => ({ ...f, favourite_sport: f.favourite_sport.includes(s) ? f.favourite_sport.filter((x) => x !== s) : [...f.favourite_sport, s] }))} className={`px-3 py-1 rounded-full text-xs border transition-colors ${form.favourite_sport.includes(s) ? "bg-gold text-primary-foreground border-gold" : "bg-secondary text-muted-foreground border-border hover:border-gold/50"}`}>{s}</button>
+                  ))}
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label>Favourite Hobbies</Label>
-                <Select value={form.favourite_hobbies} onValueChange={(v) => update("favourite_hobbies", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {HOBBIES.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}
-                  </SelectContent>
-                </Select>
+              <div className="space-y-2 md:col-span-2">
+                <Label>Favourite Hobbies (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {HOBBIES.map((h) => (
+                    <button key={h} type="button" onClick={() => setForm((f) => ({ ...f, favourite_hobbies: f.favourite_hobbies.includes(h) ? f.favourite_hobbies.filter((x) => x !== h) : [...f.favourite_hobbies, h] }))} className={`px-3 py-1 rounded-full text-xs border transition-colors ${form.favourite_hobbies.includes(h) ? "bg-gold text-primary-foreground border-gold" : "bg-secondary text-muted-foreground border-border hover:border-gold/50"}`}>{h}</button>
+                  ))}
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Personality Type</Label>
