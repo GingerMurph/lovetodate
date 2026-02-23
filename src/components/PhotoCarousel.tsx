@@ -28,6 +28,16 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
     swiped.current = false;
   };
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStart.current || swiped.current) return;
+    const dx = e.touches[0].clientX - touchStart.current.x;
+    const dy = e.touches[0].clientY - touchStart.current.y;
+    // If horizontal movement dominates, prevent vertical scroll
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      e.preventDefault();
+    }
+  };
+
   const handleTouchEnd = (e: React.TouchEvent) => {
     if (!touchStart.current || swiped.current) return;
     const dx = e.changedTouches[0].clientX - touchStart.current.x;
@@ -45,8 +55,10 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
 
   return (
     <div
-      className={`relative ${aspectClass} bg-secondary touch-pan-y`}
+      className={`relative ${aspectClass} bg-secondary`}
+      style={{ touchAction: "pan-y" }}
       onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
       <img src={allPhotos[index]} alt={`${displayName} photo ${index + 1}`} className="h-full w-full object-cover" />
