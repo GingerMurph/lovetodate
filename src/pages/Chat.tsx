@@ -177,7 +177,6 @@ const Chat = () => {
     supabase.functions.invoke("send-message-notification", {
       body: {
         recipientId: partnerId,
-        senderName: partner?.display_name || "Someone",
         messagePreview: msgContent,
       },
     }).catch(() => {}); // Silent fail

@@ -46,10 +46,10 @@ Deno.serve(async (req) => {
     });
     if (!rateCheck.allowed) return rateLimitResponse(corsHeaders);
 
-    const { recipientId, senderName, messagePreview } = await req.json();
+    const { recipientId, messagePreview } = await req.json();
 
-    if (!recipientId || !senderName) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+    if (!recipientId) {
+      return new Response(JSON.stringify({ error: "Missing recipientId" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -57,6 +57,15 @@ Deno.serve(async (req) => {
 
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceKey);
+
+    // Fetch sender's display name server-side to prevent spoofing
+    const { data: senderProfile } = await adminClient
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", senderId)
+      .single();
+
+    const senderName = senderProfile?.display_name || "Someone";
 
     // Get recipient's notification preferences
     const { data: prefs } = await adminClient
