@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2.57.2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -23,6 +24,14 @@ serve(async (req) => {
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated");
+
+    // Rate limit: 10 requests per hour
+    const rateCheck = await checkRateLimit(user.id, {
+      functionName: "create-unlock-payment",
+      maxRequests: 10,
+      windowMinutes: 60,
+    });
+    if (!rateCheck.allowed) return rateLimitResponse(corsHeaders);
 
     // Safe JSON parsing
     let body: Record<string, unknown>;

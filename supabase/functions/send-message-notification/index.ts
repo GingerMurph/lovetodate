@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -35,6 +36,15 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Rate limit: 100 requests per hour
+    const senderId = claimsData.claims.sub as string;
+    const rateCheck = await checkRateLimit(senderId, {
+      functionName: "send-message-notification",
+      maxRequests: 100,
+      windowMinutes: 60,
+    });
+    if (!rateCheck.allowed) return rateLimitResponse(corsHeaders);
 
     const { recipientId, senderName, messagePreview } = await req.json();
 
