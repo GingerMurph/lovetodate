@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,17 +41,30 @@ const Auth = () => {
         setLoading(false);
         return;
       }
+
+      // Check if email already exists before attempting signup
+      try {
+        const { data: checkData } = await supabase.functions.invoke("check-email-exists", {
+          body: { email },
+        });
+        if (checkData?.exists) {
+          toast.error("An account with this email already exists. Please sign in instead.");
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // If the check fails, proceed with signup anyway
+      }
+
       const { error, data } = await signUp(email, password, displayName);
       if (error) {
-        // Check for duplicate email - Supabase may return different messages
         const msg = error.message?.toLowerCase() || "";
         if (msg.includes("already registered") || msg.includes("already been registered") || msg.includes("already exists")) {
           toast.error("An account with this email already exists. Please sign in instead.");
         } else {
           toast.error(error.message);
         }
-      } else if (data?.user?.identities?.length === 0) {
-        // Supabase returns an empty identities array when email is already taken (security measure)
+      } else if (data?.user && (!data.user.identities || data.user.identities.length === 0)) {
         toast.error("An account with this email already exists. Please sign in instead.");
       } else {
         toast.success("Check your email to confirm your account");
