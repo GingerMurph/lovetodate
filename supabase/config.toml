@@ -1,5 +1,9 @@
 project_id = "cpzorgklfjuntwslvuoz"
 
+[auth]
+site_url = "https://lovetodate.lovable.app"
+additional_redirect_urls = ["https://lovetodate.lovable.app"]
+
 [functions.discover-profiles]
 verify_jwt = false
 
