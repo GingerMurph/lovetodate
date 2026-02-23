@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN non_negotiables text[] DEFAULT '{}'::text[];

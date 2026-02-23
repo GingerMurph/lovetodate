@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -45,6 +45,7 @@ type ViewProfile = {
   personality_type: string | null;
   distance_miles: number | null;
   is_verified: boolean;
+  non_negotiables: string[] | null;
 };
 
 const ProfileView = () => {
@@ -323,6 +324,22 @@ const ProfileView = () => {
                 {profile.personality_type && (
                   <div className="flex items-center gap-3 text-sm"><Brain className="h-4 w-4 text-gold shrink-0" /><span>Personality: {profile.personality_type}</span></div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Non-Negotiables */}
+        {profile.non_negotiables && profile.non_negotiables.length > 0 && (
+          <Card className="mb-4 border-border bg-card">
+            <CardHeader><CardTitle className="font-serif text-lg flex items-center gap-2"><Ban className="h-5 w-5 text-destructive" />Non-Negotiables</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {profile.non_negotiables.map((item) => (
+                  <Badge key={item} variant="destructive" className="text-xs">
+                    {item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                  </Badge>
+                ))}
               </div>
             </CardContent>
           </Card>

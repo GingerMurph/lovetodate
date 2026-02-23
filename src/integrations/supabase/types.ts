@@ -125,6 +125,7 @@ export type Database = {
           looking_for: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles: number | null
           nationality: string | null
+          non_negotiables: string[] | null
           occupation: string | null
           personality_type: string | null
           pets: string | null
@@ -168,6 +169,7 @@ export type Database = {
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles?: number | null
           nationality?: string | null
+          non_negotiables?: string[] | null
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
@@ -211,6 +213,7 @@ export type Database = {
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles?: number | null
           nationality?: string | null
+          non_negotiables?: string[] | null
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
