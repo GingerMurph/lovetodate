@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2 } from "lucide-react";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -52,6 +52,7 @@ const Discover = () => {
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [history, setHistory] = useState<number[]>([]);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [filters, setFilters] = useState({
     gender: "",
@@ -97,6 +98,7 @@ const Discover = () => {
     if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
     setCurrentIndex(0);
+    setHistory([]);
     setLoading(false);
   };
 
@@ -140,7 +142,26 @@ const Discover = () => {
   const currentProfile = filtered[currentIndex];
 
   const advanceCard = () => {
+    setHistory((prev) => [...prev, currentIndex]);
     setCurrentIndex((prev) => prev + 1);
+  };
+
+  const handleUndo = async () => {
+    if (history.length === 0) return;
+    const prevIndex = history[history.length - 1];
+    const prevProfile = filtered[prevIndex];
+    // Remove the like if it was a right-swipe (user liked them)
+    if (prevProfile && user && likedIds.has(prevProfile.user_id)) {
+      await supabase.from("likes").delete().eq("liker_id", user.id).eq("liked_id", prevProfile.user_id);
+      setLikedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(prevProfile.user_id);
+        return next;
+      });
+    }
+    setHistory((prev) => prev.slice(0, -1));
+    setCurrentIndex(prevIndex);
+    toast("Went back to previous profile");
   };
 
   const currentDistance = currentProfile?.distance_miles ?? null;
@@ -251,47 +272,59 @@ const Discover = () => {
         ) : (
           <div className="flex flex-col items-center">
             <div className="relative w-full max-w-sm">
-              <SwipeCard
-                key={currentProfile.user_id}
-                onSwipeRight={() => {
-                  if (currentProfile.too_far) {
-                    toast.error("Sorry but you live too far away!");
-                  } else {
-                    handleLike(currentProfile.user_id);
-                  }
-                  advanceCard();
-                }}
-                onSwipeLeft={() => { handlePass(); advanceCard(); }}
-              >
-                <Card className="overflow-hidden border-border bg-card">
-                  <Link to={`/profile/${currentProfile.user_id}`}>
-                    <PhotoCarousel
-                      avatarUrl={currentProfile.avatar_url}
-                      photoUrls={currentProfile.photo_urls || []}
-                      displayName={currentProfile.display_name}
-                    />
-                    <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
-                      <h3 className="font-serif text-xl font-semibold text-foreground">
-                        {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
-                      </h3>
-                      <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                        {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
-                        {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
-                        {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
-                        {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
-                        {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
+              {currentProfile && (
+                <SwipeCard
+                  key={`${currentProfile.user_id}-${currentIndex}`}
+                  onSwipeRight={() => {
+                    if (currentProfile.too_far) {
+                      toast.error("Sorry but you live too far away!");
+                    } else {
+                      handleLike(currentProfile.user_id);
+                    }
+                    advanceCard();
+                  }}
+                  onSwipeLeft={() => { handlePass(); advanceCard(); }}
+                >
+                  <Card className="overflow-hidden border-border bg-card">
+                    <Link to={`/profile/${currentProfile.user_id}`}>
+                      <PhotoCarousel
+                        avatarUrl={currentProfile.avatar_url}
+                        photoUrls={currentProfile.photo_urls || []}
+                        displayName={currentProfile.display_name}
+                      />
+                      <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
+                        <h3 className="font-serif text-xl font-semibold text-foreground">
+                          {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
+                        </h3>
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                          {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                          {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
+                          {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
+                          {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
+                          {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                  <CardContent className="flex items-center justify-between p-3">
-                    <span className="text-xs text-muted-foreground truncate max-w-[60%]">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
-                  </CardContent>
-                </Card>
-              </SwipeCard>
+                    </Link>
+                    <CardContent className="flex items-center justify-between p-3">
+                      <span className="text-xs text-muted-foreground truncate max-w-[60%]">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
+                    </CardContent>
+                  </Card>
+                </SwipeCard>
+              )}
             </div>
 
             {/* Action buttons */}
-            <div className="mt-6 flex items-center gap-8">
+            <div className="mt-6 flex items-center gap-6">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-12 w-12 rounded-full border-2 border-muted-foreground text-muted-foreground hover:bg-muted disabled:opacity-30"
+                onClick={handleUndo}
+                disabled={history.length === 0}
+                title="Go back"
+              >
+                <Undo2 className="h-5 w-5" />
+              </Button>
               <Button
                 variant="outline"
                 size="icon"
