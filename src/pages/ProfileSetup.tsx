@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Camera, Loader2, Trash2 } from "lucide-react";
+import { Camera, Loader2, Trash2, BadgeCheck, ShieldCheck } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
@@ -40,6 +40,7 @@ const ProfileSetup = () => {
   const [photoPreviews, setPhotoPreviews] = useState<(string | null)[]>([null, null, null, null, null, null]);
   const [storedPhotoPaths, setStoredPhotoPaths] = useState<(string | null)[]>([null, null, null, null, null, null]);
   const [isPaused, setIsPaused] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
   const [pausing, setPausing] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
@@ -307,6 +308,30 @@ const ProfileSetup = () => {
                 ))}
               </div>
               <p className="mt-2 text-xs text-muted-foreground text-center">First photo is your main profile picture</p>
+              
+              {/* Verification CTA */}
+              <div className="mt-4 rounded-lg border border-border bg-secondary/50 p-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  {isVerified ? (
+                    <>
+                      <BadgeCheck className="h-5 w-5 text-blue-500" />
+                      <span className="text-sm font-medium text-blue-500">ID Verified ✓</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Verify your identity to build trust</span>
+                    </>
+                  )}
+                </div>
+                {!isVerified && (
+                  <Link to="/verify">
+                    <Button size="sm" variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
+                      Verify Now
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </CardContent>
           </Card>
 

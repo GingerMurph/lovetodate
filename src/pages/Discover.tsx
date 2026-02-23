@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2 } from "lucide-react";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -43,6 +44,7 @@ type DiscoverProfile = {
   distance_miles: number | null;
   max_distance_miles: number | null;
   too_far: boolean;
+  is_verified: boolean;
 };
 
 const Discover = () => {
@@ -293,8 +295,9 @@ const Discover = () => {
                         displayName={currentProfile.display_name}
                       />
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
-                        <h3 className="font-serif text-xl font-semibold text-foreground">
+                        <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5">
                           {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
+                          {currentProfile.is_verified && <VerifiedBadge size="md" />}
                         </h3>
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}

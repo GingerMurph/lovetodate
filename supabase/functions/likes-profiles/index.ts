@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
 
     const { data: profiles } = await adminClient
       .from("profiles")
-      .select("user_id, display_name, avatar_url, date_of_birth, location_city, nationality")
+      .select("user_id, display_name, avatar_url, date_of_birth, location_city, nationality, is_verified")
       .in("user_id", allIds);
 
     // Sign avatar URLs and compute age
