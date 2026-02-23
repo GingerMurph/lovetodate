@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -36,6 +37,14 @@ Deno.serve(async (req) => {
     }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
+
+    // Rate limit: 3 requests per day
+    const rateCheck = await checkRateLimit(user.id, {
+      functionName: "delete-account",
+      maxRequests: 3,
+      windowMinutes: 1440,
+    });
+    if (!rateCheck.allowed) return rateLimitResponse(corsHeaders);
 
     // Validate user.id UUID format (defense in depth)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
