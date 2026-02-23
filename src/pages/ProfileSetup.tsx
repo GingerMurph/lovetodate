@@ -69,6 +69,7 @@ const ProfileSetup = () => {
     favourite_sport: "",
     favourite_hobbies: "",
     personality_type: "",
+    max_distance_miles: "",
   });
 
   // Capture GPS location
@@ -118,6 +119,7 @@ const ProfileSetup = () => {
           favourite_sport: (data as any).favourite_sport || "",
           favourite_hobbies: (data as any).favourite_hobbies || "",
           personality_type: (data as any).personality_type || "",
+          max_distance_miles: (data as any).max_distance_miles?.toString() || "",
         });
         setIsPaused(data.is_paused || false);
 
@@ -193,6 +195,7 @@ const ProfileSetup = () => {
         favourite_sport: form.favourite_sport,
         favourite_hobbies: form.favourite_hobbies,
         personality_type: form.personality_type,
+        max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         avatar_url,
       } as any).eq("user_id", user.id);
 
@@ -559,6 +562,20 @@ const ProfileSetup = () => {
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                   <SelectContent>
                     {PERSONALITY_TYPES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Distance Willing to Travel</Label>
+                <Select value={form.max_distance_miles} onValueChange={(v) => update("max_distance_miles", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">Within 5 miles</SelectItem>
+                    <SelectItem value="10">Within 10 miles</SelectItem>
+                    <SelectItem value="25">Within 25 miles</SelectItem>
+                    <SelectItem value="50">Within 50 miles</SelectItem>
+                    <SelectItem value="100">Within 100 miles</SelectItem>
+                    <SelectItem value="200">Within 200 miles</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
