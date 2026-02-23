@@ -18,6 +18,7 @@ import Likes from "./pages/Likes";
 import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => {
                   <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                   <Route path="/messages/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+                  <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </UnreadMessagesProvider>

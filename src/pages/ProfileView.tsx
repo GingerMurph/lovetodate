@@ -11,6 +11,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import acornLogo from "@/assets/logo.png";
 
 type ViewProfile = {
@@ -43,6 +44,7 @@ type ViewProfile = {
   favourite_hobbies: string | null;
   personality_type: string | null;
   distance_miles: number | null;
+  is_verified: boolean;
 };
 
 const ProfileView = () => {
@@ -180,8 +182,9 @@ const ProfileView = () => {
               aspectClass="aspect-[3/4]"
             />
           </div>
-          <h1 className="font-serif text-3xl font-bold">
+          <h1 className="font-serif text-3xl font-bold flex items-center gap-2">
             {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
+            {profile.is_verified && <VerifiedBadge size="lg" />}
           </h1>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}

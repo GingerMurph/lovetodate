@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       .from("profiles")
       .select(
         "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal"
+        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal, is_verified"
       )
       .neq("user_id", user.id)
       .neq("is_paused", true);

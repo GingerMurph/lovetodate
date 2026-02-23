@@ -116,6 +116,7 @@ export type Database = {
           id: string
           interests: string[] | null
           is_paused: boolean
+          is_verified: boolean
           languages: string[] | null
           latitude: number | null
           location_city: string | null
@@ -134,6 +135,8 @@ export type Database = {
           smoking: string | null
           updated_at: string
           user_id: string
+          verification_selfie_url: string | null
+          verified_at: string | null
           weight_kg: number | null
         }
         Insert: {
@@ -156,6 +159,7 @@ export type Database = {
           id?: string
           interests?: string[] | null
           is_paused?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           location_city?: string | null
@@ -174,6 +178,8 @@ export type Database = {
           smoking?: string | null
           updated_at?: string
           user_id: string
+          verification_selfie_url?: string | null
+          verified_at?: string | null
           weight_kg?: number | null
         }
         Update: {
@@ -196,6 +202,7 @@ export type Database = {
           id?: string
           interests?: string[] | null
           is_paused?: boolean
+          is_verified?: boolean
           languages?: string[] | null
           latitude?: number | null
           location_city?: string | null
@@ -214,6 +221,8 @@ export type Database = {
           smoking?: string | null
           updated_at?: string
           user_id?: string
+          verification_selfie_url?: string | null
+          verified_at?: string | null
           weight_kg?: number | null
         }
         Relationships: []
