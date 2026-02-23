@@ -10,17 +10,22 @@ export default function SwipeCard({ onSwipeLeft, onSwipeRight, children }: Swipe
   const cardRef = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const hasMoved = useRef(false);
   const startPos = useRef({ x: 0, y: 0 });
   const THRESHOLD = 100;
 
   const handleStart = (x: number, y: number) => {
     setIsDragging(true);
+    hasMoved.current = false;
     startPos.current = { x, y };
   };
 
   const handleMove = (x: number, y: number) => {
     if (!isDragging) return;
-    setOffset({ x: x - startPos.current.x, y: (y - startPos.current.y) * 0.3 });
+    const dx = x - startPos.current.x;
+    const dy = y - startPos.current.y;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved.current = true;
+    setOffset({ x: dx, y: dy * 0.3 });
   };
 
   const handleEnd = () => {
@@ -56,6 +61,9 @@ export default function SwipeCard({ onSwipeLeft, onSwipeRight, children }: Swipe
     <div
       ref={cardRef}
       className="relative touch-none select-none cursor-grab active:cursor-grabbing"
+      onClickCapture={(e) => {
+        if (hasMoved.current) { e.preventDefault(); e.stopPropagation(); }
+      }}
       style={{
         transform: `translateX(${offset.x}px) translateY(${offset.y}px) rotate(${rotation}deg)`,
         opacity,
