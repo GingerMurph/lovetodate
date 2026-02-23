@@ -22,6 +22,15 @@ const ETHNICITIES = ["White", "Black", "Asian", "Hispanic/Latino", "Middle Easte
 const LANGUAGES = ["English", "French", "Spanish", "German", "Italian", "Portuguese", "Polish", "Romanian", "Arabic", "Hindi", "Urdu", "Chinese", "Japanese", "Korean", "Turkish", "Russian", "Dutch", "Swedish", "Other"];
 const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pets"];
 
+const COUNTRIES = ["United Kingdom", "Ireland", "United States", "Canada", "Australia", "France", "Germany", "Italy", "Spain", "Portugal", "Poland", "Romania", "India", "Pakistan", "China", "Japan", "South Korea", "Brazil", "Nigeria", "South Africa", "Other"];
+const OCCUPATIONS = ["Student", "Teacher", "Engineer", "Doctor", "Nurse", "Lawyer", "Accountant", "Designer", "Developer", "Manager", "Entrepreneur", "Freelancer", "Artist", "Writer", "Chef", "Retail", "Finance", "Marketing", "Sales", "HR", "Consultant", "Scientist", "Researcher", "Civil Servant", "Military", "Retired", "Other"];
+const EDUCATION_LEVELS = ["Secondary School", "College", "Undergraduate Degree", "Postgraduate Degree", "Master's Degree", "PhD / Doctorate", "Professional Qualification", "Self-taught", "Prefer not to say", "Other"];
+const MUSIC_GENRES = ["Pop", "Rock", "Hip-Hop", "R&B", "Jazz", "Classical", "Country", "Electronic", "Indie", "Reggae", "Latin", "Metal", "Folk", "Soul", "Blues", "Punk", "Afrobeats", "K-Pop", "Other"];
+const FILM_GENRES = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance", "Thriller", "Documentary", "Animation", "Fantasy", "Musical", "Crime", "Western", "Indie", "Other"];
+const SPORTS = ["Football", "Rugby", "Cricket", "Tennis", "Basketball", "Swimming", "Running", "Cycling", "Boxing", "Golf", "Yoga", "Gym / Weightlifting", "Martial Arts", "Hiking", "Dancing", "None", "Other"];
+const HOBBIES = ["Reading", "Cooking", "Travelling", "Photography", "Gaming", "Music", "Art", "Writing", "Gardening", "DIY", "Volunteering", "Fitness", "Movies & TV", "Board Games", "Socialising", "Shopping", "Other"];
+const PERSONALITY_TYPES = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP", "Introvert", "Extrovert", "Ambivert", "Don't know"];
+
 const ProfileSetup = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
@@ -354,15 +363,30 @@ const ProfileSetup = () => {
               </div>
               <div className="space-y-2">
                 <Label>Country</Label>
-                <Input value={form.location_country} onChange={(e) => update("location_country", e.target.value)} placeholder="United Kingdom" />
+                <Select value={form.location_country} onValueChange={(v) => update("location_country", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Occupation</Label>
-                <Input value={form.occupation} onChange={(e) => update("occupation", e.target.value)} placeholder="e.g. Teacher" />
+                <Select value={form.occupation} onValueChange={(v) => update("occupation", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {OCCUPATIONS.map((o) => <SelectItem key={o} value={o}>{o}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Education</Label>
-                <Input value={form.education} onChange={(e) => update("education", e.target.value)} placeholder="e.g. University degree" />
+                <Select value={form.education} onValueChange={(v) => update("education", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {EDUCATION_LEVELS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
@@ -495,23 +519,48 @@ const ProfileSetup = () => {
               </div>
               <div className="space-y-2">
                 <Label>Favourite Music Genre</Label>
-                <Input value={form.favourite_music} onChange={(e) => update("favourite_music", e.target.value)} placeholder="e.g. Rock, Jazz, Pop" />
+                <Select value={form.favourite_music} onValueChange={(v) => update("favourite_music", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {MUSIC_GENRES.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
-                <Label>Favourite Film</Label>
-                <Input value={form.favourite_film} onChange={(e) => update("favourite_film", e.target.value)} placeholder="e.g. The Shawshank Redemption" />
+                <Label>Favourite Film Genre</Label>
+                <Select value={form.favourite_film} onValueChange={(v) => update("favourite_film", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {FILM_GENRES.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Favourite Sport</Label>
-                <Input value={form.favourite_sport} onChange={(e) => update("favourite_sport", e.target.value)} placeholder="e.g. Football, Tennis" />
+                <Select value={form.favourite_sport} onValueChange={(v) => update("favourite_sport", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {SPORTS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Favourite Hobbies</Label>
-                <Input value={form.favourite_hobbies} onChange={(e) => update("favourite_hobbies", e.target.value)} placeholder="e.g. Hiking, Reading, Cooking" />
+                <Select value={form.favourite_hobbies} onValueChange={(v) => update("favourite_hobbies", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {HOBBIES.map((h) => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label>Personality Type</Label>
-                <Input value={form.personality_type} onChange={(e) => update("personality_type", e.target.value)} placeholder="e.g. INFJ, Ambivert" />
+                <Select value={form.personality_type} onValueChange={(v) => update("personality_type", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    {PERSONALITY_TYPES.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
           </Card>
