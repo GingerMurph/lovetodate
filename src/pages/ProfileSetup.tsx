@@ -35,9 +35,9 @@ const ProfileSetup = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
-  const [storedAvatarPath, setStoredAvatarPath] = useState<string | null>(null);
+  const [photoFiles, setPhotoFiles] = useState<(File | null)[]>([null, null, null, null, null, null]);
+  const [photoPreviews, setPhotoPreviews] = useState<(string | null)[]>([null, null, null, null, null, null]);
+  const [storedPhotoPaths, setStoredPhotoPaths] = useState<(string | null)[]>([null, null, null, null, null, null]);
   const [isPaused, setIsPaused] = useState(false);
   const [pausing, setPausing] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -123,6 +123,10 @@ const ProfileSetup = () => {
         });
         setIsPaused(data.is_paused || false);
 
+        // Load all photos: avatar_url is photo 0, photo_urls has photos 1-5
+        const allPaths: (string | null)[] = [null, null, null, null, null, null];
+        const extraPhotos: string[] = (data as any).photo_urls || [];
+        
         if (data.avatar_url) {
           let path = data.avatar_url;
           if (path.includes("/object/public/profile-photos/")) {
@@ -131,23 +135,38 @@ const ProfileSetup = () => {
             path = path.split("/object/sign/profile-photos/")[1];
             path = path.split("?")[0];
           }
-          setStoredAvatarPath(path);
-
-          const { data: signedData } = await supabase.storage
-            .from("profile-photos")
-            .createSignedUrl(path, 3600);
-          if (signedData?.signedUrl) setAvatarPreview(signedData.signedUrl);
+          allPaths[0] = path;
         }
+        extraPhotos.forEach((p, i) => { if (i < 5) allPaths[i + 1] = p; });
+        setStoredPhotoPaths(allPaths);
+
+        // Sign all stored paths
+        const previews: (string | null)[] = [null, null, null, null, null, null];
+        await Promise.all(allPaths.map(async (p, i) => {
+          if (p) {
+            const { data: signedData } = await supabase.storage
+              .from("profile-photos")
+              .createSignedUrl(p, 3600);
+            if (signedData?.signedUrl) previews[i] = signedData.signedUrl;
+          }
+        }));
+        setPhotoPreviews(previews);
       }
     });
   }, [user]);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setAvatarFile(file);
-      setAvatarPreview(URL.createObjectURL(file));
+      setPhotoFiles(prev => { const n = [...prev]; n[index] = file; return n; });
+      setPhotoPreviews(prev => { const n = [...prev]; n[index] = URL.createObjectURL(file); return n; });
     }
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    setPhotoFiles(prev => { const n = [...prev]; n[index] = null; return n; });
+    setPhotoPreviews(prev => { const n = [...prev]; n[index] = null; return n; });
+    setStoredPhotoPaths(prev => { const n = [...prev]; n[index] = null; return n; });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -156,16 +175,20 @@ const ProfileSetup = () => {
     setLoading(true);
 
     try {
-      // Use stored path by default, only change if new file uploaded
-      let avatar_url = storedAvatarPath;
+      // Upload all photos
+      const finalPaths = [...storedPhotoPaths];
+      await Promise.all(photoFiles.map(async (file, i) => {
+        if (file) {
+          const ext = file.name.split(".").pop();
+          const path = `${user.id}/photo_${i}.${ext}`;
+          const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
+          if (uploadError) throw uploadError;
+          finalPaths[i] = path;
+        }
+      }));
 
-      if (avatarFile) {
-        const ext = avatarFile.name.split(".").pop();
-        const path = `${user.id}/avatar.${ext}`;
-        const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, avatarFile, { upsert: true });
-        if (uploadError) throw uploadError;
-        avatar_url = path;
-      }
+      const avatar_url = finalPaths[0];
+      const photo_urls = finalPaths.slice(1).filter(Boolean) as string[];
 
       const { error } = await supabase.from("profiles").update({
         display_name: form.display_name,
@@ -197,6 +220,7 @@ const ProfileSetup = () => {
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         avatar_url,
+        photo_urls,
       } as any).eq("user_id", user.id);
 
       if (error) throw error;
@@ -246,23 +270,42 @@ const ProfileSetup = () => {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Avatar */}
+          {/* Photos */}
           <Card className="border-border bg-card">
-            <CardContent className="flex flex-col items-center py-8">
-              <label htmlFor="avatar" className="group cursor-pointer flex flex-col items-center">
-                <div className="relative h-32 w-32 overflow-hidden rounded-full border-2 border-gold/30 bg-secondary flex items-center justify-center">
-                  {avatarPreview ? (
-                    <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
-                  ) : (
-                    <Camera className="h-8 w-8 text-muted-foreground" />
-                  )}
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="h-6 w-6 text-gold" />
+            <CardHeader><CardTitle className="font-serif text-lg">Photos (up to 6)</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-3">
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="relative">
+                    <label htmlFor={`photo-${i}`} className="group cursor-pointer block">
+                      <div className="relative aspect-square overflow-hidden rounded-lg border-2 border-dashed border-border bg-secondary flex items-center justify-center hover:border-gold/50 transition-colors">
+                        {photoPreviews[i] ? (
+                          <img src={photoPreviews[i]!} alt={`Photo ${i + 1}`} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex flex-col items-center gap-1">
+                            <Camera className="h-6 w-6 text-muted-foreground" />
+                            <span className="text-[10px] text-muted-foreground">{i === 0 ? "Main" : `#${i + 1}`}</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center bg-background/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Camera className="h-5 w-5 text-gold" />
+                        </div>
+                      </div>
+                    </label>
+                    <input id={`photo-${i}`} type="file" accept="image/*" onChange={handlePhotoChange(i)} className="hidden" />
+                    {photoPreviews[i] && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePhoto(i)}
+                        className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center text-xs hover:bg-destructive/80"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
-                </div>
-                <p className="mt-3 text-sm text-muted-foreground">Click to upload your photo</p>
-              </label>
-              <input id="avatar" type="file" accept="image/*" onChange={handleAvatarChange} className="hidden" />
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground text-center">First photo is your main profile picture</p>
             </CardContent>
           </Card>
 

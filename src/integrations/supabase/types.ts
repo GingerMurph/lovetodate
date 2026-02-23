@@ -127,6 +127,7 @@ export type Database = {
           occupation: string | null
           personality_type: string | null
           pets: string | null
+          photo_urls: string[] | null
           political_beliefs: string | null
           relationship_goal: string[] | null
           religion: string | null
@@ -166,6 +167,7 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
+          photo_urls?: string[] | null
           political_beliefs?: string | null
           relationship_goal?: string[] | null
           religion?: string | null
@@ -205,6 +207,7 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
+          photo_urls?: string[] | null
           political_beliefs?: string | null
           relationship_goal?: string[] | null
           religion?: string | null
