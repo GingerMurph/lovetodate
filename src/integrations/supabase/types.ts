@@ -128,9 +128,7 @@ export type Database = {
           personality_type: string | null
           pets: string | null
           political_beliefs: string | null
-          relationship_goal:
-            | Database["public"]["Enums"]["relationship_goal"]
-            | null
+          relationship_goal: string[] | null
           religion: string | null
           smoking: string | null
           updated_at: string
@@ -169,9 +167,7 @@ export type Database = {
           personality_type?: string | null
           pets?: string | null
           political_beliefs?: string | null
-          relationship_goal?:
-            | Database["public"]["Enums"]["relationship_goal"]
-            | null
+          relationship_goal?: string[] | null
           religion?: string | null
           smoking?: string | null
           updated_at?: string
@@ -210,9 +206,7 @@ export type Database = {
           personality_type?: string | null
           pets?: string | null
           political_beliefs?: string | null
-          relationship_goal?:
-            | Database["public"]["Enums"]["relationship_goal"]
-            | null
+          relationship_goal?: string[] | null
           religion?: string | null
           smoking?: string | null
           updated_at?: string
