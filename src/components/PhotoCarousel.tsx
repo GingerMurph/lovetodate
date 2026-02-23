@@ -45,7 +45,7 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
 
   return (
     <div
-      className={`relative ${aspectClass} bg-secondary`}
+      className={`relative ${aspectClass} bg-secondary touch-pan-y`}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
