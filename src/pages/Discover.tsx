@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Filter, X, ThumbsDown } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
+import { PhotoCarousel } from "@/components/PhotoCarousel";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
 const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
@@ -28,6 +29,7 @@ type DiscoverProfile = {
   user_id: string;
   display_name: string;
   avatar_url: string | null;
+  photo_urls: string[];
   gender: string | null;
   body_build: string | null;
   height_cm: number | null;
@@ -263,19 +265,21 @@ const Discover = () => {
               >
                 <Card className="overflow-hidden border-border bg-card">
                   <Link to={`/profile/${currentProfile.user_id}`}>
-                    <div className="relative aspect-[3/4] bg-secondary">
-                      <AvatarImage avatarUrl={currentProfile.avatar_url} displayName={currentProfile.display_name} />
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16">
-                        <h3 className="font-serif text-xl font-semibold text-foreground">
-                          {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
-                        </h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                          {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
-                          {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
-                          {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
-                          {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
-                          {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
-                        </div>
+                    <PhotoCarousel
+                      avatarUrl={currentProfile.avatar_url}
+                      photoUrls={currentProfile.photo_urls || []}
+                      displayName={currentProfile.display_name}
+                    />
+                    <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
+                      <h3 className="font-serif text-xl font-semibold text-foreground">
+                        {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
+                      </h3>
+                      <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                        {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
+                        {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
+                        {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
+                        {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
                       </div>
                     </div>
                   </Link>

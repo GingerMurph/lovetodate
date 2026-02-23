@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     // Include latitude/longitude for server-side distance calculation only — never returned to client
     const [profileRes, likeRes, likeBackRes, connForward, connReverse] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, latitude, longitude")
+        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, latitude, longitude")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
@@ -82,19 +82,23 @@ Deno.serve(async (req) => {
     }
 
     // Strip latitude/longitude — used only for server-side distance, never exposed
-    const { date_of_birth, avatar_url, latitude, longitude, ...rest } = profileRes.data;
+    const { date_of_birth, avatar_url, photo_urls, latitude, longitude, ...rest } = profileRes.data;
 
-    // Sign avatar URL
-    let signedAvatarUrl: string | null = null;
-    if (avatar_url) {
-      const path = avatar_url.includes("/object/public/")
-        ? avatar_url.split("/object/public/profile-photos/")[1]
-        : avatar_url;
+    // Sign photo URLs
+    const signUrl = async (rawPath: string | null): Promise<string | null> => {
+      if (!rawPath) return null;
+      const path = rawPath.includes("/object/public/")
+        ? rawPath.split("/object/public/profile-photos/")[1]
+        : rawPath;
       const { data: signedData } = await adminClient.storage
         .from("profile-photos")
         .createSignedUrl(path, 3600);
-      signedAvatarUrl = signedData?.signedUrl || null;
-    }
+      return signedData?.signedUrl || null;
+    };
+
+    const signedAvatarUrl = await signUrl(avatar_url);
+    const extraPhotos: string[] = Array.isArray(photo_urls) ? photo_urls : [];
+    const signedPhotoUrls = await Promise.all(extraPhotos.map(signUrl));
 
     const isOwnProfile = user.id === userId;
     const isLiked = !!likeRes.data;
@@ -121,7 +125,7 @@ Deno.serve(async (req) => {
     }
 
     // Full profile data for all viewers — no raw coordinates included
-    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, age, distance_miles: distanceMiles };
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles };
 
     return new Response(JSON.stringify({
       profile,

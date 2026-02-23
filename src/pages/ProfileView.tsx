@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AvatarImage } from "@/components/AvatarImage";
+import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ type ViewProfile = {
   user_id: string;
   display_name: string;
   avatar_url: string | null;
+  photo_urls: string[];
   bio: string | null;
   gender: string | null;
   body_build: string | null;
@@ -160,8 +162,13 @@ const ProfileView = () => {
       <div className="container mx-auto max-w-3xl px-4 py-6">
         {/* Header */}
         <div className="mb-6 flex flex-col items-center">
-          <div className="h-40 w-40 overflow-hidden rounded-full border-2 border-gold/30 bg-secondary mb-4">
-            <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} />
+          <div className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4">
+            <PhotoCarousel
+              avatarUrl={profile.avatar_url}
+              photoUrls={profile.photo_urls || []}
+              displayName={profile.display_name}
+              aspectClass="aspect-[3/4]"
+            />
           </div>
           <h1 className="font-serif text-3xl font-bold">
             {profile.display_name}{profile.age ? `, ${profile.age}` : ""}

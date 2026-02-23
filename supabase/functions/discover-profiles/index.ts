@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     const { data: profiles, error } = await adminClient
       .from("profiles")
       .select(
-        "user_id, display_name, avatar_url, gender, body_build, height_cm, " +
+        "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
         "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal"
       )
       .neq("user_id", user.id)
@@ -80,17 +80,22 @@ Deno.serve(async (req) => {
     // Calculate age from date_of_birth and distance server-side, then strip raw coords and dob
     // Generate signed URLs for avatars since bucket is private
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, latitude, longitude, max_distance_miles, relationship_goal, ...rest }) => {
-        let signedAvatarUrl: string | null = null;
-        if (avatar_url) {
-          const path = avatar_url.includes("/object/public/")
-            ? avatar_url.split("/object/public/profile-photos/")[1]
-            : avatar_url;
+      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, latitude, longitude, max_distance_miles, relationship_goal, ...rest }) => {
+        // Sign all photo URLs
+        const signUrl = async (rawPath: string | null): Promise<string | null> => {
+          if (!rawPath) return null;
+          const path = rawPath.includes("/object/public/")
+            ? rawPath.split("/object/public/profile-photos/")[1]
+            : rawPath;
           const { data: signedData } = await adminClient.storage
             .from("profile-photos")
             .createSignedUrl(path, 3600);
-          signedAvatarUrl = signedData?.signedUrl || null;
-        }
+          return signedData?.signedUrl || null;
+        };
+
+        const signedAvatarUrl = await signUrl(avatar_url);
+        const extraPhotos: string[] = Array.isArray(photo_urls) ? photo_urls : [];
+        const signedPhotoUrls = await Promise.all(extraPhotos.map(signUrl));
 
         // Compute distance server-side; never expose raw coordinates
         let distanceMiles: number | null = null;
@@ -105,6 +110,7 @@ Deno.serve(async (req) => {
         return {
           ...rest,
           avatar_url: signedAvatarUrl,
+          photo_urls: signedPhotoUrls.filter(Boolean),
           age: date_of_birth
             ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
             : null,
