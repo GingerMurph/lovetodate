@@ -145,7 +145,13 @@ const Verify = () => {
     <AppLayout>
       <div className="container mx-auto max-w-md px-4 py-8">
         {/* Back button */}
-        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => {
+          if (window.history.length > 1) {
+            navigate(-1);
+          } else {
+            navigate("/profile");
+          }
+        }}>
           <ArrowLeft className="h-4 w-4" />
           Go Back
         </Button>
@@ -177,16 +183,23 @@ const Verify = () => {
                   <>
                     <Settings className="h-12 w-12 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground text-center">
-                      Camera access was denied. Please enable camera permissions in your browser settings and try again.
+                      Camera access was denied. Enable camera permissions and try again.
                     </p>
-                    <div className="flex flex-col gap-2 w-full max-w-[200px]">
+                    <div className="flex flex-col gap-3 w-full max-w-[240px]">
                       <Button onClick={() => { setCameraDenied(false); startCamera(); }} className="gradient-gold text-primary-foreground">
                         <Camera className="h-4 w-4 mr-2" />
                         Try Again
                       </Button>
-                      <p className="text-[10px] text-muted-foreground text-center">
-                        Tap the lock/settings icon in your browser's address bar to manage permissions
-                      </p>
+                      <Button variant="outline" size="sm" asChild>
+                        <a href="app-settings:camera" onClick={(e) => {
+                          e.preventDefault();
+                          // Browsers don't allow direct links to settings, guide user instead
+                          toast.info("Tap the lock icon (🔒) in your browser's address bar → Site settings → Camera → Allow", { duration: 8000 });
+                        }}>
+                          <Settings className="h-4 w-4 mr-2" />
+                          How to enable camera
+                        </a>
+                      </Button>
                     </div>
                   </>
                 ) : (
