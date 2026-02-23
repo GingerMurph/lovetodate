@@ -46,7 +46,7 @@ const ProfileSetup = () => {
     date_of_birth: "",
     gender: "" as string,
     looking_for: "everyone" as string,
-    relationship_goal: "" as string,
+    relationship_goal: [] as string[],
     bio: "",
     height_cm: "",
     weight_kg: "",
@@ -96,7 +96,7 @@ const ProfileSetup = () => {
           date_of_birth: data.date_of_birth || "",
           gender: data.gender || "",
           looking_for: data.looking_for || "everyone",
-          relationship_goal: data.relationship_goal || "",
+          relationship_goal: (data.relationship_goal as string[] | null) || [],
           bio: data.bio || "",
           height_cm: data.height_cm?.toString() || "",
           weight_kg: data.weight_kg?.toString() || "",
@@ -172,7 +172,7 @@ const ProfileSetup = () => {
         date_of_birth: form.date_of_birth || null,
         gender: (form.gender || null) as any,
         looking_for: (form.looking_for || null) as any,
-        relationship_goal: (form.relationship_goal || null) as any,
+        relationship_goal: (form.relationship_goal.length > 0 ? form.relationship_goal : null) as any,
         bio: form.bio,
         height_cm: form.height_cm ? parseInt(form.height_cm) : null,
         weight_kg: form.weight_kg ? parseInt(form.weight_kg) : null,
@@ -302,17 +302,37 @@ const ProfileSetup = () => {
                 </Select>
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label>Relationship Goal</Label>
-                <Select value={form.relationship_goal} onValueChange={(v) => update("relationship_goal", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="long_term">Long-term relationship</SelectItem>
-                    <SelectItem value="short_term">Short-term relationship</SelectItem>
-                    <SelectItem value="casual">Casual dating</SelectItem>
-                    <SelectItem value="friendship">Friendship</SelectItem>
-                    <SelectItem value="not_sure">Not sure yet</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>Relationship Goal (select all that apply)</Label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { value: "long_term", label: "Long-term relationship" },
+                    { value: "short_term", label: "Short-term relationship" },
+                    { value: "casual", label: "Casual dating" },
+                    { value: "friendship", label: "Friendship" },
+                    { value: "not_sure", label: "Not sure yet" },
+                    { value: "free_tonight", label: "I'm Free Tonight! 😉" },
+                  ].map((goal) => (
+                    <button
+                      key={goal.value}
+                      type="button"
+                      onClick={() => {
+                        setForm((f) => ({
+                          ...f,
+                          relationship_goal: f.relationship_goal.includes(goal.value)
+                            ? f.relationship_goal.filter((g) => g !== goal.value)
+                            : [...f.relationship_goal, goal.value],
+                        }));
+                      }}
+                      className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+                        form.relationship_goal.includes(goal.value)
+                          ? "bg-gold text-primary-foreground border-gold"
+                          : "bg-secondary text-muted-foreground border-border hover:border-gold/50"
+                      }`}
+                    >
+                      {goal.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </CardContent>
           </Card>

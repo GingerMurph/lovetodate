@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       .from("profiles")
       .select(
         "user_id, display_name, avatar_url, gender, body_build, height_cm, " +
-        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles"
+        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal"
       )
       .neq("user_id", user.id)
       .neq("is_paused", true);
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     // Calculate age from date_of_birth and distance server-side, then strip raw coords and dob
     // Generate signed URLs for avatars since bucket is private
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, latitude, longitude, max_distance_miles, ...rest }) => {
+      (profiles || []).map(async ({ date_of_birth, avatar_url, latitude, longitude, max_distance_miles, relationship_goal, ...rest }) => {
         let signedAvatarUrl: string | null = null;
         if (avatar_url) {
           const path = avatar_url.includes("/object/public/")
@@ -98,8 +98,9 @@ Deno.serve(async (req) => {
           distanceMiles = Math.round(haversineDistance(viewerLat, viewerLng, latitude, longitude));
         }
 
-        // Check if the target profile's max_distance_miles prevents liking
-        const tooFar = max_distance_miles !== null && distanceMiles !== null && distanceMiles > max_distance_miles;
+        // "I'm Free Tonight" overrides the distance restriction
+        const isFreeTonightTarget = Array.isArray(relationship_goal) && relationship_goal.includes("free_tonight");
+        const tooFar = !isFreeTonightTarget && max_distance_miles !== null && distanceMiles !== null && distanceMiles > max_distance_miles;
 
         return {
           ...rest,
