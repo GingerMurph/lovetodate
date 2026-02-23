@@ -1,0 +1,1 @@
+ALTER TABLE public.messages ADD CONSTRAINT message_content_length CHECK (length(content) <= 5000);
