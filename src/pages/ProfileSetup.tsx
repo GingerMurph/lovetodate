@@ -72,6 +72,7 @@ const ProfileSetup = () => {
     favourite_hobbies: [] as string[],
     personality_type: "",
     max_distance_miles: "",
+    non_negotiables: [] as string[],
   });
 
   // Capture GPS location
@@ -122,6 +123,7 @@ const ProfileSetup = () => {
           favourite_hobbies: (data as any).favourite_hobbies || [],
           personality_type: (data as any).personality_type || "",
           max_distance_miles: (data as any).max_distance_miles?.toString() || "",
+          non_negotiables: (data as any).non_negotiables || [],
         });
         setIsPaused(data.is_paused || false);
 
@@ -221,6 +223,7 @@ const ProfileSetup = () => {
         favourite_hobbies: form.favourite_hobbies,
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
+        non_negotiables: form.non_negotiables,
         avatar_url,
         photo_urls,
       } as any).eq("user_id", user.id);
@@ -668,6 +671,46 @@ const ProfileSetup = () => {
                     <SelectItem value="200">Within 200 miles</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Non-Negotiables */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg">🚫 Non-Negotiables</CardTitle>
+              <p className="text-xs text-muted-foreground">Select deal-breakers that are shown on your profile</p>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: "heavy_drinkers", label: "Heavy Drinkers" },
+                  { value: "smokers", label: "Smokers" },
+                  { value: "vapers", label: "Vapers" },
+                  { value: "drug_takers", label: "Drug Takers" },
+                  { value: "unemployed", label: "Unemployed" },
+                  { value: "unhealthy_lifestyle", label: "Unhealthy Lifestyle" },
+                ].map((item) => (
+                  <button
+                    key={item.value}
+                    type="button"
+                    onClick={() => {
+                      setForm((f) => ({
+                        ...f,
+                        non_negotiables: f.non_negotiables.includes(item.value)
+                          ? f.non_negotiables.filter((n) => n !== item.value)
+                          : [...f.non_negotiables, item.value],
+                      }));
+                    }}
+                    className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
+                      form.non_negotiables.includes(item.value)
+                        ? "bg-destructive text-destructive-foreground border-destructive"
+                        : "bg-secondary text-muted-foreground border-border hover:border-destructive/50"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </CardContent>
           </Card>
