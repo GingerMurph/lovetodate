@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Camera, RefreshCw, CheckCircle, Loader2 } from "lucide-react";
+import { Camera, RefreshCw, CheckCircle, Loader2, ArrowLeft, Settings } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 
@@ -27,6 +27,7 @@ const Verify = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [cameraReady, setCameraReady] = useState(false);
+  const [cameraDenied, setCameraDenied] = useState(false);
   const [isAlreadyVerified, setIsAlreadyVerified] = useState(false);
 
   useEffect(() => {
@@ -51,8 +52,9 @@ const Verify = () => {
         videoRef.current.srcObject = stream;
         setCameraReady(true);
       }
-    } catch {
-      toast.error("Could not access camera. Please allow camera permissions.");
+    } catch (err: any) {
+      setCameraDenied(true);
+      toast.error("Camera access denied. Please enable it in your browser settings.");
     }
   }, []);
 
@@ -142,6 +144,12 @@ const Verify = () => {
   return (
     <AppLayout>
       <div className="container mx-auto max-w-md px-4 py-8">
+        {/* Back button */}
+        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate(-1)}>
+          <ArrowLeft className="h-4 w-4" />
+          Go Back
+        </Button>
+
         <h1 className="mb-2 font-serif text-2xl font-bold text-center">
           Verify Your <span className="text-gold">Identity</span>
         </h1>
@@ -164,12 +172,32 @@ const Verify = () => {
         <Card className="mb-6 border-border bg-card overflow-hidden">
           <CardContent className="p-0">
             {!cameraReady && !previewUrl && (
-              <div className="flex flex-col items-center justify-center h-64 gap-4">
-                <Camera className="h-12 w-12 text-muted-foreground" />
-                <Button onClick={startCamera} className="gradient-gold text-primary-foreground">
-                  <Camera className="h-4 w-4 mr-2" />
-                  Open Camera
-                </Button>
+              <div className="flex flex-col items-center justify-center h-64 gap-4 p-4">
+                {cameraDenied ? (
+                  <>
+                    <Settings className="h-12 w-12 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground text-center">
+                      Camera access was denied. Please enable camera permissions in your browser settings and try again.
+                    </p>
+                    <div className="flex flex-col gap-2 w-full max-w-[200px]">
+                      <Button onClick={() => { setCameraDenied(false); startCamera(); }} className="gradient-gold text-primary-foreground">
+                        <Camera className="h-4 w-4 mr-2" />
+                        Try Again
+                      </Button>
+                      <p className="text-[10px] text-muted-foreground text-center">
+                        Tap the lock/settings icon in your browser's address bar to manage permissions
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Camera className="h-12 w-12 text-muted-foreground" />
+                    <Button onClick={startCamera} className="gradient-gold text-primary-foreground">
+                      <Camera className="h-4 w-4 mr-2" />
+                      Open Camera
+                    </Button>
+                  </>
+                )}
               </div>
             )}
             {cameraReady && !previewUrl && (
