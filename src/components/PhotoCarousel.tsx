@@ -40,13 +40,13 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
           {/* Tap areas */}
           <button
             type="button"
-            className="absolute inset-y-0 left-0 w-1/3 z-10"
+            className="absolute inset-y-0 left-0 w-1/3 z-10 touch-pan-y"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIndex((i) => Math.max(0, i - 1)); }}
             aria-label="Previous photo"
           />
           <button
             type="button"
-            className="absolute inset-y-0 right-0 w-1/3 z-10"
+            className="absolute inset-y-0 right-0 w-1/3 z-10 touch-pan-y"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIndex((i) => Math.min(allPhotos.length - 1, i + 1)); }}
             aria-label="Next photo"
           />
