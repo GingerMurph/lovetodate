@@ -70,6 +70,7 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
     <div
       ref={containerRef}
       className={`relative ${aspectClass} bg-secondary select-none`}
+      style={{ touchAction: "pan-y" }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onClick={handleClick}
