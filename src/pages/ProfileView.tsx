@@ -153,6 +153,11 @@ const ProfileView = () => {
   };
 
   const formatEnum = (val: string | null) => val?.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) || null;
+  const formatArray = (val: string | string[] | null) => {
+    if (!val) return null;
+    if (Array.isArray(val)) return val.map(v => formatEnum(v)).filter(Boolean).join(", ");
+    return formatEnum(val);
+  };
 
   if (loading) return <AppLayout><div className="flex h-64 items-center justify-center text-muted-foreground">Loading...</div></AppLayout>;
   if (!profile) return <AppLayout><div className="flex h-64 items-center justify-center text-muted-foreground">Profile not found</div></AppLayout>;
@@ -180,8 +185,8 @@ const ProfileView = () => {
             )}
             {profile.nationality && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{profile.nationality}</span>}
           </div>
-          {profile.relationship_goal && (
-            <Badge variant="outline" className="mt-3 border-gold/30 text-gold">{formatEnum(profile.relationship_goal)}</Badge>
+          {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
+            <Badge variant="outline" className="mt-3 border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
           )}
         </div>
 
@@ -295,17 +300,17 @@ const ProfileView = () => {
                 {profile.political_beliefs && (
                   <div className="flex items-center gap-3 text-sm"><Vote className="h-4 w-4 text-gold shrink-0" /><span>Politics: {formatEnum(profile.political_beliefs)}</span></div>
                 )}
-                {profile.favourite_music && (
-                  <div className="flex items-center gap-3 text-sm"><Music className="h-4 w-4 text-gold shrink-0" /><span>Music: {profile.favourite_music}</span></div>
+                {profile.favourite_music && (Array.isArray(profile.favourite_music) ? profile.favourite_music.length > 0 : true) && (
+                  <div className="flex items-center gap-3 text-sm"><Music className="h-4 w-4 text-gold shrink-0" /><span>Music: {formatArray(profile.favourite_music)}</span></div>
                 )}
-                {profile.favourite_film && (
-                  <div className="flex items-center gap-3 text-sm"><Film className="h-4 w-4 text-gold shrink-0" /><span>Film: {profile.favourite_film}</span></div>
+                {profile.favourite_film && (Array.isArray(profile.favourite_film) ? profile.favourite_film.length > 0 : true) && (
+                  <div className="flex items-center gap-3 text-sm"><Film className="h-4 w-4 text-gold shrink-0" /><span>Film: {formatArray(profile.favourite_film)}</span></div>
                 )}
-                {profile.favourite_sport && (
-                  <div className="flex items-center gap-3 text-sm"><Dumbbell className="h-4 w-4 text-gold shrink-0" /><span>Sport: {profile.favourite_sport}</span></div>
+                {profile.favourite_sport && (Array.isArray(profile.favourite_sport) ? profile.favourite_sport.length > 0 : true) && (
+                  <div className="flex items-center gap-3 text-sm"><Dumbbell className="h-4 w-4 text-gold shrink-0" /><span>Sport: {formatArray(profile.favourite_sport)}</span></div>
                 )}
-                {profile.favourite_hobbies && (
-                  <div className="flex items-center gap-3 text-sm"><Gamepad2 className="h-4 w-4 text-gold shrink-0" /><span>Hobbies: {profile.favourite_hobbies}</span></div>
+                {profile.favourite_hobbies && (Array.isArray(profile.favourite_hobbies) ? profile.favourite_hobbies.length > 0 : true) && (
+                  <div className="flex items-center gap-3 text-sm"><Gamepad2 className="h-4 w-4 text-gold shrink-0" /><span>Hobbies: {formatArray(profile.favourite_hobbies)}</span></div>
                 )}
                 {profile.personality_type && (
                   <div className="flex items-center gap-3 text-sm"><Brain className="h-4 w-4 text-gold shrink-0" /><span>Personality: {profile.personality_type}</span></div>
