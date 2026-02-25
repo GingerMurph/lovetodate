@@ -97,8 +97,8 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
 
       {/* View Profile hint */}
       {allPhotos.length > 1 && (
-        <div className="absolute inset-0 flex items-end justify-center pb-3 pointer-events-none z-10">
-          <span className="text-[10px] font-medium uppercase tracking-widest text-foreground/40">Tap center to view profile</span>
+        <div className="absolute inset-0 flex items-end justify-center pb-4 pointer-events-none z-10">
+          <span className="rounded-full bg-background/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-foreground/80 backdrop-blur-sm shadow-sm">Tap to view profile</span>
         </div>
       )}
     </div>
