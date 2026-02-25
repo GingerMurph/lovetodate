@@ -107,16 +107,12 @@ const Verify = () => {
         .upload(path, capturedImage, { upsert: true, contentType: "image/jpeg" });
       if (uploadErr) throw uploadErr;
 
-      // Mark profile as verified
-      const { error: updateErr } = await supabase
-        .from("profiles")
-        .update({
-          is_verified: true,
-          verification_selfie_url: path,
-          verified_at: new Date().toISOString(),
-        } as any)
-        .eq("user_id", user.id);
-      if (updateErr) throw updateErr;
+      // Submit verification via server-side edge function (prevents client-side bypass)
+      const { data: verifyData, error: verifyErr } = await supabase.functions.invoke("submit-verification", {
+        body: { selfie_path: path },
+      });
+      if (verifyErr) throw verifyErr;
+      if (verifyData?.error) throw new Error(verifyData.error);
 
       toast.success("You're now verified! ✅");
       navigate("/profile");

@@ -58,11 +58,10 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Fetch the profile, like status, and connection status in parallel
-    // Include latitude/longitude for server-side distance calculation only — never returned to client
-    const [profileRes, likeRes, likeBackRes, connForward, connReverse] = await Promise.all([
+    // Fetch the profile, like status, connection status, and location in parallel
+    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, latitude, longitude, is_verified, non_negotiables")
+        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
@@ -71,6 +70,7 @@ Deno.serve(async (req) => {
         .eq("unlocker_id", user.id).eq("target_id", userId).maybeSingle(),
       adminClient.from("unlocked_connections").select("id")
         .eq("unlocker_id", userId).eq("target_id", user.id).maybeSingle(),
+      adminClient.from("user_locations").select("latitude, longitude").eq("user_id", userId).maybeSingle(),
     ]);
     const connectionRes = { data: connForward.data || connReverse.data };
 
@@ -81,8 +81,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Strip latitude/longitude — used only for server-side distance, never exposed
-    const { date_of_birth, avatar_url, photo_urls, latitude, longitude, ...rest } = profileRes.data;
+    // GPS coordinates come from private user_locations table, never from profiles
+    const { date_of_birth, avatar_url, photo_urls, ...rest } = profileRes.data;
+    const latitude = locationRes.data?.latitude ?? null;
+    const longitude = locationRes.data?.longitude ?? null;
 
     // Sign photo URLs
     const signUrl = async (rawPath: string | null): Promise<string | null> => {

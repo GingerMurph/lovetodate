@@ -275,6 +275,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_locations: {
+        Row: {
+          latitude: number | null
+          longitude: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          latitude?: number | null
+          longitude?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          latitude?: number | null
+          longitude?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

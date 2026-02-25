@@ -48,16 +48,21 @@ Deno.serve(async (req) => {
     }
 
     // Use service role to bypass RLS and fetch all profiles except the user's own
-    // Latitude/longitude are fetched only for server-side distance calculation — never returned to client
     const adminClient = createClient(supabaseUrl, serviceKey);
     const { data: profiles, error } = await adminClient
       .from("profiles")
       .select(
         "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal, is_verified, non_negotiables"
+        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables"
       )
       .neq("user_id", user.id)
       .neq("is_paused", true);
+
+    // Fetch locations from private table (service role only)
+    const { data: locations } = await adminClient
+      .from("user_locations")
+      .select("user_id, latitude, longitude");
+    const locationMap = new Map((locations || []).map(l => [l.user_id, l]));
 
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -80,7 +85,10 @@ Deno.serve(async (req) => {
     // Calculate age from date_of_birth and distance server-side, then strip raw coords and dob
     // Generate signed URLs for avatars since bucket is private
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, latitude, longitude, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+        const loc = locationMap.get(rest.user_id);
+        const latitude = loc?.latitude ?? null;
+        const longitude = loc?.longitude ?? null;
         // Sign all photo URLs
         const signUrl = async (rawPath: string | null): Promise<string | null> => {
           if (!rawPath) return null;
