@@ -326,7 +326,7 @@ const Discover = () => {
                                       {label}
                                     </Badge>
                                   </TooltipTrigger>
-                                  <TooltipContent side="top" className="max-w-[200px] text-center">
+                                  <TooltipContent side="top" className="max-w-[200px] text-center animate-scale-in">
                                     <p className="text-xs">{currentProfile.display_name} won't date someone who is: <strong>{label}</strong></p>
                                   </TooltipContent>
                                 </Tooltip>
