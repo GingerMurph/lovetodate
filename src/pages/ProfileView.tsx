@@ -65,6 +65,34 @@ const ProfileView = () => {
   const [displayedScore, setDisplayedScore] = useState(0);
   const [scoreRevealed, setScoreRevealed] = useState(false);
 
+  // Swipe-to-go-back gesture
+  const swipeRef = useRef<{ x: number; y: number; time: number } | null>(null);
+  const [swipeProgress, setSwipeProgress] = useState(0);
+
+  const handlePageTouchStart = useCallback((e: React.TouchEvent) => {
+    // Only activate from the left 40px edge
+    if (e.touches[0].clientX > 40) return;
+    swipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
+  }, []);
+
+  const handlePageTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!swipeRef.current) return;
+    const dx = e.touches[0].clientX - swipeRef.current.x;
+    const dy = e.touches[0].clientY - swipeRef.current.y;
+    if (dx > 0 && dx > Math.abs(dy)) {
+      setSwipeProgress(Math.min(dx / 150, 1));
+    }
+  }, []);
+
+  const handlePageTouchEnd = useCallback(() => {
+    if (!swipeRef.current) return;
+    if (swipeProgress >= 0.5) {
+      navigate(-1);
+    }
+    setSwipeProgress(0);
+    swipeRef.current = null;
+  }, [swipeProgress, navigate]);
+
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -202,7 +230,26 @@ const ProfileView = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto max-w-3xl px-4 py-6">
+      <div
+        className="container mx-auto max-w-3xl px-4 py-6 relative"
+        onTouchStart={handlePageTouchStart}
+        onTouchMove={handlePageTouchMove}
+        onTouchEnd={handlePageTouchEnd}
+      >
+        {/* Swipe-back edge indicator */}
+        {swipeProgress > 0 && (
+          <div
+            className="fixed left-0 top-0 bottom-0 z-50 flex items-center pointer-events-none"
+            style={{ width: `${swipeProgress * 48}px` }}
+          >
+            <div
+              className="ml-1 h-10 w-10 rounded-full bg-gold/80 flex items-center justify-center shadow-lg transition-transform"
+              style={{ transform: `scale(${0.5 + swipeProgress * 0.5})`, opacity: swipeProgress }}
+            >
+              <ArrowLeft className="h-5 w-5 text-primary-foreground" />
+            </div>
+          </div>
+        )}
         {/* Go Back */}
         <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate(-1)}>
           <ArrowLeft className="h-4 w-4" />
