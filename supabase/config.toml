@@ -15,3 +15,6 @@ verify_jwt = false
 
 [functions.generate-icebreaker]
 verify_jwt = false
+
+[functions.generate-bio]
+verify_jwt = false
