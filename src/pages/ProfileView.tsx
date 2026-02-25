@@ -68,11 +68,12 @@ const ProfileView = () => {
   // Swipe-to-go-back gesture
   const swipeRef = useRef<{ x: number; y: number; time: number } | null>(null);
   const [swipeProgress, setSwipeProgress] = useState(0);
+  const hapticFired = useRef(false);
 
   const handlePageTouchStart = useCallback((e: React.TouchEvent) => {
-    // Only activate from the left 40px edge
     if (e.touches[0].clientX > 40) return;
     swipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY, time: Date.now() };
+    hapticFired.current = false;
   }, []);
 
   const handlePageTouchMove = useCallback((e: React.TouchEvent) => {
@@ -80,7 +81,14 @@ const ProfileView = () => {
     const dx = e.touches[0].clientX - swipeRef.current.x;
     const dy = e.touches[0].clientY - swipeRef.current.y;
     if (dx > 0 && dx > Math.abs(dy)) {
-      setSwipeProgress(Math.min(dx / 150, 1));
+      const progress = Math.min(dx / 150, 1);
+      setSwipeProgress(progress);
+      if (progress >= 0.5 && !hapticFired.current) {
+        hapticFired.current = true;
+        navigator.vibrate?.(15);
+      } else if (progress < 0.5) {
+        hapticFired.current = false;
+      }
     }
   }, []);
 
