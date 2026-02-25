@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AvatarImage } from "@/components/AvatarImage";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Lightbulb, Sparkles } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import { toast } from "sonner";
 
@@ -36,6 +36,8 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+  const [icebreakers, setIcebreakers] = useState<string[]>([]);
+  const [loadingIcebreakers, setLoadingIcebreakers] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -189,6 +191,32 @@ const Chat = () => {
     }
   };
 
+  const handleGetIcebreakers = async () => {
+    if (!partnerId || loadingIcebreakers) return;
+    setLoadingIcebreakers(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-icebreaker", {
+        body: { partnerId },
+      });
+      if (error) throw error;
+      if (data?.icebreakers?.length) {
+        setIcebreakers(data.icebreakers);
+      } else {
+        toast.error("Couldn't generate suggestions. Try again!");
+      }
+    } catch (err: any) {
+      console.error("Icebreaker error:", err);
+      toast.error("Failed to generate icebreakers");
+    } finally {
+      setLoadingIcebreakers(false);
+    }
+  };
+
+  const handleSelectIcebreaker = (text: string) => {
+    setNewMessage(text);
+    setIcebreakers([]);
+  };
+
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -228,9 +256,41 @@ const Chat = () => {
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             </div>
           ) : messages.length === 0 ? (
-            <p className="text-center text-muted-foreground text-sm py-8">
-              No messages yet. Say hello! 👋
-            </p>
+            <div className="flex flex-col items-center justify-center py-8 gap-4">
+              <p className="text-center text-muted-foreground text-sm">
+                No messages yet. Say hello! 👋
+              </p>
+              {icebreakers.length === 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGetIcebreakers}
+                  disabled={loadingIcebreakers}
+                  className="gap-2"
+                >
+                  {loadingIcebreakers ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  Suggest an icebreaker
+                </Button>
+              )}
+              {icebreakers.length > 0 && (
+                <div className="w-full space-y-2 max-w-sm">
+                  <p className="text-xs text-muted-foreground text-center font-medium">Tap one to use it:</p>
+                  {icebreakers.map((text, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSelectIcebreaker(text)}
+                      className="w-full text-left text-sm px-4 py-3 rounded-xl border border-border bg-card hover:bg-accent transition-colors"
+                    >
+                      {text}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           ) : (
             messages.map((msg) => {
               const isOwn = msg.sender_id === user?.id;
@@ -255,9 +315,39 @@ const Chat = () => {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Icebreaker suggestions (shown above input when not empty chat) */}
+        {icebreakers.length > 0 && messages.length > 0 && (
+          <div className="border-t border-border bg-card/50 px-4 py-2 space-y-1.5">
+            <p className="text-xs text-muted-foreground font-medium">Tap to use:</p>
+            {icebreakers.map((text, i) => (
+              <button
+                key={i}
+                onClick={() => handleSelectIcebreaker(text)}
+                className="w-full text-left text-sm px-3 py-2 rounded-lg border border-border bg-card hover:bg-accent transition-colors"
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Input */}
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGetIcebreakers}
+              disabled={loadingIcebreakers}
+              className="shrink-0 px-2"
+              title="Get icebreaker suggestions"
+            >
+              {loadingIcebreakers ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Lightbulb className="h-4 w-4" />
+              )}
+            </Button>
             <Input
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}

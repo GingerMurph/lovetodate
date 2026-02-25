@@ -12,3 +12,6 @@ verify_jwt = false
 
 [functions.verify-unlock-payment]
 verify_jwt = false
+
+[functions.generate-icebreaker]
+verify_jwt = false
