@@ -181,8 +181,16 @@ const ProfileSetup = () => {
     try {
       // Upload all photos
       const finalPaths = [...storedPhotoPaths];
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+      const maxSize = 10 * 1024 * 1024; // 10MB
       await Promise.all(photoFiles.map(async (file, i) => {
         if (file) {
+          if (!allowedTypes.includes(file.type)) {
+            throw new Error(`Invalid file type: ${file.type}. Only JPEG, PNG, WebP, and GIF are allowed.`);
+          }
+          if (file.size > maxSize) {
+            throw new Error(`File is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 10MB.`);
+          }
           const ext = file.name.split(".").pop();
           const path = `${user.id}/photo_${i}.${ext}`;
           const { error: uploadError } = await supabase.storage.from("profile-photos").upload(path, file, { upsert: true });
