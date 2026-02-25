@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       .from("profiles")
       .select(
         "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal, is_verified"
+        "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, latitude, longitude, max_distance_miles, relationship_goal, is_verified, non_negotiables"
       )
       .neq("user_id", user.id)
       .neq("is_paused", true);
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
     // Calculate age from date_of_birth and distance server-side, then strip raw coords and dob
     // Generate signed URLs for avatars since bucket is private
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, latitude, longitude, max_distance_miles, relationship_goal, ...rest }) => {
+      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, latitude, longitude, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
         // Sign all photo URLs
         const signUrl = async (rawPath: string | null): Promise<string | null> => {
           if (!rawPath) return null;
@@ -117,6 +117,7 @@ Deno.serve(async (req) => {
           distance_miles: distanceMiles,
           max_distance_miles: max_distance_miles,
           too_far: tooFar,
+          non_negotiables: Array.isArray(non_negotiables) ? non_negotiables : [],
         };
       })
     );

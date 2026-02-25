@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2 } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2, Ban } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
@@ -45,6 +46,7 @@ type DiscoverProfile = {
   max_distance_miles: number | null;
   too_far: boolean;
   is_verified: boolean;
+  non_negotiables: string[];
 };
 
 const Discover = () => {
@@ -308,8 +310,18 @@ const Discover = () => {
                         </div>
                       </div>
                     </Link>
-                    <CardContent className="flex items-center justify-between p-3">
-                      <span className="text-xs text-muted-foreground truncate max-w-[60%]">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
+                    <CardContent className="p-3 space-y-2">
+                      <span className="text-xs text-muted-foreground truncate block">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
+                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          <Ban className="h-3 w-3 text-destructive shrink-0" />
+                          {currentProfile.non_negotiables.map((item) => (
+                            <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0">
+                              {item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </SwipeCard>
