@@ -60,10 +60,16 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const x = e.clientX - rect.left;
     const third = rect.width / 3;
-    e.preventDefault();
-    e.stopPropagation();
-    if (x < third) goPrev();
-    else if (x > third * 2) goNext();
+    if (x < third) {
+      e.preventDefault();
+      e.stopPropagation();
+      goPrev();
+    } else if (x > third * 2) {
+      e.preventDefault();
+      e.stopPropagation();
+      goNext();
+    }
+    // Middle third: let the click propagate (e.g. to Link)
   };
 
   return (
