@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Camera, Loader2, Trash2, BadgeCheck, ShieldCheck } from "lucide-react";
+import { Camera, Loader2, Trash2, BadgeCheck, ShieldCheck, Sparkles } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
@@ -43,6 +43,9 @@ const ProfileSetup = () => {
   const [isVerified, setIsVerified] = useState(false);
   const [pausing, setPausing] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [bioSuggestions, setBioSuggestions] = useState<string[]>([]);
+  const [loadingBio, setLoadingBio] = useState(false);
+  const [bioTone, setBioTone] = useState("sincere");
   const [form, setForm] = useState({
     display_name: "",
     date_of_birth: "",
@@ -171,6 +174,28 @@ const ProfileSetup = () => {
     setPhotoFiles(prev => { const n = [...prev]; n[index] = null; return n; });
     setPhotoPreviews(prev => { const n = [...prev]; n[index] = null; return n; });
     setStoredPhotoPaths(prev => { const n = [...prev]; n[index] = null; return n; });
+  };
+
+  const handleGenerateBio = async () => {
+    if (loadingBio) return;
+    setLoadingBio(true);
+    setBioSuggestions([]);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-bio", {
+        body: { tone: bioTone },
+      });
+      if (error) throw error;
+      if (data?.bios?.length) {
+        setBioSuggestions(data.bios);
+      } else {
+        toast.error("Couldn't generate bios. Try again!");
+      }
+    } catch (err: any) {
+      console.error("Bio generation error:", err);
+      toast.error("Failed to generate bio suggestions");
+    } finally {
+      setLoadingBio(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -726,8 +751,49 @@ const ProfileSetup = () => {
           {/* Bio */}
           <Card className="border-border bg-card">
             <CardHeader><CardTitle className="font-serif text-lg">About You</CardTitle></CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <Textarea value={form.bio} onChange={(e) => update("bio", e.target.value)} placeholder="Tell potential matches about yourself, what makes you unique, what you're looking for..." rows={5} className="resize-none" />
+              
+              <div className="flex items-center gap-2">
+                <Select value={bioTone} onValueChange={setBioTone}>
+                  <SelectTrigger className="w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="witty">✨ Witty</SelectItem>
+                    <SelectItem value="sincere">💛 Sincere</SelectItem>
+                    <SelectItem value="adventurous">🌍 Adventurous</SelectItem>
+                    <SelectItem value="chill">😎 Chill</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleGenerateBio}
+                  disabled={loadingBio}
+                  className="gap-1.5"
+                >
+                  {loadingBio ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                  Write my bio
+                </Button>
+              </div>
+
+              {bioSuggestions.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-xs text-muted-foreground font-medium">Tap to use:</p>
+                  {bioSuggestions.map((bio, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => { update("bio", bio); setBioSuggestions([]); }}
+                      className="w-full text-left text-sm px-3 py-2.5 rounded-lg border border-border bg-background hover:bg-accent transition-colors"
+                    >
+                      {bio}
+                    </button>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
 
