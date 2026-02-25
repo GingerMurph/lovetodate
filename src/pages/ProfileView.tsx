@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -59,6 +60,8 @@ const ProfileView = () => {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [compatScore, setCompatScore] = useState<{ score: number; summary: string } | null>(null);
+  const [loadingCompat, setLoadingCompat] = useState(false);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -92,6 +95,17 @@ const ProfileView = () => {
     setLoading(false);
   };
 
+  const fetchCompatibility = async () => {
+    if (!userId || !user || !profile || isOwnProfile) return;
+    setLoadingCompat(true);
+    const { data, error } = await supabase.functions.invoke("compatibility-score", {
+      body: { partnerId: userId },
+    });
+    if (!error && data && !data.error) {
+      setCompatScore({ score: data.score, summary: data.summary });
+    }
+    setLoadingCompat(false);
+  };
 
   const handleLike = async () => {
     if (!user || !userId) return;
@@ -228,6 +242,39 @@ const ProfileView = () => {
           <div className="mb-6 text-center">
             <Badge className="bg-red-500/20 text-red-400 border-red-500/30">💕 It's a mutual like!</Badge>
           </div>
+        )}
+
+        {/* AI Compatibility Score */}
+        {!isOwnProfile && (
+          <Card className="mb-4 border-gold/30 bg-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-gold" />
+                Compatibility Score
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {compatScore ? (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Progress value={compatScore.score} className="flex-1 h-3" />
+                    <span className="text-2xl font-bold text-gold min-w-[3ch] text-right">{compatScore.score}%</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{compatScore.summary}</p>
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full border-gold/30 text-gold hover:bg-gold/10"
+                  onClick={fetchCompatibility}
+                  disabled={loadingCompat}
+                >
+                  {loadingCompat ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                  {loadingCompat ? "Analysing..." : "Check Compatibility"}
+                </Button>
+              )}
+            </CardContent>
+          </Card>
         )}
 
         {/* Bio */}
