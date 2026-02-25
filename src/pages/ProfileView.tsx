@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AvatarImage } from "@/components/AvatarImage";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import { useParams, useNavigate } from "react-router-dom";
@@ -62,6 +62,8 @@ const ProfileView = () => {
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [compatScore, setCompatScore] = useState<{ score: number; summary: string } | null>(null);
   const [loadingCompat, setLoadingCompat] = useState(false);
+  const [displayedScore, setDisplayedScore] = useState(0);
+  const [scoreRevealed, setScoreRevealed] = useState(false);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -98,11 +100,30 @@ const ProfileView = () => {
   const fetchCompatibility = async () => {
     if (!userId || !user || !profile || isOwnProfile) return;
     setLoadingCompat(true);
+    setScoreRevealed(false);
+    setDisplayedScore(0);
     const { data, error } = await supabase.functions.invoke("compatibility-score", {
       body: { partnerId: userId },
     });
     if (!error && data && !data.error) {
       setCompatScore({ score: data.score, summary: data.summary });
+      // Trigger count-up animation
+      const target = data.score;
+      const duration = 1200;
+      const steps = 40;
+      const increment = target / steps;
+      let current = 0;
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        current = Math.min(Math.round(increment * step), target);
+        setDisplayedScore(current);
+        if (step >= steps) {
+          clearInterval(timer);
+          setDisplayedScore(target);
+          setTimeout(() => setScoreRevealed(true), 200);
+        }
+      }, duration / steps);
     }
     setLoadingCompat(false);
   };
@@ -246,26 +267,53 @@ const ProfileView = () => {
 
         {/* AI Compatibility Score */}
         {!isOwnProfile && (
-          <Card className="mb-4 border-gold/30 bg-card">
+          <Card className={`mb-4 border-gold/30 bg-card overflow-hidden transition-all duration-500 ${compatScore ? 'shadow-[0_0_20px_hsl(var(--gold)/0.15)]' : ''}`}>
             <CardHeader className="pb-3">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-gold" />
+                <Sparkles className={`h-5 w-5 text-gold ${compatScore ? 'animate-pulse' : ''}`} />
                 Compatibility Score
               </CardTitle>
             </CardHeader>
             <CardContent>
               {compatScore ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Progress value={compatScore.score} className="flex-1 h-3" />
-                    <span className="text-2xl font-bold text-gold min-w-[3ch] text-right">{compatScore.score}%</span>
+                <div className="animate-fade-in space-y-4">
+                  {/* Score ring */}
+                  <div className="flex items-center gap-5">
+                    <div className="relative h-20 w-20 shrink-0">
+                      <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--secondary))" strokeWidth="8" />
+                        <circle
+                          cx="50" cy="50" r="42" fill="none"
+                          stroke="hsl(var(--gold))"
+                          strokeWidth="8"
+                          strokeLinecap="round"
+                          strokeDasharray={`${2 * Math.PI * 42}`}
+                          strokeDashoffset={`${2 * Math.PI * 42 * (1 - displayedScore / 100)}`}
+                          className="transition-all duration-300 ease-out"
+                        />
+                      </svg>
+                      <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-gold">
+                        {displayedScore}%
+                      </span>
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <Progress value={displayedScore} className="h-2" />
+                      <p className={`text-sm text-muted-foreground transition-opacity duration-500 ${scoreRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                        {compatScore.summary}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{compatScore.summary}</p>
+                  {/* Score label */}
+                  <p className={`text-center text-xs font-medium uppercase tracking-wider transition-opacity duration-700 ${scoreRevealed ? 'opacity-100' : 'opacity-0'} ${
+                    displayedScore >= 80 ? 'text-green-500' : displayedScore >= 50 ? 'text-gold' : 'text-muted-foreground'
+                  }`}>
+                    {displayedScore >= 80 ? '🔥 Excellent Match!' : displayedScore >= 60 ? '✨ Great Potential!' : displayedScore >= 40 ? '💫 Worth Exploring' : '🌱 See Where It Goes'}
+                  </p>
                 </div>
               ) : (
                 <Button
                   variant="outline"
-                  className="w-full border-gold/30 text-gold hover:bg-gold/10"
+                  className="w-full border-gold/30 text-gold hover:bg-gold/10 hover-scale"
                   onClick={fetchCompatibility}
                   disabled={loadingCompat}
                 >
