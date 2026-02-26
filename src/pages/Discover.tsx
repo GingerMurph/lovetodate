@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
@@ -52,11 +52,14 @@ type DiscoverProfile = {
 
 const Discover = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const resumeIndex = (location.state as any)?.resumeIndex;
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [resumeApplied, setResumeApplied] = useState(false);
   const [history, setHistory] = useState<number[]>([]);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [filters, setFilters] = useState({
@@ -102,7 +105,13 @@ const Discover = () => {
 
     if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
-    setCurrentIndex(0);
+    // Restore position if returning from a profile view
+    if (resumeIndex !== undefined && !resumeApplied) {
+      setCurrentIndex(resumeIndex);
+      setResumeApplied(true);
+    } else if (!resumeApplied) {
+      setCurrentIndex(0);
+    }
     setHistory([]);
     setLoading(false);
   };
@@ -291,7 +300,7 @@ const Discover = () => {
                   onSwipeLeft={() => { handlePass(); advanceCard(); }}
                 >
                   <Card className="overflow-hidden border-border bg-card">
-                    <Link to={`/profile/${currentProfile.user_id}`}>
+                    <Link to={`/profile/${currentProfile.user_id}`} state={{ fromDiscover: true, discoverIndex: currentIndex }}>
                       <PhotoCarousel
                         avatarUrl={currentProfile.avatar_url}
                         photoUrls={currentProfile.photo_urls || []}
