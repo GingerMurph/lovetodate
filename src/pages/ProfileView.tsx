@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { AvatarImage } from "@/components/AvatarImage";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -53,6 +53,10 @@ const ProfileView = () => {
   const { userId } = useParams();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = location.state as { fromDiscover?: boolean; discoverIndex?: number } | null;
+  const fromDiscover = navState?.fromDiscover ?? false;
+  const discoverIndex = navState?.discoverIndex ?? 0;
   const [profile, setProfile] = useState<ViewProfile | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLikedBack, setIsLikedBack] = useState(false);
@@ -65,10 +69,14 @@ const ProfileView = () => {
   const [displayedScore, setDisplayedScore] = useState(0);
   const [scoreRevealed, setScoreRevealed] = useState(false);
 
-  // Swipe-to-go-back gesture
+  // Swipe-to-go-back gesture (from left edge)
   const swipeRef = useRef<{ x: number; y: number; time: number } | null>(null);
   const [swipeProgress, setSwipeProgress] = useState(0);
   const hapticFired = useRef(false);
+
+  // Swipe left/right on card to like/pass
+  const cardSwipeRef = useRef<{ x: number; y: number } | null>(null);
+  const [cardSwipeX, setCardSwipeX] = useState(0);
 
   const handlePageTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches[0].clientX > 40) return;
@@ -92,14 +100,37 @@ const ProfileView = () => {
     }
   }, []);
 
+  const goBackToDiscover = useCallback(() => {
+    if (fromDiscover) {
+      navigate("/discover", { state: { resumeIndex: discoverIndex } });
+    } else {
+      navigate(-1);
+    }
+  }, [fromDiscover, discoverIndex, navigate]);
+
   const handlePageTouchEnd = useCallback(() => {
     if (!swipeRef.current) return;
     if (swipeProgress >= 0.5) {
-      navigate(-1);
+      goBackToDiscover();
     }
     setSwipeProgress(0);
     swipeRef.current = null;
-  }, [swipeProgress, navigate]);
+  }, [swipeProgress, goBackToDiscover]);
+
+  // Card swipe handlers for like/pass
+  const handleCardTouchStart = useCallback((e: React.TouchEvent) => {
+    cardSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, []);
+
+  const handleCardTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!cardSwipeRef.current) return;
+    const dx = e.touches[0].clientX - cardSwipeRef.current.x;
+    const dy = e.touches[0].clientY - cardSwipeRef.current.y;
+    if (Math.abs(dx) > Math.abs(dy)) {
+      setCardSwipeX(dx);
+    }
+  }, []);
+
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -177,6 +208,31 @@ const ProfileView = () => {
       toast.success("Liked!");
     }
   };
+
+  const handleCardTouchEnd = useCallback(() => {
+    if (!cardSwipeRef.current) return;
+    const threshold = 100;
+    if (cardSwipeX > threshold) {
+      if (!isLiked) {
+        handleLike();
+        toast.success("Love To Date! ❤️");
+      }
+      if (fromDiscover) {
+        navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
+      } else {
+        navigate("/discover");
+      }
+    } else if (cardSwipeX < -threshold) {
+      toast("Not for me");
+      if (fromDiscover) {
+        navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
+      } else {
+        navigate("/discover");
+      }
+    }
+    setCardSwipeX(0);
+    cardSwipeRef.current = null;
+  }, [cardSwipeX, isLiked, handleLike, fromDiscover, discoverIndex, navigate]);
 
   const [unlocking, setUnlocking] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -259,13 +315,33 @@ const ProfileView = () => {
           </div>
         )}
         {/* Go Back */}
-        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => navigate(-1)}>
+        <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={goBackToDiscover}>
           <ArrowLeft className="h-4 w-4" />
           Go Back
         </Button>
         {/* Header */}
         <div className="mb-6 flex flex-col items-center">
-          <div className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4">
+          <div
+            className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4 relative select-none"
+            onTouchStart={handleCardTouchStart}
+            onTouchMove={handleCardTouchMove}
+            onTouchEnd={handleCardTouchEnd}
+            style={{
+              transform: cardSwipeX !== 0 ? `translateX(${cardSwipeX}px) rotate(${cardSwipeX * 0.05}deg)` : undefined,
+              transition: cardSwipeX === 0 ? 'transform 0.3s ease' : undefined,
+            }}
+          >
+            {/* Swipe overlay indicators */}
+            {cardSwipeX > 50 && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-green-500/20 rounded-2xl pointer-events-none">
+                <span className="text-4xl font-bold text-green-500 rotate-[-15deg] border-4 border-green-500 rounded-lg px-4 py-1">LIKE</span>
+              </div>
+            )}
+            {cardSwipeX < -50 && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-destructive/20 rounded-2xl pointer-events-none">
+                <span className="text-4xl font-bold text-destructive rotate-[15deg] border-4 border-destructive rounded-lg px-4 py-1">NOPE</span>
+              </div>
+            )}
             <PhotoCarousel
               avatarUrl={profile.avatar_url}
               photoUrls={profile.photo_urls || []}
@@ -273,6 +349,7 @@ const ProfileView = () => {
               aspectClass="aspect-[3/4]"
             />
           </div>
+          <p className="text-xs text-muted-foreground mb-2">Swipe photo right to like, left to pass</p>
           <h1 className="font-serif text-3xl font-bold flex items-center gap-2">
             {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
             {profile.is_verified && <VerifiedBadge size="lg" />}
@@ -501,14 +578,29 @@ const ProfileView = () => {
             <Button
               variant="outline"
               className="flex-1 max-w-[200px] gap-2 border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
-              onClick={() => { navigate("/discover"); toast("Not for me"); }}
+              onClick={() => {
+                toast("Not for me");
+                if (fromDiscover) {
+                  navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
+                } else {
+                  navigate("/discover");
+                }
+              }}
             >
               <ThumbsDown className="h-5 w-5" />
               Not For Me
             </Button>
             <Button
               className="flex-1 max-w-[200px] gap-2 gradient-gold text-primary-foreground"
-              onClick={() => { handleLike(); toast.success("Love To Date! ❤️"); }}
+              onClick={() => {
+                handleLike();
+                toast.success("Love To Date! ❤️");
+                if (fromDiscover) {
+                  navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
+                } else {
+                  navigate("/discover");
+                }
+              }}
               disabled={isLiked}
             >
               <Heart className="h-5 w-5" />
