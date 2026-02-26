@@ -117,19 +117,32 @@ const ProfileView = () => {
     swipeRef.current = null;
   }, [swipeProgress, goBackToDiscover]);
 
-  // Card swipe handlers for like/pass
-  const handleCardTouchStart = useCallback((e: React.TouchEvent) => {
-    cardSwipeRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  // Card swipe handlers for like/pass (touch + mouse)
+  const cardSwipeLocked = useRef(false); // lock axis once determined
+  const handleCardPointerStart = useCallback((x: number, y: number) => {
+    cardSwipeRef.current = { x, y };
+    cardSwipeLocked.current = false;
   }, []);
 
-  const handleCardTouchMove = useCallback((e: React.TouchEvent) => {
+  const handleCardPointerMove = useCallback((x: number, y: number) => {
     if (!cardSwipeRef.current) return;
-    const dx = e.touches[0].clientX - cardSwipeRef.current.x;
-    const dy = e.touches[0].clientY - cardSwipeRef.current.y;
-    if (Math.abs(dx) > Math.abs(dy)) {
+    const dx = x - cardSwipeRef.current.x;
+    const dy = y - cardSwipeRef.current.y;
+    // Lock to horizontal axis after 10px movement
+    if (!cardSwipeLocked.current && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+      cardSwipeLocked.current = true;
+      if (Math.abs(dy) > Math.abs(dx)) {
+        // Vertical dominant — cancel card swipe
+        cardSwipeRef.current = null;
+        return;
+      }
+    }
+    if (cardSwipeLocked.current) {
       setCardSwipeX(dx);
     }
   }, []);
+
+  const [isDraggingCard, setIsDraggingCard] = useState(false);
 
 
   useEffect(() => {
@@ -209,8 +222,9 @@ const ProfileView = () => {
     }
   };
 
-  const handleCardTouchEnd = useCallback(() => {
-    if (!cardSwipeRef.current) return;
+  const handleCardPointerEnd = useCallback(() => {
+    setIsDraggingCard(false);
+    if (!cardSwipeRef.current && cardSwipeX === 0) { return; }
     const threshold = 100;
     if (cardSwipeX > threshold) {
       if (!isLiked) {
@@ -322,23 +336,32 @@ const ProfileView = () => {
         {/* Header */}
         <div className="mb-6 flex flex-col items-center">
           <div
-            className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4 relative select-none"
-            onTouchStart={handleCardTouchStart}
-            onTouchMove={handleCardTouchMove}
-            onTouchEnd={handleCardTouchEnd}
+            className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4 relative select-none cursor-grab active:cursor-grabbing"
             style={{
               transform: cardSwipeX !== 0 ? `translateX(${cardSwipeX}px) rotate(${cardSwipeX * 0.05}deg)` : undefined,
-              transition: cardSwipeX === 0 ? 'transform 0.3s ease' : undefined,
+              transition: isDraggingCard ? 'none' : 'transform 0.3s ease',
             }}
           >
+            {/* Transparent swipe overlay — captures horizontal drags */}
+            <div
+              className="absolute inset-0 z-20"
+              onTouchStart={(e) => { handleCardPointerStart(e.touches[0].clientX, e.touches[0].clientY); setIsDraggingCard(true); }}
+              onTouchMove={(e) => { handleCardPointerMove(e.touches[0].clientX, e.touches[0].clientY); }}
+              onTouchEnd={() => handleCardPointerEnd()}
+              onMouseDown={(e) => { e.preventDefault(); handleCardPointerStart(e.clientX, e.clientY); setIsDraggingCard(true); }}
+              onMouseMove={(e) => { if (isDraggingCard) handleCardPointerMove(e.clientX, e.clientY); }}
+              onMouseUp={() => handleCardPointerEnd()}
+              onMouseLeave={() => { if (isDraggingCard) handleCardPointerEnd(); }}
+              style={{ touchAction: 'none' }}
+            />
             {/* Swipe overlay indicators */}
             {cardSwipeX > 50 && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-green-500/20 rounded-2xl pointer-events-none">
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-green-500/20 rounded-2xl pointer-events-none">
                 <span className="text-4xl font-bold text-green-500 rotate-[-15deg] border-4 border-green-500 rounded-lg px-4 py-1">LIKE</span>
               </div>
             )}
             {cardSwipeX < -50 && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-destructive/20 rounded-2xl pointer-events-none">
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-destructive/20 rounded-2xl pointer-events-none">
                 <span className="text-4xl font-bold text-destructive rotate-[15deg] border-4 border-destructive rounded-lg px-4 py-1">NOPE</span>
               </div>
             )}
