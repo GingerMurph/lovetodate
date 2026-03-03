@@ -63,7 +63,7 @@ const Index = () => {
             </h1>
             <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">
               Only pay when you find someone you would
-              <span className="text-gold font-medium">Love To Date</span>
+              <span className="text-gold font-medium"> Love To Date</span>
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/auth?mode=signup">
