@@ -10,6 +10,12 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Fixed background image */}
+      <div className="fixed inset-0 z-0">
+        <img src={heroBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-background/70" />
+      </div>
+
       {/* Nav */}
       <header className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -49,8 +55,6 @@ const Index = () => {
       {/* Hero */}
       <main>
         <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
-          <img src={heroBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-background/70" />
           <div
             className="absolute inset-0 opacity-20"
             style={{
