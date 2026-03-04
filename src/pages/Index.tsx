@@ -53,7 +53,7 @@ const Index = () => {
       </header>
 
       {/* Hero */}
-      <main>
+      <main className="relative z-10">
         <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
           <div
             className="absolute inset-0 opacity-20"
