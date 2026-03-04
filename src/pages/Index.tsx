@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Shield, CreditCard, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
+import heroBg from "@/assets/hero-bg.png";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -48,11 +49,12 @@ const Index = () => {
       {/* Hero */}
       <main>
         <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-16">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-card" />
+          <img src={heroBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-background/70" />
           <div
-            className="absolute inset-0 opacity-10"
+            className="absolute inset-0 opacity-20"
             style={{
-              backgroundImage: "radial-gradient(ellipse at 50% 0%, hsl(38 70% 55% / 0.3), transparent 70%)",
+              backgroundImage: "radial-gradient(ellipse at 50% 0%, hsl(38 70% 55% / 0.4), transparent 70%)",
             }}
           />
           <div className="relative z-10 container mx-auto px-4 text-center">
