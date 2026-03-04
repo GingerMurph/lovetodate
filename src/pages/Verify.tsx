@@ -3,18 +3,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Camera, RefreshCw, CheckCircle, Loader2, ArrowLeft, Settings } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Camera, RefreshCw, CheckCircle, Loader2, ArrowLeft, Settings, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 
-const POSES = [
-  { instruction: "Give a thumbs up 👍", emoji: "👍" },
-  { instruction: "Make a peace sign ✌️", emoji: "✌️" },
-  { instruction: "Wave at the camera 👋", emoji: "👋" },
-  { instruction: "Point to your nose 👆", emoji: "👆" },
-  { instruction: "Show three fingers 🤟", emoji: "🤟" },
-];
+interface Challenge {
+  challenge_token: string;
+  pose_key: string;
+  pose_instruction: string;
+  expires_at: string;
+}
+
+const POSE_EMOJIS: Record<string, string> = {
+  thumbs_up: "👍",
+  peace_sign: "✌️",
+  wave: "👋",
+  point_nose: "👆",
+  three_fingers: "🤟",
+};
 
 const Verify = () => {
   const { user } = useAuth();
@@ -22,7 +29,9 @@ const Verify = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const [pose] = useState(() => POSES[Math.floor(Math.random() * POSES.length)]);
+
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [loadingChallenge, setLoadingChallenge] = useState(false);
   const [capturedImage, setCapturedImage] = useState<Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -42,6 +51,20 @@ const Verify = () => {
       });
   }, [user]);
 
+  // Fetch a server-issued challenge
+  const fetchChallenge = useCallback(async () => {
+    setLoadingChallenge(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-verification-challenge");
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setChallenge(data as Challenge);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to start verification");
+    }
+    setLoadingChallenge(false);
+  }, []);
+
   const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -52,7 +75,7 @@ const Verify = () => {
         videoRef.current.srcObject = stream;
         setCameraReady(true);
       }
-    } catch (err: any) {
+    } catch {
       setCameraDenied(true);
       toast.error("Camera access denied. Please enable it in your browser settings.");
     }
@@ -67,6 +90,11 @@ const Verify = () => {
   useEffect(() => {
     return () => stopCamera();
   }, [stopCamera]);
+
+  const beginVerification = async () => {
+    await fetchChallenge();
+    startCamera();
+  };
 
   const capture = () => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -96,20 +124,29 @@ const Verify = () => {
   };
 
   const submit = async () => {
-    if (!user || !capturedImage) return;
+    if (!user || !capturedImage || !challenge) return;
     setSubmitting(true);
 
     try {
-      // Upload selfie to storage
+      // Check if challenge expired client-side
+      if (new Date(challenge.expires_at) < new Date()) {
+        toast.error("Challenge expired. Starting a new one...");
+        setCapturedImage(null);
+        setPreviewUrl(null);
+        await fetchChallenge();
+        startCamera();
+        setSubmitting(false);
+        return;
+      }
+
       const path = `${user.id}/verification_selfie.jpg`;
       const { error: uploadErr } = await supabase.storage
         .from("profile-photos")
         .upload(path, capturedImage, { upsert: true, contentType: "image/jpeg" });
       if (uploadErr) throw uploadErr;
 
-      // Submit verification via server-side edge function (prevents client-side bypass)
       const { data: verifyData, error: verifyErr } = await supabase.functions.invoke("submit-verification", {
-        body: { selfie_path: path },
+        body: { selfie_path: path, challenge_token: challenge.challenge_token },
       });
       if (verifyErr) throw verifyErr;
       if (verifyData?.error) throw new Error(verifyData.error);
@@ -140,13 +177,9 @@ const Verify = () => {
   return (
     <AppLayout>
       <div className="container mx-auto max-w-md px-4 py-8">
-        {/* Back button */}
         <Button variant="ghost" size="sm" className="mb-4 gap-2 text-muted-foreground" onClick={() => {
-          if (window.history.length > 1) {
-            navigate(-1);
-          } else {
-            navigate("/profile");
-          }
+          if (window.history.length > 1) navigate(-1);
+          else navigate("/profile");
         }}>
           <ArrowLeft className="h-4 w-4" />
           Go Back
@@ -156,24 +189,50 @@ const Verify = () => {
           Verify Your <span className="text-gold">Identity</span>
         </h1>
         <p className="text-sm text-muted-foreground text-center mb-6">
-          Take a selfie doing the pose below to prove you're a real person.
+          Take a live selfie doing the pose below to prove you're a real person.
         </p>
 
-        {/* Pose instruction */}
-        <Card className="mb-6 border-gold/30 bg-accent/10">
-          <CardContent className="flex items-center gap-4 py-4">
-            <span className="text-4xl">{pose.emoji}</span>
-            <div>
-              <p className="font-semibold text-sm">Your pose:</p>
-              <p className="text-lg font-bold text-gold">{pose.instruction}</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Pose instruction from server challenge */}
+        {challenge && (
+          <Card className="mb-6 border-gold/30 bg-accent/10">
+            <CardContent className="flex items-center gap-4 py-4">
+              <span className="text-4xl">{POSE_EMOJIS[challenge.pose_key] || "📸"}</span>
+              <div>
+                <p className="font-semibold text-sm">Your pose:</p>
+                <p className="text-lg font-bold text-gold">{challenge.pose_instruction}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Expires in 3 minutes • AI-verified
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Camera / Preview */}
         <Card className="mb-6 border-border bg-card overflow-hidden">
           <CardContent className="p-0">
-            {!cameraReady && !previewUrl && (
+            {!challenge && !cameraReady && !previewUrl && (
+              <div className="flex flex-col items-center justify-center h-64 gap-4 p-4">
+                <ShieldCheck className="h-12 w-12 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground text-center">
+                  We'll assign you a random pose to perform. Your selfie will be verified by AI.
+                </p>
+                <Button
+                  onClick={beginVerification}
+                  className="gradient-gold text-primary-foreground"
+                  disabled={loadingChallenge}
+                >
+                  {loadingChallenge ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Camera className="h-4 w-4 mr-2" />
+                  )}
+                  {loadingChallenge ? "Starting..." : "Start Verification"}
+                </Button>
+              </div>
+            )}
+
+            {challenge && !cameraReady && !previewUrl && (
               <div className="flex flex-col items-center justify-center h-64 gap-4 p-4">
                 {cameraDenied ? (
                   <>
@@ -189,7 +248,6 @@ const Verify = () => {
                       <Button variant="outline" size="sm" asChild>
                         <a href="app-settings:camera" onClick={(e) => {
                           e.preventDefault();
-                          // Browsers don't allow direct links to settings, guide user instead
                           toast.info("Tap the lock icon (🔒) in your browser's address bar → Site settings → Camera → Allow", { duration: 8000 });
                         }}>
                           <Settings className="h-4 w-4 mr-2" />
@@ -209,6 +267,7 @@ const Verify = () => {
                 )}
               </div>
             )}
+
             {cameraReady && !previewUrl && (
               <div className="relative">
                 <video
@@ -243,7 +302,6 @@ const Verify = () => {
 
         <canvas ref={canvasRef} className="hidden" />
 
-        {/* Actions */}
         {previewUrl && (
           <div className="flex gap-3">
             <Button variant="outline" className="flex-1" onClick={retake}>
