@@ -95,6 +95,36 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_prompts: {
+        Row: {
+          answer_text: string
+          created_at: string
+          display_order: number
+          id: string
+          prompt_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answer_text: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          prompt_text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answer_text?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          prompt_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

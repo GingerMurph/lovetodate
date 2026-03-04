@@ -58,11 +58,19 @@ Deno.serve(async (req) => {
       .neq("user_id", user.id)
       .neq("is_paused", true);
 
-    // Fetch locations from private table (service role only)
-    const { data: locations } = await adminClient
-      .from("user_locations")
-      .select("user_id, latitude, longitude");
+    // Fetch locations and prompts from private tables (service role only)
+    const [{ data: locations }, { data: allPrompts }] = await Promise.all([
+      adminClient.from("user_locations").select("user_id, latitude, longitude"),
+      adminClient.from("profile_prompts").select("user_id, prompt_text, answer_text, display_order").order("display_order"),
+    ]);
     const locationMap = new Map((locations || []).map(l => [l.user_id, l]));
+    // Group prompts by user_id, take first 2 for discover cards
+    const promptsMap = new Map<string, { prompt_text: string; answer_text: string }[]>();
+    for (const p of (allPrompts || [])) {
+      const arr = promptsMap.get(p.user_id) || [];
+      if (arr.length < 2) arr.push({ prompt_text: p.prompt_text, answer_text: p.answer_text });
+      promptsMap.set(p.user_id, arr);
+    }
 
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
@@ -126,6 +134,7 @@ Deno.serve(async (req) => {
           max_distance_miles: max_distance_miles,
           too_far: tooFar,
           non_negotiables: Array.isArray(non_negotiables) ? non_negotiables : [],
+          prompts: promptsMap.get(rest.user_id) || [],
         };
       })
     );
