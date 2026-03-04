@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import acornLogo from "@/assets/logo.png";
+import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
 
 type ViewProfile = {
   user_id: string;
@@ -47,6 +48,7 @@ type ViewProfile = {
   distance_miles: number | null;
   is_verified: boolean;
   non_negotiables: string[] | null;
+  prompts?: { prompt_text: string; answer_text: string }[];
 };
 
 const ProfileView = () => {
@@ -492,6 +494,11 @@ const ProfileView = () => {
             <CardHeader><CardTitle className="font-serif text-lg">About</CardTitle></CardHeader>
             <CardContent><p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.bio}</p></CardContent>
           </Card>
+        )}
+
+        {/* Show the Real You - Prompts */}
+        {profile.prompts && profile.prompts.length > 0 && (
+          <ProfilePromptDisplay prompts={profile.prompts} />
         )}
 
         {/* Physical */}

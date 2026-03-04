@@ -15,6 +15,7 @@ import { Link, useLocation } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
+import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
 const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
@@ -48,6 +49,7 @@ type DiscoverProfile = {
   too_far: boolean;
   is_verified: boolean;
   non_negotiables: string[];
+  prompts?: { prompt_text: string; answer_text: string }[];
 };
 
 const Discover = () => {
@@ -313,6 +315,9 @@ const Discover = () => {
                       </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
+                      {currentProfile.prompts && currentProfile.prompts.length > 0 && (
+                        <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
+                      )}
                       <span className="text-xs text-muted-foreground truncate block">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
                       {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 items-center">

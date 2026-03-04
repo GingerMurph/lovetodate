@@ -14,6 +14,7 @@ import { Camera, Loader2, Trash2, BadgeCheck, ShieldCheck, Sparkles } from "luci
 import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
+import ShowTheRealYou from "@/components/ShowTheRealYou";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
@@ -747,6 +748,9 @@ const ProfileSetup = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Show the Real You */}
+          <ShowTheRealYou />
 
           {/* Bio */}
           <Card className="border-border bg-card">
