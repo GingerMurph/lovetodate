@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes] = await Promise.all([
+    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes, myConnectionsCount] = await Promise.all([
       adminClient.from("profiles")
         .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
         .eq("user_id", userId)
@@ -70,6 +70,7 @@ Deno.serve(async (req) => {
       adminClient.from("user_locations").select("latitude, longitude").eq("user_id", userId).maybeSingle(),
       adminClient.from("profile_prompts").select("prompt_text, answer_text, display_order").eq("user_id", userId).order("display_order"),
       adminClient.from("subscriber_cache").select("is_subscribed").eq("user_id", userId).maybeSingle(),
+      adminClient.from("unlocked_connections").select("id", { count: "exact", head: true }).eq("unlocker_id", user.id),
     ]);
     const connectionRes = { data: connForward.data || connReverse.data };
 
@@ -126,12 +127,15 @@ Deno.serve(async (req) => {
     const prompts = (promptsRes.data || []).map(({ prompt_text, answer_text }: any) => ({ prompt_text, answer_text }));
     const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
 
+    const freeConnectionAvailable = (myConnectionsCount.count ?? 0) === 0;
+
     return new Response(JSON.stringify({
       profile,
       isLiked,
       isLikedBack,
       isUnlocked,
       isOwnProfile,
+      freeConnectionAvailable,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

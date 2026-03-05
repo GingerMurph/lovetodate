@@ -54,9 +54,30 @@ type ViewProfile = {
   prompts?: { prompt_text: string; answer_text: string }[];
 };
 
-const MutualLikePrompt = ({ profileName, userId, isUnlocked }: { profileName: string; userId: string; isUnlocked: boolean }) => {
+const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvailable, onConnectionClaimed }: {
+  profileName: string;
+  userId: string;
+  isUnlocked: boolean;
+  freeConnectionAvailable: boolean;
+  onConnectionClaimed: () => void;
+}) => {
   const { subscribed } = useSubscription();
   const navigate = useNavigate();
+  const [claiming, setClaiming] = useState(false);
+
+  const handleClaimFree = async () => {
+    setClaiming(true);
+    const { data, error } = await supabase.functions.invoke("claim-free-connection", {
+      body: { targetUserId: userId },
+    });
+    setClaiming(false);
+    if (error || data?.error) {
+      toast.error(data?.error || error?.message || "Failed to claim free connection");
+      return;
+    }
+    toast.success("🎉 Free connection unlocked! You can now message each other.");
+    onConnectionClaimed();
+  };
 
   return (
     <div className="mb-6 space-y-3">
@@ -70,16 +91,29 @@ const MutualLikePrompt = ({ profileName, userId, isUnlocked }: { profileName: st
             <h3 className="font-serif text-lg font-bold">
               You and {profileName} both want to date!
             </h3>
-            <p className="text-sm text-muted-foreground">
-              Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">Love To Date</strong>.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
-                <Crown className="h-4 w-4 mr-2" />
-                See Plans from £6.99/week
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">🎉 First connection FREE during launch!</p>
+            {freeConnectionAvailable ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  🎉 <strong className="text-gold">Launch Offer:</strong> Your first connection is completely FREE! Unlock messaging and exchange contact details with {profileName} right now.
+                </p>
+                <Button onClick={handleClaimFree} disabled={claiming} className="gradient-gold text-primary-foreground">
+                  {claiming ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Heart className="h-4 w-4 mr-2" />}
+                  {claiming ? "Unlocking..." : "Claim Free Connection"}
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">Love To Date</strong>.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
+                    <Crown className="h-4 w-4 mr-2" />
+                    See Plans from £6.99/week
+                  </Button>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       )}
@@ -100,6 +134,7 @@ const ProfileView = () => {
   const [isLikedBack, setIsLikedBack] = useState(false);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [freeConnectionAvailable, setFreeConnectionAvailable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [compatScore, setCompatScore] = useState<{ score: number; summary: string; hasGameData?: boolean } | null>(null);
@@ -211,6 +246,7 @@ const ProfileView = () => {
       setIsLikedBack(data.isLikedBack);
       setIsUnlocked(data.isUnlocked);
       setIsOwnProfile(data.isOwnProfile);
+      setFreeConnectionAvailable(data.freeConnectionAvailable ?? false);
     }
     setLoading(false);
   };
@@ -468,7 +504,13 @@ const ProfileView = () => {
 
         {/* Mutual like indicator + subscription prompt */}
         {!isOwnProfile && isLiked && isLikedBack && (
-          <MutualLikePrompt profileName={profile.display_name} userId={userId!} isUnlocked={isUnlocked} />
+          <MutualLikePrompt
+            profileName={profile.display_name}
+            userId={userId!}
+            isUnlocked={isUnlocked}
+            freeConnectionAvailable={freeConnectionAvailable}
+            onConnectionClaimed={() => { setIsUnlocked(true); setFreeConnectionAvailable(false); }}
+          />
         )}
 
         {/* AI Compatibility Score */}
