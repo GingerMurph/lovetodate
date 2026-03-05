@@ -22,7 +22,6 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const { userId } = body;
-    // Optional viewer coordinates for server-side distance calculation
     const viewerLat: number | null = typeof body.lat === "number" ? body.lat : null;
     const viewerLng: number | null = typeof body.lng === "number" ? body.lng : null;
 
@@ -44,7 +43,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    // Verify the requesting user
     const userClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
       global: { headers: { Authorization: authHeader } },
     });
@@ -58,8 +56,7 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Fetch the profile, like status, connection status, and location in parallel
-    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes] = await Promise.all([
+    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes] = await Promise.all([
       adminClient.from("profiles")
         .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
         .eq("user_id", userId)
@@ -72,6 +69,7 @@ Deno.serve(async (req) => {
         .eq("unlocker_id", userId).eq("target_id", user.id).maybeSingle(),
       adminClient.from("user_locations").select("latitude, longitude").eq("user_id", userId).maybeSingle(),
       adminClient.from("profile_prompts").select("prompt_text, answer_text, display_order").eq("user_id", userId).order("display_order"),
+      adminClient.from("subscriber_cache").select("is_subscribed").eq("user_id", userId).maybeSingle(),
     ]);
     const connectionRes = { data: connForward.data || connReverse.data };
 
@@ -82,12 +80,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    // GPS coordinates come from private user_locations table, never from profiles
     const { date_of_birth, avatar_url, photo_urls, ...rest } = profileRes.data;
     const latitude = locationRes.data?.latitude ?? null;
     const longitude = locationRes.data?.longitude ?? null;
 
-    // Sign photo URLs
     const signUrl = async (rawPath: string | null): Promise<string | null> => {
       if (!rawPath) return null;
       const path = rawPath.includes("/object/public/")
@@ -107,12 +103,12 @@ Deno.serve(async (req) => {
     const isLiked = !!likeRes.data;
     const isLikedBack = !!likeBackRes.data;
     const isUnlocked = !!connectionRes.data;
+    const isSubscribed = subCacheRes.data?.is_subscribed ?? false;
 
     const age = date_of_birth
       ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
       : null;
 
-    // Server-side distance calculation — raw GPS never leaves the server
     function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
       const R = 3959;
       const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -127,9 +123,8 @@ Deno.serve(async (req) => {
       distanceMiles = Math.round(haversineDistance(viewerLat, viewerLng, latitude, longitude));
     }
 
-    // Full profile data for all viewers — no raw coordinates included
     const prompts = (promptsRes.data || []).map(({ prompt_text, answer_text }: any) => ({ prompt_text, answer_text }));
-    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles, prompts };
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
 
     return new Response(JSON.stringify({
       profile,

@@ -9,6 +9,7 @@ import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2, Ban } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import SubscriberBadge from "@/components/SubscriberBadge";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link, useLocation } from "react-router-dom";
@@ -48,6 +49,7 @@ type DiscoverProfile = {
   max_distance_miles: number | null;
   too_far: boolean;
   is_verified: boolean;
+  is_subscribed: boolean;
   non_negotiables: string[];
   prompts?: { prompt_text: string; answer_text: string }[];
 };
@@ -304,6 +306,7 @@ const Discover = () => {
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5">
                           {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
                           {currentProfile.is_verified && <VerifiedBadge size="md" />}
+                          {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
                         </h3>
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
