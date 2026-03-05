@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Shield, CreditCard, Users, Star, Lightbulb, BookOpen, MessageCircle, Gamepad2, Trophy } from "lucide-react";
+import {
+  Heart,
+  Shield,
+  CreditCard,
+  Users,
+  Star,
+  Lightbulb,
+  BookOpen,
+  MessageCircle,
+  Gamepad2,
+  Trophy,
+} from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
@@ -132,14 +143,13 @@ const Index = () => {
               Why We're <span className="text-gold">Different</span>
             </h2>
             <p className="mx-auto mb-12 max-w-2xl text-muted-foreground">
-              No monthly fees bleeding your wallet. No endless swiping into the void. Just real connections worth paying
-              for.
+              Affordable subscriptions. A.I gererated matches. Just real connections worth paying for.
             </p>
             <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
               {[
                 {
                   icon: Shield,
-                  title: "No Subscriptions",
+                  title: "Affordable Subscriptions",
                   desc: "Never pay for features you don't use. Only pay when you find someone special.",
                 },
                 {
@@ -176,7 +186,12 @@ const Index = () => {
                 { to: "/testimonials", icon: Star, label: "Testimonials", desc: "Real success stories" },
                 { to: "/dating-advice", icon: Lightbulb, label: "Dating Advice", desc: "Expert tips" },
                 { to: "/blog", icon: BookOpen, label: "Blog", desc: "Insights & stories" },
-                { to: "/conversation-starters", icon: MessageCircle, label: "Conversation Starters", desc: "Break the ice" },
+                {
+                  to: "/conversation-starters",
+                  icon: MessageCircle,
+                  label: "Conversation Starters",
+                  desc: "Break the ice",
+                },
                 { to: "/fun", icon: Gamepad2, label: "Fun Stuff", desc: "Games & challenges" },
               ].map((item, i) => (
                 <Link key={i} to={item.to}>
