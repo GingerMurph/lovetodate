@@ -8,13 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles, Crown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import acornLogo from "@/assets/logo.png";
 import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
+import SubscriberBadge from "@/components/SubscriberBadge";
+import { useSubscription } from "@/hooks/useSubscription";
 
 type ViewProfile = {
   user_id: string;
@@ -49,6 +51,39 @@ type ViewProfile = {
   is_verified: boolean;
   non_negotiables: string[] | null;
   prompts?: { prompt_text: string; answer_text: string }[];
+};
+
+const MutualLikePrompt = ({ profileName, userId, isUnlocked }: { profileName: string; userId: string; isUnlocked: boolean }) => {
+  const { subscribed } = useSubscription();
+  const navigate = useNavigate();
+
+  return (
+    <div className="mb-6 space-y-3">
+      <div className="text-center">
+        <Badge className="bg-red-500/20 text-red-400 border-red-500/30">💕 It's a mutual like!</Badge>
+      </div>
+      {!subscribed && !isUnlocked && (
+        <Card className="border-gold/30 bg-gradient-to-br from-card to-accent/30">
+          <CardContent className="py-5 text-center space-y-3">
+            <Heart className="h-8 w-8 text-gold mx-auto fill-current" />
+            <h3 className="font-serif text-lg font-bold">
+              You and {profileName} both want to date!
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">Love To Date</strong>.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center">
+              <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
+                <Crown className="h-4 w-4 mr-2" />
+                See Plans from £6.99/week
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">🎉 First connection FREE during launch!</p>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 };
 
 const ProfileView = () => {
@@ -379,11 +414,20 @@ const ProfileView = () => {
               displayName={profile.display_name}
               aspectClass="aspect-[3/4]"
             />
+            {/* Badge overlays on photo */}
+            <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 pointer-events-none">
+              {profile.is_verified && (
+                <span className="bg-background/80 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 text-[10px] font-semibold pointer-events-auto">
+                  <VerifiedBadge size="sm" /> Verified
+                </span>
+              )}
+            </div>
           </div>
           <p className="text-xs text-muted-foreground mb-2">Swipe photo right to like, left to pass</p>
           <h1 className="font-serif text-3xl font-bold flex items-center gap-2">
             {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
             {profile.is_verified && <VerifiedBadge size="lg" />}
+            {/* Subscriber badge - shown for all profiles; for own profile check own subscription */}
           </h1>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}
@@ -421,11 +465,9 @@ const ProfileView = () => {
           </div>
         )}
 
-        {/* Mutual like indicator */}
+        {/* Mutual like indicator + subscription prompt */}
         {!isOwnProfile && isLiked && isLikedBack && (
-          <div className="mb-6 text-center">
-            <Badge className="bg-red-500/20 text-red-400 border-red-500/30">💕 It's a mutual like!</Badge>
-          </div>
+          <MutualLikePrompt profileName={profile.display_name} userId={userId!} isUnlocked={isUnlocked} />
         )}
 
         {/* AI Compatibility Score */}

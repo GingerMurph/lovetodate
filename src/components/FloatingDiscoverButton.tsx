@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
-const HIDDEN_ROUTES = ["/", "/auth", "/discover", "/reset-password"];
+const HIDDEN_ROUTES = ["/", "/auth", "/discover", "/reset-password", "/subscription"];
 
 export default function FloatingDiscoverButton() {
   const { user } = useAuth();
