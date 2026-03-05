@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Shield, CreditCard, Users, Star, Lightbulb, BookOpen, MessageCircle, Gamepad2 } from "lucide-react";
+import { Heart, Shield, CreditCard, Users, Star, Lightbulb, BookOpen, MessageCircle, Gamepad2, Trophy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.png";
 
@@ -191,6 +192,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Game Stats - only for logged in users */}
+        {user && <GameStatsSection />}
 
         {/* Footer */}
         <footer className="border-t border-border py-12">
