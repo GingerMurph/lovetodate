@@ -21,7 +21,37 @@ const QUESTIONS = [
     q: "Your ideal first date?",
     options: ["Dinner at a nice restaurant", "Walk & coffee somewhere scenic", "Something adventurous", "Comedy show or live music"],
   },
+  {
+    q: "You can only eat one cuisine for the rest of your life. Which one?",
+    options: ["Italian", "Japanese", "Mexican", "Indian"],
+  },
+  {
+    q: "Your partner surprises you with a weekend away. Where have they taken you?",
+    options: ["Cosy countryside cabin", "Bustling capital city", "Spa & wellness retreat", "Camping under the stars"],
+  },
+  {
+    q: "How do you handle disagreements?",
+    options: ["Talk it out immediately", "Take space then discuss", "Write down my thoughts first", "Use humour to defuse tension"],
+  },
+  {
+    q: "It's a rainy evening. What's the plan?",
+    options: ["Board games & wine", "Cook a meal together", "Movie marathon on the sofa", "Head out regardless — rain won't stop us"],
+  },
+  {
+    q: "What matters most in a relationship?",
+    options: ["Trust & honesty", "Shared sense of humour", "Physical chemistry", "Supporting each other's goals"],
+  },
+  {
+    q: "You get one superpower. What do you pick?",
+    options: ["Time travel", "Read minds", "Fly anywhere instantly", "Speak every language"],
+  },
+  {
+    q: "How do you recharge after a long week?",
+    options: ["Solo time at home", "Out with friends", "Nature walk or hike", "Creative hobby (art, music, cooking)"],
+  },
 ];
+
+export const TOTAL_QUESTIONS = QUESTIONS.length;
 
 interface Props {
   gameState: any;
@@ -41,9 +71,10 @@ export default function HypotheticalQuestions({ gameState, userId, isMyTurn, isC
     return (
       <div className="space-y-6">
         <p className="text-center text-sm text-muted-foreground mb-4">Here's how you both answered:</p>
-        {QUESTIONS.slice(0, 5).map((q, i) => {
+        {QUESTIONS.map((q, i) => {
           const answers = allAnswers[i] || {};
           const keys = Object.keys(answers);
+          if (keys.length === 0) return null;
           return (
             <div key={i} className="rounded-xl border border-border p-4">
               <p className="text-sm font-medium text-foreground mb-2">{q.q}</p>
@@ -67,7 +98,7 @@ export default function HypotheticalQuestions({ gameState, userId, isMyTurn, isC
   if (myAnswer) {
     return (
       <div className="text-center py-8">
-        <p className="text-sm text-foreground mb-2">Question {qi + 1} of 5</p>
+        <p className="text-sm text-foreground mb-2">Question {qi + 1} of {TOTAL_QUESTIONS}</p>
         <p className="text-base font-medium text-foreground mb-4">"{currentQ.q}"</p>
         <p className="text-sm text-gold">Your answer: {myAnswer}</p>
         <p className="text-xs text-muted-foreground mt-4">Waiting for opponent to answer...</p>
@@ -77,7 +108,7 @@ export default function HypotheticalQuestions({ gameState, userId, isMyTurn, isC
 
   return (
     <div className="text-center">
-      <p className="text-xs text-muted-foreground mb-2">Question {qi + 1} of 5</p>
+      <p className="text-xs text-muted-foreground mb-2">Question {qi + 1} of {TOTAL_QUESTIONS}</p>
       <p className="text-base font-medium text-foreground mb-6">{currentQ.q}</p>
       <div className="space-y-3 max-w-sm mx-auto">
         {currentQ.options.map((opt) => (
