@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UnreadMessagesProvider } from "@/hooks/useUnreadMessages";
+import { SubscriptionProvider } from "@/hooks/useSubscription";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import SplashScreen from "@/components/SplashScreen";
@@ -30,6 +31,7 @@ import FunStuff from "./pages/FunStuff";
 import MyGames from "./pages/MyGames";
 import GameLobby from "./pages/GameLobby";
 import PlayGame from "./pages/PlayGame";
+import Subscription from "./pages/Subscription";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +49,7 @@ const App = () => {
           <BrowserRouter>
             <AuthProvider>
               <UnreadMessagesProvider>
+              <SubscriptionProvider>
                 <ScrollToTop />
                 <FloatingDiscoverButton />
                 <Routes>
@@ -69,8 +72,10 @@ const App = () => {
                   <Route path="/messages/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
                   <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
+                  <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+              </SubscriptionProvider>
               </UnreadMessagesProvider>
             </AuthProvider>
           </BrowserRouter>
