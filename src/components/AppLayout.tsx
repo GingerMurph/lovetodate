@@ -18,6 +18,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   const nav = [
     { to: "/discover", icon: Home, label: "Home", badge: 0 },
+    { to: "/discover", icon: Search, label: "Discover", badge: 0, isDiscover: true },
     { to: "/likes", icon: Heart, label: "Love To Date", badge: 0 },
     { to: "/messages", icon: MessageSquare, label: "Messages", badge: unreadCount },
     { to: "/profile", icon: User, label: "Profile", badge: 0 },
