@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -57,11 +58,14 @@ export default function GameLobby() {
     if (!user || !gameType) return;
     setSending(opponentId);
 
+    const shuffledOrder = Array.from({ length: TOTAL_QUESTIONS }, (_, i) => i)
+      .sort(() => Math.random() - 0.5);
+
     const initialState = gameType === "noughts_crosses"
       ? { board: Array(9).fill(null) }
       : gameType === "connect4"
       ? { board: Array(6).fill(null).map(() => Array(7).fill(null)) }
-      : { questionIndex: 0, answers: {} };
+      : { questionIndex: 0, answers: {}, questionOrder: shuffledOrder };
 
     const { error } = await supabase.from("games").insert({
       game_type: gameType as any,

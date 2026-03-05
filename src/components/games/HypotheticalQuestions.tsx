@@ -62,8 +62,10 @@ interface Props {
 }
 
 export default function HypotheticalQuestions({ gameState, userId, isMyTurn, isCompleted, onAnswer }: Props) {
+  const questionOrder: number[] = gameState.questionOrder || Array.from({ length: TOTAL_QUESTIONS }, (_, i) => i);
   const qi = gameState.questionIndex || 0;
-  const currentQ = QUESTIONS[qi];
+  const actualIndex = questionOrder[qi] ?? qi;
+  const currentQ = QUESTIONS[actualIndex];
   const myAnswer = gameState.answers?.[qi]?.[userId];
   const allAnswers = gameState.answers || {};
 
@@ -71,7 +73,9 @@ export default function HypotheticalQuestions({ gameState, userId, isMyTurn, isC
     return (
       <div className="space-y-6">
         <p className="text-center text-sm text-muted-foreground mb-4">Here's how you both answered:</p>
-        {QUESTIONS.map((q, i) => {
+        {questionOrder.map((qIdx, i) => {
+          const q = QUESTIONS[qIdx];
+          if (!q) return null;
           const answers = allAnswers[i] || {};
           const keys = Object.keys(answers);
           if (keys.length === 0) return null;
