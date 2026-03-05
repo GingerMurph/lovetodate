@@ -63,9 +63,13 @@ Deno.serve(async (req) => {
 
     const profileFields = "display_name, bio, interests, relationship_goal, looking_for, gender, smoking, drinking, children, religion, ethnicity, pets, political_beliefs, personality_type, favourite_music, favourite_film, favourite_sport, favourite_hobbies, occupation, education, languages";
 
-    const [partnerRes, selfRes] = await Promise.all([
+    const [partnerRes, selfRes, sharedGamesRes] = await Promise.all([
       adminClient.from("profiles").select(profileFields).eq("user_id", partnerId).maybeSingle(),
       adminClient.from("profiles").select(profileFields).eq("user_id", user.id).maybeSingle(),
+      adminClient.from("games").select("game_state")
+        .eq("game_type", "hypothetical_questions")
+        .eq("status", "completed")
+        .or(`and(creator_id.eq.${user.id},opponent_id.eq.${partnerId}),and(creator_id.eq.${partnerId},opponent_id.eq.${user.id})`),
     ]);
 
     if (!partnerRes.data || !selfRes.data) {
@@ -73,6 +77,27 @@ Deno.serve(async (req) => {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Extract hypothetical question match data
+    let gameMatchSummary = "";
+    if (sharedGamesRes.data?.length) {
+      let totalQs = 0;
+      let matchedQs = 0;
+      for (const game of sharedGamesRes.data) {
+        const answers = (game.game_state as any)?.answers || {};
+        for (const qIndex of Object.keys(answers)) {
+          const qa = answers[qIndex];
+          const players = Object.keys(qa);
+          if (players.length === 2) {
+            totalQs++;
+            if (qa[players[0]] === qa[players[1]]) matchedQs++;
+          }
+        }
+      }
+      if (totalQs > 0) {
+        gameMatchSummary = `\n\nHypothetical Questions Game Data: They played ${sharedGamesRes.data.length} game(s) with ${totalQs} questions total. They matched on ${matchedQs} out of ${totalQs} answers (${Math.round((matchedQs / totalQs) * 100)}% agreement). This shows real-world compatibility — weight this meaningfully in your score.`;
+      }
     }
 
     const formatProfile = (p: Record<string, unknown>) => {
@@ -117,11 +142,11 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a dating compatibility analyst for an app called "Love To Date". Given two user profiles, analyze their compatibility across these dimensions: shared interests, lifestyle alignment (smoking, drinking, children, pets), values (religion, politics), personality, and relationship goals. Return a score from 0-100 and a brief fun summary (max 120 chars) explaining the match. Be encouraging but honest.`,
+            content: `You are a dating compatibility analyst for an app called "Love To Date". Given two user profiles, analyze their compatibility across these dimensions: shared interests, lifestyle alignment (smoking, drinking, children, pets), values (religion, politics), personality, relationship goals, and any hypothetical question game results (which show real decision-making alignment). Return a score from 0-100 and a brief fun summary (max 120 chars) explaining the match. Be encouraging but honest. If game data is provided, weight matching answers positively — it shows genuine compatibility.`,
           },
           {
             role: "user",
-            content: `User A:\n${formatProfile(selfRes.data)}\n\nUser B (${partnerRes.data.display_name}):\n${formatProfile(partnerRes.data)}`,
+            content: `User A:\n${formatProfile(selfRes.data)}\n\nUser B (${partnerRes.data.display_name}):\n${formatProfile(partnerRes.data)}${gameMatchSummary}`,
           },
         ],
         max_tokens: 300,
