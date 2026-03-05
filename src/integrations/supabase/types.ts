@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      game_moves: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          move_data: Json
+          player_id: string
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          move_data: Json
+          player_id: string
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          move_data?: Json
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_moves_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      games: {
+        Row: {
+          created_at: string
+          creator_id: string
+          current_turn: string | null
+          game_state: Json
+          game_type: Database["public"]["Enums"]["game_type"]
+          id: string
+          opponent_id: string
+          status: Database["public"]["Enums"]["game_status"]
+          updated_at: string
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          current_turn?: string | null
+          game_state?: Json
+          game_type: Database["public"]["Enums"]["game_type"]
+          id?: string
+          opponent_id: string
+          status?: Database["public"]["Enums"]["game_status"]
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          current_turn?: string | null
+          game_state?: Json
+          game_type?: Database["public"]["Enums"]["game_type"]
+          id?: string
+          opponent_id?: string
+          status?: Database["public"]["Enums"]["game_status"]
+          updated_at?: string
+          winner_id?: string | null
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -372,6 +443,8 @@ export type Database = {
         | "muscular"
         | "heavyset"
         | "petite"
+      game_status: "pending" | "active" | "completed" | "declined"
+      game_type: "noughts_crosses" | "connect4" | "hypothetical_questions"
       gender: "male" | "female" | "non_binary" | "other"
       looking_for: "male" | "female" | "everyone"
       relationship_goal:
@@ -516,6 +589,8 @@ export const Constants = {
         "heavyset",
         "petite",
       ],
+      game_status: ["pending", "active", "completed", "declined"],
+      game_type: ["noughts_crosses", "connect4", "hypothetical_questions"],
       gender: ["male", "female", "non_binary", "other"],
       looking_for: ["male", "female", "everyone"],
       relationship_goal: [
