@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import NoughtsCrossesBoard from "@/components/games/NoughtsCrossesBoard";
 import Connect4Board from "@/components/games/Connect4Board";
-import HypotheticalQuestions from "@/components/games/HypotheticalQuestions";
+import HypotheticalQuestions, { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 
 interface GameData {
   id: string;
@@ -166,11 +166,11 @@ export default function PlayGame() {
               newState.answers[newState.questionIndex][user.id] = answer;
 
               const bothAnswered = Object.keys(newState.answers[newState.questionIndex]).length === 2;
-              if (bothAnswered && newState.questionIndex < 4) {
+              if (bothAnswered && newState.questionIndex < TOTAL_QUESTIONS - 1) {
                 newState.questionIndex = newState.questionIndex + 1;
               }
 
-              const allDone = bothAnswered && newState.questionIndex >= 4;
+              const allDone = bothAnswered && newState.questionIndex >= TOTAL_QUESTIONS - 1;
               await updateGame(
                 newState,
                 allDone ? null : opponentId,
