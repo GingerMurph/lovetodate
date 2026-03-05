@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
 const HIDDEN_ROUTES = ["/", "/auth", "/discover", "/reset-password", "/subscription"];
+const HIDDEN_PREFIXES = ["/messages/"];
 
 export default function FloatingDiscoverButton() {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ export default function FloatingDiscoverButton() {
 
   if (!user) return null;
   if (HIDDEN_ROUTES.some((r) => location.pathname === r)) return null;
+  if (HIDDEN_PREFIXES.some((p) => location.pathname.startsWith(p))) return null;
 
   return (
     <Link to="/discover" className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50">
