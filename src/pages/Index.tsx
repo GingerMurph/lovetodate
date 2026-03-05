@@ -143,7 +143,7 @@ const Index = () => {
               Why We're <span className="text-gold">Different</span>
             </h2>
             <p className="mx-auto mb-12 max-w-2xl text-muted-foreground">
-              Affordable subscriptions. A.I gererated matches. Just real connections worth paying for.
+              Affordable subscriptions. A.I generated matches. Just real connections worth paying for.
             </p>
             <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
               {[
