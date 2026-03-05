@@ -10,7 +10,7 @@ import {
   BookOpen,
   MessageCircle,
   Gamepad2,
-  Trophy,
+  Crown,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import GameStatsSection from "@/components/GameStatsSection";
@@ -38,6 +38,12 @@ const Index = () => {
             </span>
           </Link>
           <div className="flex items-center gap-2 shrink-0">
+            <Link to="/subscription">
+              <Button variant="ghost" size="sm" className="text-gold gap-1.5">
+                <Crown className="h-4 w-4" />
+                <span className="hidden sm:inline">Premium</span>
+              </Button>
+            </Link>
             {loading ? (
               <div className="h-8 w-24" />
             ) : user ? (
@@ -92,8 +98,13 @@ const Index = () => {
                   Join for Free
                 </Button>
               </Link>
-              <p className="text-sm text-muted-foreground">Affordable subscriptions. No surprises!  </p>
+              <Link to="/subscription">
+                <Button variant="outline" size="lg" className="border-gold text-gold hover:bg-gold/10 px-8 py-6 text-lg font-semibold">
+                  View Pricing
+                </Button>
+              </Link>
             </div>
+            <p className="mt-4 text-sm text-muted-foreground">Affordable subscriptions. No surprises!</p>
           </div>
         </section>
 

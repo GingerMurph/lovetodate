@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, User, LogOut, MessageSquare } from "lucide-react";
+import { Heart, Search, User, LogOut, MessageSquare, Crown } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +21,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { to: "/likes", icon: Heart, label: "Love To Date", badge: 0 },
     { to: "/messages", icon: MessageSquare, label: "Messages", badge: unreadCount },
     { to: "/profile", icon: User, label: "Profile", badge: 0 },
+    { to: "/subscription", icon: Crown, label: "Premium", badge: 0 },
   ];
 
   return (
