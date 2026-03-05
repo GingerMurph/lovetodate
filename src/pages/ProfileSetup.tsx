@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -304,9 +305,14 @@ const ProfileSetup = () => {
   return (
     <AppLayout>
       <div className="container mx-auto max-w-2xl px-4 py-8">
-        <h1 className="mb-8 font-serif text-3xl font-bold text-center">
-          Complete Your <span className="text-gold">Profile</span>
-        </h1>
+        <div className="relative mb-8">
+          <button onClick={() => navigate(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <h1 className="font-serif text-3xl font-bold text-center">
+            Complete Your <span className="text-gold">Profile</span>
+          </h1>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Photos */}

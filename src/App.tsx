@@ -20,6 +20,7 @@ import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
                   <Route path="/profile/:userId" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />

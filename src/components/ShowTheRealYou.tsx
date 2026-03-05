@@ -32,6 +32,7 @@ type PromptAnswer = {
   prompt_text: string;
   answer_text: string;
   display_order: number;
+  _editing?: boolean;
 };
 
 export default function ShowTheRealYou() {
@@ -145,17 +146,33 @@ export default function ShowTheRealYou() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <Textarea
-              value={prompt.answer_text}
-              onChange={(e) => handleUpdateAnswer(index, e.target.value)}
-              placeholder="Type your answer..."
-              rows={2}
-              className="resize-none text-sm"
-              maxLength={MAX_ANSWER_LENGTH}
-            />
-            <p className="text-[10px] text-muted-foreground text-right">
-              {prompt.answer_text.length}/{MAX_ANSWER_LENGTH}
-            </p>
+            {prompt.answer_text.trim().length === 0 && !prompt._editing ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setPrompts((prev) => prev.map((p, i) => (i === index ? { ...p, _editing: true } : p)))}
+                className="w-full border-gold/30 text-gold hover:bg-gold/10 gap-1.5"
+              >
+                <MessageCircleHeart className="h-3.5 w-3.5" />
+                Answer this prompt
+              </Button>
+            ) : (
+              <>
+                <Textarea
+                  value={prompt.answer_text}
+                  onChange={(e) => handleUpdateAnswer(index, e.target.value)}
+                  placeholder="Type your answer..."
+                  rows={2}
+                  className="resize-none text-sm"
+                  maxLength={MAX_ANSWER_LENGTH}
+                  autoFocus={prompt._editing}
+                />
+                <p className="text-[10px] text-muted-foreground text-right">
+                  {prompt.answer_text.length}/{MAX_ANSWER_LENGTH}
+                </p>
+              </>
+            )}
           </div>
         ))}
 
