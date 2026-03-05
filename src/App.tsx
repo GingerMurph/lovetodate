@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import SplashScreen from "@/components/SplashScreen";
 import Index from "./pages/Index";
+import FloatingDiscoverButton from "@/components/FloatingDiscoverButton";
 import Auth from "./pages/Auth";
 import Discover from "./pages/Discover";
 import ProfileSetup from "./pages/ProfileSetup";
@@ -47,6 +48,7 @@ const App = () => {
             <AuthProvider>
               <UnreadMessagesProvider>
                 <ScrollToTop />
+                <FloatingDiscoverButton />
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
