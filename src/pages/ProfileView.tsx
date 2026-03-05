@@ -66,7 +66,7 @@ const ProfileView = () => {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [compatScore, setCompatScore] = useState<{ score: number; summary: string } | null>(null);
+  const [compatScore, setCompatScore] = useState<{ score: number; summary: string; hasGameData?: boolean } | null>(null);
   const [loadingCompat, setLoadingCompat] = useState(false);
   const [displayedScore, setDisplayedScore] = useState(0);
   const [scoreRevealed, setScoreRevealed] = useState(false);
@@ -188,7 +188,7 @@ const ProfileView = () => {
       body: { partnerId: userId },
     });
     if (!error && data && !data.error) {
-      setCompatScore({ score: data.score, summary: data.summary });
+      setCompatScore({ score: data.score, summary: data.summary, hasGameData: data.hasGameData });
       // Trigger count-up animation
       const target = data.score;
       const duration = 1200;
@@ -464,6 +464,12 @@ const ProfileView = () => {
                       <p className={`text-sm text-muted-foreground transition-opacity duration-500 ${scoreRevealed ? 'opacity-100' : 'opacity-0'}`}>
                         {compatScore.summary}
                       </p>
+                      {compatScore.hasGameData && scoreRevealed && (
+                        <div className="flex items-center gap-1.5 mt-1 animate-fade-in">
+                          <Gamepad2 className="h-3.5 w-3.5 text-purple-500" />
+                          <span className="text-xs font-medium text-purple-500">Includes game data</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   {/* Score label */}

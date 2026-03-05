@@ -204,7 +204,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({ score, summary }), {
+    return new Response(JSON.stringify({ score, summary, hasGameData: !!gameMatchSummary }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
