@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Heart, Shield, CreditCard, Users } from "lucide-react";
+import { Heart, Shield, CreditCard, Users, Star, Lightbulb, BookOpen, MessageCircle, Gamepad2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/logo.png";
 import heroBg from "@/assets/hero-bg.png";
@@ -156,6 +156,37 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground">{item.desc}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Explore More */}
+        <section className="py-24 bg-card/50">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="mb-6 font-serif text-4xl font-bold text-[#0369a0]">
+              Explore <span className="text-gold">More</span>
+            </h2>
+            <p className="mx-auto mb-12 max-w-2xl text-muted-foreground">
+              Tips, stories, games, and everything you need for your dating journey
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5 max-w-5xl mx-auto">
+              {[
+                { to: "/testimonials", icon: Star, label: "Testimonials", desc: "Real success stories" },
+                { to: "/dating-advice", icon: Lightbulb, label: "Dating Advice", desc: "Expert tips" },
+                { to: "/blog", icon: BookOpen, label: "Blog", desc: "Insights & stories" },
+                { to: "/conversation-starters", icon: MessageCircle, label: "Conversation Starters", desc: "Break the ice" },
+                { to: "/fun", icon: Gamepad2, label: "Fun Stuff", desc: "Games & challenges" },
+              ].map((item, i) => (
+                <Link key={i} to={item.to}>
+                  <div className="group rounded-2xl border border-border bg-card p-6 text-center transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5 h-full">
+                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent group-hover:bg-gold/10 transition-colors">
+                      <item.icon className="h-5 w-5 text-gold" />
+                    </div>
+                    <h3 className="font-serif text-base font-semibold text-foreground mb-1">{item.label}</h3>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                </Link>
               ))}
             </div>
           </div>

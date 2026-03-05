@@ -21,6 +21,14 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Verify from "./pages/Verify";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
+import Testimonials from "./pages/Testimonials";
+import DatingAdvice from "./pages/DatingAdvice";
+import Blog from "./pages/Blog";
+import ConversationStarters from "./pages/ConversationStarters";
+import FunStuff from "./pages/FunStuff";
+import MyGames from "./pages/MyGames";
+import GameLobby from "./pages/GameLobby";
+import PlayGame from "./pages/PlayGame";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +51,14 @@ const App = () => {
                   <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/testimonials" element={<Testimonials />} />
+                  <Route path="/dating-advice" element={<DatingAdvice />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/conversation-starters" element={<ConversationStarters />} />
+                  <Route path="/fun" element={<ProtectedRoute><FunStuff /></ProtectedRoute>} />
+                  <Route path="/fun/my-games" element={<ProtectedRoute><MyGames /></ProtectedRoute>} />
+                  <Route path="/fun/:gameType" element={<ProtectedRoute><GameLobby /></ProtectedRoute>} />
+                  <Route path="/fun/play/:gameId" element={<ProtectedRoute><PlayGame /></ProtectedRoute>} />
                   <Route path="/discover" element={<ProtectedRoute><Discover /></ProtectedRoute>} />
                   <Route path="/profile" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
                   <Route path="/profile/:userId" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
