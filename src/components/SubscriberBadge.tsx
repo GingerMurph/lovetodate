@@ -1,5 +1,5 @@
 import { Crown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type SubscriberBadgeProps = {
   size?: "sm" | "md" | "lg";
@@ -14,13 +14,15 @@ const sizeMap = {
 
 export default function SubscriberBadge({ size = "md", className = "" }: SubscriberBadgeProps) {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Crown className={`${sizeMap[size]} text-gold inline-block shrink-0 ${className}`} />
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="text-xs">Premium Subscriber</p>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Crown className={`${sizeMap[size]} text-gold inline-block shrink-0 ${className}`} />
+        </TooltipTrigger>
+        <TooltipContent>
+          <p className="text-xs">Premium Subscriber</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

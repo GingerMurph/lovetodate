@@ -355,6 +355,24 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriber_cache: {
+        Row: {
+          checked_at: string
+          is_subscribed: boolean
+          user_id: string
+        }
+        Insert: {
+          checked_at?: string
+          is_subscribed?: boolean
+          user_id: string
+        }
+        Update: {
+          checked_at?: string
+          is_subscribed?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       unlocked_connections: {
         Row: {
           created_at: string

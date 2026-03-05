@@ -49,6 +49,7 @@ type ViewProfile = {
   personality_type: string | null;
   distance_miles: number | null;
   is_verified: boolean;
+  is_subscribed: boolean;
   non_negotiables: string[] | null;
   prompts?: { prompt_text: string; answer_text: string }[];
 };
@@ -427,7 +428,7 @@ const ProfileView = () => {
           <h1 className="font-serif text-3xl font-bold flex items-center gap-2">
             {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
             {profile.is_verified && <VerifiedBadge size="lg" />}
-            {/* Subscriber badge - shown for all profiles; for own profile check own subscription */}
+            {profile.is_subscribed && <SubscriberBadge size="lg" />}
           </h1>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
             {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}

@@ -35,6 +35,12 @@ serve(async (req) => {
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
 
     if (customers.data.length === 0) {
+      // Cache the result
+      await supabaseClient.from("subscriber_cache").upsert({
+        user_id: user.id,
+        is_subscribed: false,
+        checked_at: new Date().toISOString(),
+      });
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -56,6 +62,13 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       productId = subscription.items.data[0].price.product;
     }
+
+    // Cache the result
+    await supabaseClient.from("subscriber_cache").upsert({
+      user_id: user.id,
+      is_subscribed: hasActiveSub,
+      checked_at: new Date().toISOString(),
+    });
 
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
