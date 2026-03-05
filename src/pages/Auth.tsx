@@ -22,8 +22,11 @@ const Auth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) navigate("/discover");
-  }, [user, navigate]);
+    if (user) {
+      const redirect = searchParams.get("redirect") || "/discover";
+      navigate(redirect);
+    }
+  }, [user, navigate, searchParams]);
 
 
 
