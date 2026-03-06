@@ -5,7 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AvatarImage } from "@/components/AvatarImage";
-import { ArrowLeft, Send, Loader2, Lightbulb, Sparkles } from "lucide-react";
+import { ArrowLeft, Send, Loader2, Lightbulb, Sparkles, Video } from "lucide-react";
+import { useSubscription } from "@/hooks/useSubscription";
 import AppLayout from "@/components/AppLayout";
 import { toast } from "sonner";
 
@@ -38,6 +39,7 @@ const Chat = () => {
   const [sending, setSending] = useState(false);
   const [icebreakers, setIcebreakers] = useState<string[]>([]);
   const [loadingIcebreakers, setLoadingIcebreakers] = useState(false);
+  const { subscribed } = useSubscription();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -247,6 +249,17 @@ const Chat = () => {
               <span className="font-serif font-semibold">{partner.display_name}</span>
             </div>
           )}
+          <div className="ml-auto">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-gold hover:text-gold/80"
+              onClick={() => navigate(`/video-call/${partnerId}`)}
+              title={subscribed ? "Video call" : "Subscribe for video calls"}
+            >
+              <Video className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
 
         {/* Messages */}
