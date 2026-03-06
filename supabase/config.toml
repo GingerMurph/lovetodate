@@ -19,6 +19,9 @@ verify_jwt = false
 [functions.generate-bio]
 verify_jwt = false
 
+[functions.generate-agora-token]
+verify_jwt = false
+
 [functions.compatibility-score]
 verify_jwt = false
 

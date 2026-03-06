@@ -32,6 +32,7 @@ import MyGames from "./pages/MyGames";
 import GameLobby from "./pages/GameLobby";
 import PlayGame from "./pages/PlayGame";
 import Subscription from "./pages/Subscription";
+import VideoCall from "./pages/VideoCall";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => {
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
                   <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+                  <Route path="/video-call/:userId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </SubscriptionProvider>
