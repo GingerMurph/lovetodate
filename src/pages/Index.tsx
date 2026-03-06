@@ -80,7 +80,7 @@ const Index = () => {
             }}
           />
           <div className="relative z-10 container mx-auto px-4 text-center">
-            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">Who would you</p>
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.3em] text-gold">Find Someone you would</p>
             <h1 className="mb-6 font-serif text-5xl font-bold leading-tight md:text-7xl lg:text-8xl">
               <span className="text-sky-700">Love To </span>
               <span className="text-gradient-gold">Date</span>
