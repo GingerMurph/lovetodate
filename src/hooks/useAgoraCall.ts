@@ -4,6 +4,7 @@ import AgoraRTC, {
   ICameraVideoTrack,
   IMicrophoneAudioTrack,
   IAgoraRTCRemoteUser,
+  ILocalVideoTrack,
 } from "agora-rtc-sdk-ng";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,16 +25,21 @@ export function useAgoraCall(partnerId: string | null) {
   const [error, setError] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [remoteUser, setRemoteUser] = useState<IAgoraRTCRemoteUser | null>(null);
 
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localAudioRef = useRef<ICameraVideoTrack | IMicrophoneAudioTrack | null>(null);
   const localVideoRef = useRef<ICameraVideoTrack | null>(null);
+  const screenTrackRef = useRef<ILocalVideoTrack | null>(null);
+  const cameraTrackRef = useRef<ICameraVideoTrack | null>(null); // backup when screen sharing
 
   const cleanup = useCallback(async () => {
     try {
       localAudioRef.current?.close();
       localVideoRef.current?.close();
+      screenTrackRef.current?.close();
+      cameraTrackRef.current?.close();
       if (clientRef.current) {
         await clientRef.current.leave();
         clientRef.current.removeAllListeners();
@@ -41,8 +47,11 @@ export function useAgoraCall(partnerId: string | null) {
     } catch {}
     localAudioRef.current = null;
     localVideoRef.current = null;
+    screenTrackRef.current = null;
+    cameraTrackRef.current = null;
     clientRef.current = null;
     setRemoteUser(null);
+    setIsScreenSharing(false);
   }, []);
 
   const startCall = useCallback(async () => {
@@ -51,7 +60,6 @@ export function useAgoraCall(partnerId: string | null) {
     setError(null);
 
     try {
-      // Get token from edge function
       const { data, error: fnError } = await supabase.functions.invoke("generate-agora-token", {
         body: { partnerId },
       });
@@ -60,11 +68,9 @@ export function useAgoraCall(partnerId: string | null) {
       }
       const { token, channelName, appId, uid } = data as AgoraTokenResponse;
 
-      // Create client optimized for low power
       const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
       clientRef.current = client;
 
-      // Handle remote user events
       client.on("user-published", async (user, mediaType) => {
         await client.subscribe(user, mediaType);
         setRemoteUser(user);
@@ -79,16 +85,10 @@ export function useAgoraCall(partnerId: string | null) {
 
       await client.join(appId, channelName, token, uid);
 
-      // Create tracks with low-power settings
       const [audioTrack, videoTrack] = await AgoraRTC.createMicrophoneAndCameraTracks(
         { encoderConfig: "speech_low_quality" },
         {
-          encoderConfig: {
-            width: 480,
-            height: 640,
-            frameRate: 15,
-            bitrateMax: 400,
-          },
+          encoderConfig: { width: 480, height: 640, frameRate: 15, bitrateMax: 400 },
           optimizationMode: "motion",
         }
       );
@@ -127,14 +127,75 @@ export function useAgoraCall(partnerId: string | null) {
     }
   }, [isVideoOff]);
 
-  // Play local video into a container
+  const toggleScreenShare = useCallback(async () => {
+    const client = clientRef.current;
+    if (!client) return;
+
+    if (isScreenSharing) {
+      // Stop screen share, restore camera
+      try {
+        if (screenTrackRef.current) {
+          await client.unpublish(screenTrackRef.current);
+          screenTrackRef.current.close();
+          screenTrackRef.current = null;
+        }
+        if (cameraTrackRef.current) {
+          localVideoRef.current = cameraTrackRef.current;
+          await client.publish(cameraTrackRef.current);
+          cameraTrackRef.current = null;
+        }
+      } catch {}
+      setIsScreenSharing(false);
+    } else {
+      // Start screen share
+      try {
+        const screenTrack = await AgoraRTC.createScreenVideoTrack(
+          {
+            encoderConfig: { width: 1280, height: 720, frameRate: 10, bitrateMax: 800 },
+            optimizationMode: "detail",
+          },
+          "disable" // no audio from screen
+        );
+
+        // Handle the user stopping screen share via browser UI
+        const track = Array.isArray(screenTrack) ? screenTrack[0] : screenTrack;
+        track.on("track-ended", async () => {
+          // Auto-restore camera
+          try {
+            await client.unpublish(track);
+            track.close();
+            screenTrackRef.current = null;
+            if (cameraTrackRef.current) {
+              localVideoRef.current = cameraTrackRef.current;
+              await client.publish(cameraTrackRef.current);
+              cameraTrackRef.current = null;
+            }
+          } catch {}
+          setIsScreenSharing(false);
+        });
+
+        // Unpublish camera, publish screen
+        if (localVideoRef.current) {
+          cameraTrackRef.current = localVideoRef.current;
+          await client.unpublish(localVideoRef.current);
+        }
+        screenTrackRef.current = track;
+        localVideoRef.current = track as any;
+        await client.publish(track);
+        setIsScreenSharing(true);
+      } catch (err: any) {
+        // User cancelled the screen picker
+        console.log("Screen share cancelled:", err.message);
+      }
+    }
+  }, [isScreenSharing]);
+
   const playLocalVideo = useCallback((container: HTMLElement | null) => {
     if (container && localVideoRef.current) {
       localVideoRef.current.play(container);
     }
   }, []);
 
-  // Play remote video into a container
   const playRemoteVideo = useCallback((container: HTMLElement | null) => {
     if (container && remoteUser) {
       remoteUser.videoTrack?.play(container);
@@ -142,7 +203,6 @@ export function useAgoraCall(partnerId: string | null) {
     }
   }, [remoteUser]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => { cleanup(); };
   }, [cleanup]);
@@ -152,12 +212,14 @@ export function useAgoraCall(partnerId: string | null) {
     error,
     isMuted,
     isVideoOff,
+    isScreenSharing,
     remoteUser,
     localVideoTrack: localVideoRef.current,
     startCall,
     endCall,
     toggleMute,
     toggleVideo,
+    toggleScreenShare,
     playLocalVideo,
     playRemoteVideo,
   };
