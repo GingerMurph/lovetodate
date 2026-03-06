@@ -230,7 +230,7 @@ const Index = () => {
         <footer className="border-t border-border py-12">
           <div className="container mx-auto px-4 text-center">
             <p className="font-serif text-xl text-gold mb-2">Love To Date</p>
-            <p className="text-sm text-muted-foreground">Only pay when it is someone you would Love To Date</p>
+            <p className="text-sm text-muted-foreground">Only pay when you find someone you would Love To Date</p>
             <p className="mt-4 text-xs text-muted-foreground">
               © {new Date().getFullYear()} lovetodate.co.uk. All rights reserved.
             </p>
