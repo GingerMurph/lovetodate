@@ -355,6 +355,36 @@ export type Database = {
         }
         Relationships: []
       }
+      reports: {
+        Row: {
+          context: string
+          created_at: string
+          id: string
+          is_block: boolean
+          reason: string
+          reported_id: string
+          reporter_id: string
+        }
+        Insert: {
+          context?: string
+          created_at?: string
+          id?: string
+          is_block?: boolean
+          reason?: string
+          reported_id: string
+          reporter_id: string
+        }
+        Update: {
+          context?: string
+          created_at?: string
+          id?: string
+          is_block?: boolean
+          reason?: string
+          reported_id?: string
+          reporter_id?: string
+        }
+        Relationships: []
+      }
       subscriber_cache: {
         Row: {
           checked_at: string

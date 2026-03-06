@@ -8,6 +8,7 @@ import { AvatarImage } from "@/components/AvatarImage";
 import { Button } from "@/components/ui/button";
 import FiltersPanel from "@/components/video/FiltersPanel";
 import CallIcebreakers from "@/components/video/CallIcebreakers";
+import ReportBlockOverlay from "@/components/video/ReportBlockOverlay";
 import {
   Phone,
   PhoneOff,
@@ -186,6 +187,11 @@ const VideoCall = () => {
               </div>
             )}
           </div>
+        )}
+
+        {/* Report/Block overlay */}
+        {callState === "connected" && (
+          <ReportBlockOverlay partnerId={partnerId} onEndCall={handleEndCall} />
         )}
 
         {/* AR Mask overlay */}
