@@ -19,6 +19,8 @@ import {
   MessageSquare,
   ArrowLeft,
   Loader2,
+  Monitor,
+  MonitorOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,11 +37,13 @@ const VideoCall = () => {
     error,
     isMuted,
     isVideoOff,
+    isScreenSharing,
     remoteUser,
     startCall,
     endCall,
     toggleMute,
     toggleVideo,
+    toggleScreenShare,
     playLocalVideo,
     playRemoteVideo,
   } = useAgoraCall(partnerId);
@@ -254,6 +258,15 @@ const VideoCall = () => {
               onClick={() => { setShowIcebreakers(!showIcebreakers); setShowFilters(false); }}
             >
               <MessageSquare className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`h-12 w-12 rounded-full ${isScreenSharing ? "bg-gold/20 text-gold" : "bg-white/10 text-white"}`}
+              onClick={toggleScreenShare}
+              title={isScreenSharing ? "Stop sharing" : "Share screen"}
+            >
+              {isScreenSharing ? <MonitorOff className="h-5 w-5" /> : <Monitor className="h-5 w-5" />}
             </Button>
             <Button
               variant="ghost"
