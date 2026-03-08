@@ -62,13 +62,13 @@ export default function DatingAdvice() {
         <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-border p-5">
+                <div key={i} className="rounded-xl border border-border bg-card p-5">
                   <Skeleton className="h-4 w-1/2 mb-3" />
                   <Skeleton className="h-3 w-full" />
                 </div>
               ))
             : tips.map((tip, i) => (
-                <div key={i} className="flex items-start gap-4 rounded-xl border border-border p-5 transition-all hover:border-gold/30">
+                <div key={i} className="flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-all hover:border-gold/30">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent">
                     <Lightbulb className="h-4 w-4 text-gold" />
                   </div>

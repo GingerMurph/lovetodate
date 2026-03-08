@@ -91,7 +91,7 @@ export default function FunStuff() {
         </p>
 
         {pendingCount > 0 && (
-          <div className="max-w-md mx-auto mb-8 p-4 rounded-xl border border-gold/30 bg-accent/50 text-center">
+          <div className="max-w-md mx-auto mb-8 p-4 rounded-xl border border-gold/30 bg-card text-center">
             <p className="text-sm text-foreground font-medium">
               🎮 You have {pendingCount} game invite{pendingCount > 1 ? "s" : ""} waiting!
             </p>
