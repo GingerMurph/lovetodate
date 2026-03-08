@@ -64,6 +64,7 @@ const ProfileSetup = () => {
     looking_for: "everyone" as string,
     relationship_goal: [] as string[],
     bio: "",
+    interests: [] as string[],
     height_cm: "",
     weight_kg: "",
     body_build: "" as string,
