@@ -97,11 +97,15 @@ const ProfileSetup = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle().then(async ({ data }) => {
+    const loadProfile = async () => {
+      const [{ data }, { data: privateData }] = await Promise.all([
+        supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
+        supabase.from("profile_private_data" as any).select("date_of_birth").eq("user_id", user.id).maybeSingle(),
+      ]);
       if (data) {
         setForm({
           display_name: data.display_name || "",
-          date_of_birth: data.date_of_birth || "",
+          date_of_birth: (privateData as any)?.date_of_birth || data.date_of_birth || "",
           gender: data.gender || "",
           looking_for: data.looking_for || "everyone",
           relationship_goal: (data.relationship_goal as string[] | null) || [],
@@ -161,7 +165,8 @@ const ProfileSetup = () => {
         }));
         setPhotoPreviews(previews);
       }
-    });
+    };
+    loadProfile();
   }, [user]);
 
   const handlePhotoChange = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {

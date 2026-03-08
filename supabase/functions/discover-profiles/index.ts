@@ -46,22 +46,24 @@ Deno.serve(async (req) => {
     }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
-    const [{ data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }] = await Promise.all([
+    const [{ data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }, { data: privateData }] = await Promise.all([
       adminClient
         .from("profiles")
         .select(
           "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-          "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables"
+          "location_city, nationality, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables"
         )
         .neq("user_id", user.id)
         .neq("is_paused", true),
       adminClient.from("user_locations").select("user_id, latitude, longitude"),
       adminClient.from("profile_prompts").select("user_id, prompt_text, answer_text, display_order").order("display_order"),
       adminClient.from("subscriber_cache").select("user_id, is_subscribed").eq("is_subscribed", true),
+      adminClient.from("profile_private_data").select("user_id, date_of_birth"),
     ]);
 
     const locationMap = new Map((locations || []).map(l => [l.user_id, l]));
     const subscriberSet = new Set((subscriberCache || []).map(s => s.user_id));
+    const dobMap = new Map((privateData || []).map(p => [p.user_id, p.date_of_birth]));
     const promptsMap = new Map<string, { prompt_text: string; answer_text: string }[]>();
     for (const p of (allPrompts || [])) {
       const arr = promptsMap.get(p.user_id) || [];
@@ -87,7 +89,8 @@ Deno.serve(async (req) => {
     }
 
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+      (profiles || []).map(async ({ avatar_url, photo_urls, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+        const date_of_birth = dobMap.get(rest.user_id) || null;
         const loc = locationMap.get(rest.user_id);
         const latitude = loc?.latitude ?? null;
         const longitude = loc?.longitude ?? null;

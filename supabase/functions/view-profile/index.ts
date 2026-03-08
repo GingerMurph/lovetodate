@@ -56,9 +56,9 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes, myConnectionsCount] = await Promise.all([
+    const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes, myConnectionsCount, privateDataRes] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, date_of_birth, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
+        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
@@ -71,6 +71,7 @@ Deno.serve(async (req) => {
       adminClient.from("profile_prompts").select("prompt_text, answer_text, display_order").eq("user_id", userId).order("display_order"),
       adminClient.from("subscriber_cache").select("is_subscribed").eq("user_id", userId).maybeSingle(),
       adminClient.from("unlocked_connections").select("id", { count: "exact", head: true }).eq("unlocker_id", user.id),
+      adminClient.from("profile_private_data").select("date_of_birth").eq("user_id", userId).maybeSingle(),
     ]);
     const connectionRes = { data: connForward.data || connReverse.data };
 
@@ -81,7 +82,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { date_of_birth, avatar_url, photo_urls, ...rest } = profileRes.data;
+    const { avatar_url, photo_urls, ...rest } = profileRes.data;
+    const date_of_birth = privateDataRes.data?.date_of_birth || null;
     const latitude = locationRes.data?.latitude ?? null;
     const longitude = locationRes.data?.longitude ?? null;
 
