@@ -76,6 +76,7 @@ const ResetPassword = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
           <span className="font-serif text-3xl text-gold">Love To Date</span>
