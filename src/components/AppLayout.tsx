@@ -66,7 +66,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <main className="relative z-10">{children}</main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/80 backdrop-blur-xl">
         <div className="flex items-center justify-around h-16">
           {nav.map((item) => {
             const isActive = location.pathname === item.to || location.pathname.startsWith(item.to + "/");
