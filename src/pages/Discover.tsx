@@ -389,7 +389,7 @@ const Discover = () => {
                         isVerified={currentProfile.is_verified}
                         isSubscribed={currentProfile.is_subscribed}
                         onMiddleTap={() => {
-                          navigate(`/profile/${currentProfile.user_id}`, { state: { fromDiscover: true, discoverIndex: currentIndex } });
+                          navigate(`/profile/${currentProfile.user_id}`, { state: { fromDiscover: true, discoverIndex: currentIndex, matchScore: currentProfile.match_score } });
                         }}
                       />
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8 pointer-events-none">

@@ -126,9 +126,10 @@ const ProfileView = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const navState = location.state as { fromDiscover?: boolean; discoverIndex?: number } | null;
+  const navState = location.state as { fromDiscover?: boolean; discoverIndex?: number; matchScore?: number | null } | null;
   const fromDiscover = navState?.fromDiscover ?? false;
   const discoverIndex = navState?.discoverIndex ?? 0;
+  const passedMatchScore = navState?.matchScore ?? null;
   const [profile, setProfile] = useState<ViewProfile | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLikedBack, setIsLikedBack] = useState(false);
@@ -272,38 +273,42 @@ const ProfileView = () => {
     setLoadingCompat(true);
     setScoreRevealed(false);
     setDisplayedScore(0);
-    const { data, error } = await supabase.functions.invoke("compatibility-score", {
-      body: { partnerId: userId },
-    });
-    if (!error && data && !data.error) {
-      setCompatScore({
-        score: data.score,
-        summary: data.summary,
-        hasGameData: data.hasGameData,
-        gameMatchPercent: data.gameMatchPercent,
-        dimensions: data.dimensions,
-        commonalities: data.commonalities,
-        conversationStarters: data.conversationStarters,
-        strengthsNote: data.strengthsNote,
-        watchOutNote: data.watchOutNote,
+    try {
+      const { data, error } = await supabase.functions.invoke("compatibility-score", {
+        body: { partnerId: userId },
       });
-      // Trigger count-up animation
-      const target = data.score;
-      const duration = 1200;
-      const steps = 40;
-      const increment = target / steps;
-      let current = 0;
-      let step = 0;
-      const timer = setInterval(() => {
-        step++;
-        current = Math.min(Math.round(increment * step), target);
-        setDisplayedScore(current);
-        if (step >= steps) {
-          clearInterval(timer);
-          setDisplayedScore(target);
-          setTimeout(() => setScoreRevealed(true), 200);
-        }
-      }, duration / steps);
+      if (!error && data && !data.error) {
+        setCompatScore({
+          score: data.score,
+          summary: data.summary,
+          hasGameData: data.hasGameData,
+          gameMatchPercent: data.gameMatchPercent,
+          dimensions: data.dimensions,
+          commonalities: data.commonalities,
+          conversationStarters: data.conversationStarters,
+          strengthsNote: data.strengthsNote,
+          watchOutNote: data.watchOutNote,
+        });
+        const target = data.score;
+        const duration = 1200;
+        const steps = 40;
+        const increment = target / steps;
+        let step = 0;
+        const timer = setInterval(() => {
+          step++;
+          const current = Math.min(Math.round(increment * step), target);
+          setDisplayedScore(current);
+          if (step >= steps) {
+            clearInterval(timer);
+            setDisplayedScore(target);
+            setTimeout(() => setScoreRevealed(true), 200);
+          }
+        }, duration / steps);
+      } else {
+        console.error("Compatibility score error:", error || data?.error);
+      }
+    } catch (err) {
+      console.error("Compatibility score fetch failed:", err);
     }
     setLoadingCompat(false);
   };
@@ -498,6 +503,17 @@ const ProfileView = () => {
             </div>
             {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
               <Badge variant="outline" className="border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
+            )}
+            {/* Quick match score from Discover */}
+            {!isOwnProfile && passedMatchScore !== null && !compatScore && (
+              <div className={`mt-2 inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-extrabold border ${
+                passedMatchScore >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                passedMatchScore >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                "bg-muted text-muted-foreground border-border"
+              }`}>
+                <Sparkles className="h-4 w-4" />
+                {passedMatchScore}% Match
+              </div>
             )}
           </div>
         </div>
