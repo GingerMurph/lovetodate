@@ -513,9 +513,9 @@ const ProfileView = () => {
               {isLiked ? "Liked" : "Like"}
             </Button>
             {!isUnlocked ? (
-              <Button onClick={handleUnlock} disabled={unlocking} className="gradient-gold text-primary-foreground">
-                {unlocking ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Lock className="h-4 w-4 mr-2" />}
-                {unlocking ? "Processing..." : "Unlock for £1"}
+              <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
+                <Lock className="h-4 w-4 mr-2" />
+                Unlock
               </Button>
             ) : (
               <>
