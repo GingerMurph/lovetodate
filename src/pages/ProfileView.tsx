@@ -496,42 +496,7 @@ const ProfileView = () => {
           )}
         </div>
 
-        {/* Actions */}
-        {!isOwnProfile && (
-          <div className="mb-6 flex justify-center gap-3">
-            <Button onClick={handleLike} variant={isLiked ? "default" : "outline"} className={isLiked ? "gradient-gold text-primary-foreground" : "border-gold/30"}>
-              <Heart className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`} />
-              {isLiked ? "Liked" : "Like"}
-            </Button>
-            {!isUnlocked ? (
-              <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
-                <Lock className="h-4 w-4 mr-2" />
-                Unlock
-              </Button>
-            ) : (
-              <>
-                <Badge className="bg-green-600 text-white px-4 py-2">✓ Connected</Badge>
-                <Button onClick={() => navigate(`/messages/${userId}`)} className="gradient-gold text-primary-foreground">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Message
-                </Button>
-              </>
-            )}
-          </div>
-        )}
-
-        {/* Mutual like indicator + subscription prompt */}
-        {!isOwnProfile && isLiked && isLikedBack && (
-          <MutualLikePrompt
-            profileName={profile.display_name}
-            userId={userId!}
-            isUnlocked={isUnlocked}
-            freeConnectionAvailable={freeConnectionAvailable}
-            onConnectionClaimed={() => { setIsUnlocked(true); setFreeConnectionAvailable(false); }}
-          />
-        )}
-
-        {/* AI Compatibility Score */}
+        {/* AI Compatibility Score — prominently placed */}
         {!isOwnProfile && (
           <Card className={`mb-4 border-gold/30 bg-card overflow-hidden transition-all duration-500 ${compatScore ? 'shadow-[0_0_20px_hsl(var(--gold)/0.15)]' : ''}`}>
             <CardHeader className="pb-3">
@@ -663,23 +628,48 @@ const ProfileView = () => {
                   )}
                 </div>
               ) : (
-                <div className="space-y-3">
-                  <p className="text-xs text-muted-foreground text-center">
-                    Our advanced AI analyzes 15+ compatibility dimensions including values, lifestyle, goals, and real game data.
-                  </p>
-                  <Button
-                    variant="outline"
-                    className="w-full border-gold/30 text-gold hover:bg-gold/10 hover-scale"
-                    onClick={fetchCompatibility}
-                    disabled={loadingCompat}
-                  >
-                    {loadingCompat ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                    {loadingCompat ? "Deep Analysis..." : "Run AI Compatibility Analysis"}
-                  </Button>
+                <div className="flex items-center justify-center gap-2 py-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-gold" />
+                  <span className="text-sm text-muted-foreground">Analyzing compatibility...</span>
                 </div>
               )}
             </CardContent>
           </Card>
+        )}
+
+        {/* Actions */}
+        {!isOwnProfile && (
+          <div className="mb-6 flex justify-center gap-3">
+            <Button onClick={handleLike} variant={isLiked ? "default" : "outline"} className={isLiked ? "gradient-gold text-primary-foreground" : "border-gold/30"}>
+              <Heart className={`h-4 w-4 mr-2 ${isLiked ? "fill-current" : ""}`} />
+              {isLiked ? "Liked" : "Like"}
+            </Button>
+            {!isUnlocked ? (
+              <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
+                <Lock className="h-4 w-4 mr-2" />
+                Unlock
+              </Button>
+            ) : (
+              <>
+                <Badge className="bg-green-600 text-white px-4 py-2">✓ Connected</Badge>
+                <Button onClick={() => navigate(`/messages/${userId}`)} className="gradient-gold text-primary-foreground">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Message
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* Mutual like indicator + subscription prompt */}
+        {!isOwnProfile && isLiked && isLikedBack && (
+          <MutualLikePrompt
+            profileName={profile.display_name}
+            userId={userId!}
+            isUnlocked={isUnlocked}
+            freeConnectionAvailable={freeConnectionAvailable}
+            onConnectionClaimed={() => { setIsUnlocked(true); setFreeConnectionAvailable(false); }}
+          />
         )}
 
         {/* Bio */}
