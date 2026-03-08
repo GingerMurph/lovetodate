@@ -65,6 +65,14 @@ type DiscoverProfile = {
   non_negotiables: string[];
   prompts?: { prompt_text: string; answer_text: string }[];
   interests?: string[];
+  education: string | null;
+  occupation: string | null;
+  ethnicity: string | null;
+  children: string | null;
+  pets: string | null;
+  diet: string | null;
+  looking_for: string | null;
+  match_score: number | null;
 };
 
 const Discover = () => {
