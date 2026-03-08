@@ -134,6 +134,7 @@ const ProfileSetup = () => {
           diet: (data as any).diet || "",
           children: data.children || "",
           religion: (data as any).religion || "",
+          interests: data.interests || [],
           ethnicity: (data as any).ethnicity || "",
           languages: (data as any).languages || [],
           pets: (data as any).pets || "",
