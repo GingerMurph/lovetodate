@@ -13,7 +13,7 @@ interface PhotoCarouselProps {
   onMiddleTap?: () => void;
 }
 
-export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass = "aspect-[3/4]", isVerified, isSubscribed }: PhotoCarouselProps) {
+export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass = "aspect-[3/4]", isVerified, isSubscribed, onMiddleTap }: PhotoCarouselProps) {
   const allPhotos = [avatarUrl, ...photoUrls].filter(Boolean) as string[];
   const [index, setIndex] = useState(0);
   const touchStart = useRef<{ x: number; y: number; time: number } | null>(null);
