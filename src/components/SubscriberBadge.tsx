@@ -14,7 +14,7 @@ const sizeMap = {
 
 export default function SubscriberBadge({ size = "md", className = "" }: SubscriberBadgeProps) {
   return (
-    <TooltipProvider delayDuration={0}>
+    <TooltipProvider delayDuration={300}>
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="inline-flex cursor-pointer" role="button" tabIndex={0}>
