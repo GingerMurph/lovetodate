@@ -35,16 +35,15 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: authError } = await userClient.auth.getClaims(token);
-    if (authError || !claimsData?.claims) {
+    const { data: { user: callerUser }, error: authError } = await userClient.auth.getUser();
+    if (authError || !callerUser) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const accepterId = claimsData.claims.sub as string;
+    const accepterId = callerUser.id;
 
     const rateCheck = await checkRateLimit(accepterId, {
       functionName: "notify-game-accepted",
