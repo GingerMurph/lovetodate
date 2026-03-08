@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
-const playSplashCheer = () => {
-  const audio = new Audio("/cheer.mp3");
-  audio.volume = 1.0;
-  audio.play().catch((e) => console.error("Audio play failed:", e));
-};
 
 interface SplashScreenProps {
   onComplete: () => void;
