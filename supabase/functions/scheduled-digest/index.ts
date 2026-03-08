@@ -47,17 +47,25 @@ Deno.serve(async (req) => {
         const hoursAgo = digestType === "morning" ? 24 : 12;
         const sinceDate = new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString();
 
-        const { count: newLikesCount } = await admin
-          .from("likes")
-          .select("id", { count: "exact", head: true })
-          .eq("liked_id", pref.user_id)
-          .gte("created_at", sinceDate);
+        const [likesResult, gamesResult] = await Promise.all([
+          admin
+            .from("likes")
+            .select("id", { count: "exact", head: true })
+            .eq("liked_id", pref.user_id)
+            .gte("created_at", sinceDate),
+          admin
+            .from("games")
+            .select("id", { count: "exact", head: true })
+            .eq("opponent_id", pref.user_id)
+            .eq("status", "pending"),
+        ]);
 
         const totalUnread = unreadCount || 0;
-        const totalLikes = newLikesCount || 0;
+        const totalLikes = likesResult.count || 0;
+        const pendingGames = gamesResult.count || 0;
 
         // Skip if nothing to notify about
-        if (totalUnread === 0 && totalLikes === 0) continue;
+        if (totalUnread === 0 && totalLikes === 0 && pendingGames === 0) continue;
 
         // Get unique sender names for unread messages
         const senderIds = [...new Set((unreadMessages || []).map((m) => m.sender_id))];
@@ -75,6 +83,7 @@ Deno.serve(async (req) => {
           digestType,
           totalUnread,
           totalLikes,
+          pendingGames,
           senderNames
         );
 
@@ -115,24 +124,30 @@ function buildDigestContent(
   type: "morning" | "evening",
   unreadCount: number,
   likesCount: number,
+  pendingGames: number,
   senderNames: string[]
 ) {
   const greeting = type === "morning" ? "Good morning" : "Good evening";
   const parts: string[] = [];
   const smsParts: string[] = [];
 
+  if (likesCount > 0) {
+    parts.push(`💕 ${likesCount} new person${likesCount > 1 ? "s" : ""} would Love To Date you`);
+    smsParts.push(`${likesCount} new like${likesCount > 1 ? "s" : ""}`);
+  }
+
   if (unreadCount > 0) {
     const namesList =
       senderNames.length > 2
         ? `${senderNames.slice(0, 2).join(", ")} and ${senderNames.length - 2} other${senderNames.length - 2 > 1 ? "s" : ""}`
         : senderNames.join(" and ");
-    parts.push(`You have ${unreadCount} unread message${unreadCount > 1 ? "s" : ""} from ${namesList}`);
+    parts.push(`💬 You have ${unreadCount} unread message${unreadCount > 1 ? "s" : ""} from ${namesList}`);
     smsParts.push(`${unreadCount} unread msg${unreadCount > 1 ? "s" : ""}`);
   }
 
-  if (likesCount > 0) {
-    parts.push(`${likesCount} new person${likesCount > 1 ? "s" : ""} would Love To Date you`);
-    smsParts.push(`${likesCount} new like${likesCount > 1 ? "s" : ""}`);
+  if (pendingGames > 0) {
+    parts.push(`🎮 ${pendingGames} game invite${pendingGames > 1 ? "s" : ""} waiting for you`);
+    smsParts.push(`${pendingGames} game invite${pendingGames > 1 ? "s" : ""}`);
   }
 
   const subject =
@@ -142,8 +157,8 @@ function buildDigestContent(
 
   const textBody =
     type === "morning"
-      ? `${greeting}! Here's your morning summary from Love To Date:\n\n${parts.join(".\n")}\n\nOpen the app to see what's waiting for you! 💕`
-      : `${greeting}! You still have activity waiting on Love To Date:\n\n${parts.join(".\n")}\n\nDon't keep them waiting — check the app now! 💕`;
+      ? `${greeting}! Here's your morning summary from Love To Date:\n\n${parts.join("\n")}\n\nOpen the app to see what's waiting for you! 💕`
+      : `${greeting}! You still have activity waiting on Love To Date:\n\n${parts.join("\n")}\n\nDon't keep them waiting — check the app now! 💕`;
 
   const smsBody =
     type === "morning"
