@@ -84,6 +84,16 @@ export default function MyGames() {
     } else {
       toast({ title: accept ? "Game accepted!" : "Invite declined" });
       fetchGames();
+
+      // Notify the challenger that the invite was accepted
+      if (accept) {
+        const game = games.find((g) => g.id === gameId);
+        if (game) {
+          supabase.functions.invoke("notify-game-accepted", {
+            body: { challengerId: game.creator_id, gameType: game.game_type },
+          }).catch(() => {});
+        }
+      }
     }
   };
 
