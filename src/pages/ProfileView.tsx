@@ -504,6 +504,17 @@ const ProfileView = () => {
             {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
               <Badge variant="outline" className="border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
             )}
+            {/* Quick match score from Discover */}
+            {!isOwnProfile && passedMatchScore !== null && !compatScore && (
+              <div className={`mt-2 inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-extrabold border ${
+                passedMatchScore >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                passedMatchScore >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                "bg-muted text-muted-foreground border-border"
+              }`}>
+                <Sparkles className="h-4 w-4" />
+                {passedMatchScore}% Match
+              </div>
+            )}
           </div>
         </div>
 
