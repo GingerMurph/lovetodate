@@ -183,6 +183,31 @@ export default function PlayGame() {
             }}
           />
         )}
+
+        {game.game_type === "eight_ball_pool" && (
+          <EightBallPool
+            gameState={game.game_state}
+            userId={user.id}
+            creatorId={game.creator_id}
+            isMyTurn={isMyTurn && !isCompleted}
+            isCompleted={isCompleted}
+            onShot={async (newState) => {
+              const winnerId = newState.gameOver
+                ? newState.winner === "player1"
+                  ? game.creator_id
+                  : newState.winner === "player2"
+                  ? game.opponent_id
+                  : newState.winner
+                : undefined;
+              const nextTurn = newState.currentPlayer === "player1" ? game.creator_id : game.opponent_id;
+              await updateGame(
+                newState,
+                newState.gameOver ? null : nextTurn,
+                newState.gameOver ? (winnerId || null) : undefined
+              );
+            }}
+          />
+        )}
       </main>
     </div>
   );
