@@ -579,15 +579,6 @@ const ProfileSetup = () => {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Country</Label>
-                <Select value={form.location_country} onValueChange={(v) => update("location_country", v)}>
-                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>
-                    {COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
                 <Label>Occupation</Label>
                 <Select value={form.occupation} onValueChange={(v) => update("occupation", v)}>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
