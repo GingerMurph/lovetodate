@@ -22,11 +22,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Fixed background image */}
-      <div className="fixed inset-0 z-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-background/70" />
-      </div>
+      <BackgroundImage />
 
       {/* Nav */}
       <header className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">

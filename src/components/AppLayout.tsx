@@ -63,7 +63,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </header>
-      <main>{children}</main>
+      <main className="relative z-10">{children}</main>
 
       {/* Mobile bottom tab bar */}
       <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background">
