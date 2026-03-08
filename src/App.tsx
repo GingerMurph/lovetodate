@@ -74,6 +74,7 @@ const App = () => {
                   <Route path="/messages/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
                   <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
+                  <Route path="/verify-account" element={<ProtectedRoute><VerifyAccount /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/video-call/:userId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
