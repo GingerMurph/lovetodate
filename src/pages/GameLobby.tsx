@@ -192,7 +192,7 @@ export default function GameLobby() {
             ) : (
               <div className="space-y-3">
                 {connections.map((c) => (
-                  <div key={c.user_id} className="flex items-center justify-between rounded-xl border border-border p-4 hover:border-gold/30 transition-all">
+                  <div key={c.user_id} className="flex items-center justify-between rounded-xl border border-border bg-card p-4 hover:border-gold/30 transition-all">
                     <p className="text-sm font-medium text-foreground">{c.display_name}</p>
                     <Button
                       size="sm"
