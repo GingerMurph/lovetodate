@@ -353,6 +353,20 @@ const Discover = () => {
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
+                      {currentProfile.interests && currentProfile.interests.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {currentProfile.interests.slice(0, 5).map((tag: string) => (
+                            <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-gold/15 text-gold border border-gold/20">
+                              {tag}
+                            </span>
+                          ))}
+                          {currentProfile.interests.length > 5 && (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/50 text-muted-foreground">
+                              +{currentProfile.interests.length - 5} more
+                            </span>
+                          )}
+                        </div>
+                      )}
                       <span className="text-xs text-muted-foreground truncate block">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
                     </CardContent>
                   </Card>
