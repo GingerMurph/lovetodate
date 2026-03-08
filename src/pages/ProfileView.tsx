@@ -475,7 +475,7 @@ const ProfileView = () => {
             />
             {/* Non-negotiables overlay on photo */}
             {profile.non_negotiables && profile.non_negotiables.length > 0 && (
-              <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
+              <div className="absolute top-16 sm:top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
                 {profile.non_negotiables.map((item) => {
                   const label = item.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
                   return (
