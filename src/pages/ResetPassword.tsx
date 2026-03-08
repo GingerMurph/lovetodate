@@ -57,7 +57,7 @@ const ResetPassword = () => {
 
   if (!isRecovery) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="flex min-h-screen items-center justify-center px-4 relative">
         <BackgroundImage />
         <Card className="w-full max-w-md border-border bg-card">
           <CardHeader className="text-center">
@@ -75,7 +75,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen items-center justify-center px-4 relative">
       <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
