@@ -63,6 +63,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           </p>
         </button>
       )}
+      {/* Pre-loaded audio element — required for mobile playback from user gesture */}
+      <audio ref={audioRef} src="/cheer.mp3" preload="auto" />
       <video
         ref={videoRef}
         src={splashVideo}
