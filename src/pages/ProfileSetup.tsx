@@ -121,6 +121,7 @@ const ProfileSetup = () => {
           education: data.education || "",
           smoking: data.smoking || "",
           drinking: data.drinking || "",
+          diet: (data as any).diet || "",
           children: data.children || "",
           religion: (data as any).religion || "",
           ethnicity: (data as any).ethnicity || "",
