@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import BackgroundImage from "@/components/BackgroundImage";
 import { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy, Home } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
