@@ -6,6 +6,123 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const PROFILE_FIELDS =
+  "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
+  "location_city, nationality, religion, smoking, drinking, personality_type, " +
+  "max_distance_miles, relationship_goal, is_verified, non_negotiables, interests, " +
+  "education, occupation, ethnicity, children, pets, diet, languages, looking_for, political_beliefs, bio";
+
+/**
+ * Compute a lightweight 0-100 compatibility score between two profile objects.
+ * This runs entirely server-side with no AI calls so it's fast.
+ */
+function quickCompatScore(viewer: Record<string, any>, candidate: Record<string, any>): number {
+  let score = 50; // base
+  let factors = 0;
+
+  // Gender preference match
+  if (viewer.looking_for && viewer.looking_for !== "everyone") {
+    factors++;
+    if (candidate.gender === viewer.looking_for) score += 8;
+    else score -= 15;
+  }
+  if (candidate.looking_for && candidate.looking_for !== "everyone") {
+    factors++;
+    if (viewer.gender === candidate.looking_for) score += 8;
+    else score -= 15;
+  }
+
+  // Relationship goals overlap
+  const vGoals = Array.isArray(viewer.relationship_goal) ? viewer.relationship_goal : [];
+  const cGoals = Array.isArray(candidate.relationship_goal) ? candidate.relationship_goal : [];
+  if (vGoals.length > 0 && cGoals.length > 0) {
+    factors++;
+    const overlap = vGoals.filter((g: string) => cGoals.includes(g)).length;
+    if (overlap > 0) score += 6 * overlap;
+    else score -= 5;
+  }
+
+  // Shared interests
+  const vInterests = Array.isArray(viewer.interests) ? viewer.interests : [];
+  const cInterests = Array.isArray(candidate.interests) ? candidate.interests : [];
+  if (vInterests.length > 0 && cInterests.length > 0) {
+    factors++;
+    const shared = vInterests.filter((i: string) => cInterests.includes(i)).length;
+    score += Math.min(shared * 3, 15);
+  }
+
+  // Religion match
+  if (viewer.religion && candidate.religion) {
+    factors++;
+    if (viewer.religion === candidate.religion) score += 5;
+  }
+
+  // Smoking compatibility
+  if (viewer.smoking && candidate.smoking) {
+    factors++;
+    if (viewer.smoking === candidate.smoking) score += 3;
+    else if (viewer.smoking === "non_smoker" && candidate.smoking === "regular") score -= 4;
+  }
+
+  // Drinking compatibility
+  if (viewer.drinking && candidate.drinking) {
+    factors++;
+    if (viewer.drinking === candidate.drinking) score += 3;
+    else if (viewer.drinking === "non_drinker" && candidate.drinking === "regular") score -= 3;
+  }
+
+  // Children compatibility
+  if (viewer.children && candidate.children) {
+    factors++;
+    if (viewer.children === candidate.children) score += 4;
+  }
+
+  // Diet compatibility
+  if (viewer.diet && candidate.diet) {
+    factors++;
+    if (viewer.diet === candidate.diet) score += 3;
+  }
+
+  // Personality type
+  if (viewer.personality_type && candidate.personality_type) {
+    factors++;
+    if (viewer.personality_type === candidate.personality_type) score += 4;
+  }
+
+  // Education level similarity
+  if (viewer.education && candidate.education) {
+    factors++;
+    if (viewer.education === candidate.education) score += 3;
+  }
+
+  // Pets compatibility
+  if (viewer.pets && candidate.pets) {
+    factors++;
+    if (viewer.pets === candidate.pets) score += 2;
+  }
+
+  // Languages overlap
+  const vLangs = Array.isArray(viewer.languages) ? viewer.languages : [];
+  const cLangs = Array.isArray(candidate.languages) ? candidate.languages : [];
+  if (vLangs.length > 0 && cLangs.length > 0) {
+    factors++;
+    const sharedLangs = vLangs.filter((l: string) => cLangs.includes(l)).length;
+    if (sharedLangs > 0) score += Math.min(sharedLangs * 2, 6);
+  }
+
+  // Non-negotiables check — penalise if viewer's non-negotiables match candidate traits
+  const viewerNN = Array.isArray(viewer.non_negotiables) ? viewer.non_negotiables : [];
+  if (viewerNN.length > 0) {
+    for (const nn of viewerNN) {
+      if (nn === "smoker" && candidate.smoking === "regular") score -= 10;
+      if (nn === "drinker" && candidate.drinking === "regular") score -= 10;
+      if (nn === "no_children" && candidate.children && candidate.children !== "none" && candidate.children !== "No") score -= 8;
+    }
+  }
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -46,13 +163,13 @@ Deno.serve(async (req) => {
     }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
-    const [{ data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }, { data: privateData }] = await Promise.all([
+
+    // Fetch viewer's own profile for matching
+    const [{ data: viewerProfile }, { data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }, { data: privateData }] = await Promise.all([
+      adminClient.from("profiles").select(PROFILE_FIELDS).eq("user_id", user.id).single(),
       adminClient
         .from("profiles")
-        .select(
-          "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-          "location_city, nationality, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables, interests"
-        )
+        .select(PROFILE_FIELDS)
         .neq("user_id", user.id)
         .neq("is_paused", true),
       adminClient.from("user_locations").select("user_id, latitude, longitude"),
@@ -117,6 +234,10 @@ Deno.serve(async (req) => {
         const isFreeTonightTarget = Array.isArray(relationship_goal) && relationship_goal.includes("free_tonight");
         const tooFar = !isFreeTonightTarget && max_distance_miles !== null && distanceMiles !== null && distanceMiles > max_distance_miles;
 
+        // Compute quick compatibility score
+        const candidateFull = { ...rest, relationship_goal, non_negotiables };
+        const matchScore = viewerProfile ? quickCompatScore(viewerProfile, candidateFull) : null;
+
         return {
           ...rest,
           avatar_url: signedAvatarUrl,
@@ -130,9 +251,13 @@ Deno.serve(async (req) => {
           non_negotiables: Array.isArray(non_negotiables) ? non_negotiables : [],
           prompts: promptsMap.get(rest.user_id) || [],
           is_subscribed: subscriberSet.has(rest.user_id),
+          match_score: matchScore,
         };
       })
     );
+
+    // Sort by match score descending (best matches first)
+    sanitized.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
 
     return new Response(JSON.stringify(sanitized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

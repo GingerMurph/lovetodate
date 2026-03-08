@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2 } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -20,7 +20,19 @@ import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
 const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
-const PERSONALITY_TYPES = ["Introvert", "Extrovert", "Ambivert", "Old Soul", "Free Spirit", "Adventurer", "Empath", "Creative", "Analytical"];
+const PERSONALITY_TYPES = ["Selectively social", "Life of the party", "Bit of both", "More confident once I know you", "Free spirit", "Love trying new things", "Deep thinker", "Heart on my sleeve", "Creative soul", "Analytical mind"];
+const EDUCATION_LEVELS = ["Secondary School", "College", "Undergraduate Degree", "Postgraduate Degree", "Master's Degree", "PhD / Doctorate", "Professional Qualification", "Self-taught", "Prefer not to say", "Other"];
+const ETHNICITY_OPTIONS = ["White", "Black", "Asian", "Mixed", "Hispanic", "Middle Eastern", "Other", "Prefer not to say"];
+const CHILDREN_OPTIONS = ["None", "Have children", "Want children", "Don't want children", "Open to children"];
+const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pets"];
+const DIET_OPTIONS = ["Eat Anything", "Vegetarian", "Vegan", "Pescatarian", "Halal", "Kosher", "Gluten-free", "Other"];
+const RELATIONSHIP_GOALS = [
+  { value: "long_term", label: "Long Term" },
+  { value: "short_term", label: "Short Term" },
+  { value: "casual", label: "Casual" },
+  { value: "friendship", label: "Friendship" },
+  { value: "not_sure", label: "Not Sure" },
+];
 const DISTANCE_OPTIONS = [
   { label: "Within 5 miles", value: "5" },
   { label: "Within 10 miles", value: "10" },
@@ -53,6 +65,14 @@ type DiscoverProfile = {
   non_negotiables: string[];
   prompts?: { prompt_text: string; answer_text: string }[];
   interests?: string[];
+  education: string | null;
+  occupation: string | null;
+  ethnicity: string | null;
+  children: string | null;
+  pets: string | null;
+  diet: string | null;
+  looking_for: string | null;
+  match_score: number | null;
 };
 
 const Discover = () => {
@@ -79,6 +99,13 @@ const Discover = () => {
     personality_type: "",
     minAge: "",
     maxAge: "",
+    education: "",
+    ethnicity: "",
+    children: "",
+    pets: "",
+    diet: "",
+    looking_for: "",
+    relationship_goal: "",
   });
 
   // Get user GPS on mount — sent to edge function for server-side distance, never used client-side
@@ -144,6 +171,12 @@ const Discover = () => {
     if (filters.personality_type && p.personality_type !== filters.personality_type) return false;
     if (filters.minAge && p.age !== null && p.age < parseInt(filters.minAge)) return false;
     if (filters.maxAge && p.age !== null && p.age > parseInt(filters.maxAge)) return false;
+    if (filters.education && p.education !== filters.education) return false;
+    if (filters.ethnicity && p.ethnicity !== filters.ethnicity) return false;
+    if (filters.children && p.children !== filters.children) return false;
+    if (filters.pets && p.pets !== filters.pets) return false;
+    if (filters.diet && p.diet !== filters.diet) return false;
+    if (filters.looking_for && p.looking_for !== filters.looking_for) return false;
     if (filters.distance) {
       if (p.distance_miles === null || p.distance_miles > parseInt(filters.distance)) return false;
     }
@@ -209,6 +242,15 @@ const Discover = () => {
                   <SelectItem value="two_spirit">Two-Spirit</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={filters.looking_for} onValueChange={(v) => setFilters(f => ({ ...f, looking_for: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Looking for" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Anyone</SelectItem>
+                  <SelectItem value="male">Men</SelectItem>
+                  <SelectItem value="female">Women</SelectItem>
+                  <SelectItem value="everyone">Everyone</SelectItem>
+                </SelectContent>
+              </Select>
               <Select value={filters.body_build} onValueChange={(v) => setFilters(f => ({ ...f, body_build: v === "all" ? "" : v }))}>
                 <SelectTrigger><SelectValue placeholder="Build" /></SelectTrigger>
                 <SelectContent>
@@ -229,8 +271,15 @@ const Discover = () => {
                   {NATIONALITIES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                 </SelectContent>
               </Select>
+              <Select value={filters.ethnicity} onValueChange={(v) => setFilters(f => ({ ...f, ethnicity: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Ethnicity" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {ETHNICITY_OPTIONS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <Select value={filters.distance} onValueChange={(v) => setFilters(f => ({ ...f, distance: v === "anywhere" ? "" : v }))}>
-                <SelectTrigger><SelectValue placeholder="Distance from me" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Distance" /></SelectTrigger>
                 <SelectContent>
                   {DISTANCE_OPTIONS.map((d) => (
                     <SelectItem key={d.value || "anywhere"} value={d.value || "anywhere"}>{d.label}</SelectItem>
@@ -246,6 +295,13 @@ const Discover = () => {
                 <SelectContent>
                   <SelectItem value="all">All Religions</SelectItem>
                   {RELIGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.education} onValueChange={(v) => setFilters(f => ({ ...f, education: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Education" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {EDUCATION_LEVELS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={filters.smoking} onValueChange={(v) => setFilters(f => ({ ...f, smoking: v === "all" ? "" : v }))}>
@@ -266,6 +322,27 @@ const Discover = () => {
                   <SelectItem value="non_drinker">Non-Drinker</SelectItem>
                   <SelectItem value="social">Social</SelectItem>
                   <SelectItem value="regular">Regular</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filters.children} onValueChange={(v) => setFilters(f => ({ ...f, children: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Children" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {CHILDREN_OPTIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.pets} onValueChange={(v) => setFilters(f => ({ ...f, pets: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Pets" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {PETS_OPTIONS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.diet} onValueChange={(v) => setFilters(f => ({ ...f, diet: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Diet" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {DIET_OPTIONS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={filters.personality_type} onValueChange={(v) => setFilters(f => ({ ...f, personality_type: v === "all" ? "" : v }))}>
@@ -312,7 +389,19 @@ const Discover = () => {
                           isVerified={currentProfile.is_verified}
                           isSubscribed={currentProfile.is_subscribed}
                         />
-                        {/* Non-negotiables removed from photo overlay — shown below */}
+                        {/* Match score badge */}
+                        {currentProfile.match_score !== null && (
+                          <div className="absolute top-3 right-3 z-10">
+                            <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold backdrop-blur-sm shadow-lg ${
+                              currentProfile.match_score >= 70 ? "bg-green-500/90 text-white" :
+                              currentProfile.match_score >= 50 ? "bg-gold/90 text-primary-foreground" :
+                              "bg-muted/80 text-muted-foreground"
+                            }`}>
+                              <Sparkles className="h-3 w-3" />
+                              {currentProfile.match_score}% Match
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
