@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+// Country field removed — UK only for now
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
