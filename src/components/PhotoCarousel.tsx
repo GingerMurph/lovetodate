@@ -10,6 +10,7 @@ interface PhotoCarouselProps {
   aspectClass?: string;
   isVerified?: boolean;
   isSubscribed?: boolean;
+  onMiddleTap?: () => void;
 }
 
 export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass = "aspect-[3/4]", isVerified, isSubscribed }: PhotoCarouselProps) {

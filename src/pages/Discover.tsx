@@ -12,7 +12,7 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriberBadge from "@/components/SubscriberBadge";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
