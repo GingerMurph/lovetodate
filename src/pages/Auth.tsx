@@ -160,7 +160,7 @@ const Auth = () => {
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+44 7700 900000" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                    <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+44 7700 900000" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
                     <p className="text-xs text-muted-foreground">Include country code. You'll verify this after signing up.</p>
                   </div>
                 )}
