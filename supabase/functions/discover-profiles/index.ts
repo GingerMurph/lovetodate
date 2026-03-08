@@ -89,7 +89,8 @@ Deno.serve(async (req) => {
     }
 
     const sanitized = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, photo_urls, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+      (profiles || []).map(async ({ avatar_url, photo_urls, max_distance_miles, relationship_goal, non_negotiables, ...rest }) => {
+        const date_of_birth = dobMap.get(rest.user_id) || null;
         const loc = locationMap.get(rest.user_id);
         const latitude = loc?.latitude ?? null;
         const longitude = loc?.longitude ?? null;
