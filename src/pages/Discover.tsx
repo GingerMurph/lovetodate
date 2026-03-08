@@ -199,7 +199,13 @@ const Discover = () => {
                   <SelectItem value="all">All Genders</SelectItem>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="transgender_male">Transgender Male</SelectItem>
+                  <SelectItem value="transgender_female">Transgender Female</SelectItem>
                   <SelectItem value="non_binary">Non-Binary</SelectItem>
+                  <SelectItem value="genderfluid">Genderfluid</SelectItem>
+                  <SelectItem value="genderqueer">Genderqueer</SelectItem>
+                  <SelectItem value="agender">Agender</SelectItem>
+                  <SelectItem value="two_spirit">Two-Spirit</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filters.body_build} onValueChange={(v) => setFilters(f => ({ ...f, body_build: v === "all" ? "" : v }))}>
