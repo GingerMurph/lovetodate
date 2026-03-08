@@ -473,35 +473,40 @@ const ProfileView = () => {
               isVerified={profile.is_verified}
               isSubscribed={profile.is_subscribed}
             />
-            {/* Non-negotiables overlay on photo */}
-            {profile.non_negotiables && profile.non_negotiables.length > 0 && (
-              <div className="absolute top-16 sm:top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
-                {profile.non_negotiables.map((item) => {
-                  const label = item.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-                  return (
-                    <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm">
-                      🚫 {label}
-                    </Badge>
-                  );
-                })}
-              </div>
-            )}
           </div>
           <p className="text-xs text-muted-foreground mb-2">Swipe photo right to like, left to pass</p>
-          <h1 className="font-serif text-3xl font-bold flex items-center gap-2">
-            {profile.display_name}{profile.age ? `, ${profile.age}` : ""}
-            {profile.is_verified && <VerifiedBadge size="lg" />}
-            {profile.is_subscribed && <SubscriberBadge size="lg" />}
+          
+          {/* Name, age, location & badges */}
+          <h1 className="font-serif text-3xl font-bold flex items-center gap-2 text-center flex-wrap justify-center">
+            <span>{profile.display_name}{profile.age ? `, ${profile.age}` : ""}</span>
+            <span className="flex items-center gap-1 shrink-0">
+              {profile.is_verified && <VerifiedBadge size="lg" />}
+              {profile.is_subscribed && <SubscriberBadge size="lg" />}
+            </span>
           </h1>
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
-            {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}
+          <div className="mt-1 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
+            {profile.location_city && <span className="flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" />{profile.location_city}{profile.location_country ? `, ${profile.location_country}` : ""}</span>}
             {profile.distance_miles !== null && !isOwnProfile && (
-              <span className="flex items-center gap-1"><MapPin className="h-4 w-4" />{profile.distance_miles} miles away</span>
+              <Badge variant="secondary" className="text-xs font-medium">{profile.distance_miles} miles away</Badge>
             )}
-            {profile.nationality && <span className="flex items-center gap-1"><Globe className="h-4 w-4" />{profile.nationality}</span>}
+            {profile.nationality && <span className="flex items-center gap-1"><Globe className="h-4 w-4 text-gold" />{profile.nationality}</span>}
           </div>
           {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
             <Badge variant="outline" className="mt-3 border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
+          )}
+
+          {/* Non-negotiables — spaced below header */}
+          {profile.non_negotiables && profile.non_negotiables.length > 0 && (
+            <div className="mt-4 flex flex-wrap justify-center gap-2">
+              {profile.non_negotiables.map((item) => {
+                const label = item.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                return (
+                  <Badge key={item} variant="destructive" className="text-xs px-2.5 py-1">
+                    🚫 {label}
+                  </Badge>
+                );
+              })}
+            </div>
           )}
         </div>
 
