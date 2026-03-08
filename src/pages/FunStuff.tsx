@@ -34,6 +34,13 @@ const GAMES = [
     icon: Circle,
     color: "text-green-500",
   },
+  {
+    id: "whos_who",
+    title: "Who's Who?",
+    desc: "Guess facts about each other from your profiles. How well do you know your match?",
+    icon: Users,
+    color: "text-gold",
+  },
 ];
 
 export default function FunStuff() {

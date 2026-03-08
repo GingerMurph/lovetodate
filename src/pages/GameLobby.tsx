@@ -70,6 +70,8 @@ export default function GameLobby() {
       ? { board: Array(6).fill(null).map(() => Array(7).fill(null)) }
       : gameType === "eight_ball_pool"
       ? (await import("@/components/games/EightBallPool")).createInitialPoolState()
+      : gameType === "whos_who"
+      ? { currentRound: 0, questions: [], scores: {}, answers: {} }
       : { questionIndex: 0, answers: {}, questionOrder: shuffledOrder };
 
     const { error } = await supabase.from("games").insert({
