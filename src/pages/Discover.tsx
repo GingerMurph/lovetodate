@@ -403,6 +403,19 @@ const Discover = () => {
                           </div>
                         )}
                       </div>
+                      {/* Non-negotiables — above name overlay */}
+                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
+                        <div className="absolute inset-x-0 bottom-[7.5rem] z-10 px-3 flex flex-wrap gap-1 justify-start pointer-events-none">
+                          {currentProfile.non_negotiables.map((item) => {
+                            const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                            return (
+                              <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm pointer-events-auto">
+                                🚫 {label}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                      )}
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
                           <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
@@ -421,28 +434,6 @@ const Discover = () => {
                       </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
-                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 pb-1 mb-1 border-b border-border">
-                          <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide w-full">Deal Breakers</span>
-                          <TooltipProvider delayDuration={0}>
-                            {currentProfile.non_negotiables.map((item) => {
-                              const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-                              return (
-                                <Tooltip key={item}>
-                                  <TooltipTrigger asChild>
-                                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 cursor-pointer">
-                                      🚫 {label}
-                                    </Badge>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="bottom" className="max-w-[200px] text-center animate-scale-in">
-                                    <p className="text-xs">{currentProfile.display_name} won't date someone who is: <strong>{label}</strong></p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              );
-                            })}
-                          </TooltipProvider>
-                        </div>
-                      )}
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
