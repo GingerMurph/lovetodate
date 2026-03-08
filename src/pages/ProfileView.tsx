@@ -826,21 +826,6 @@ const ProfileView = () => {
           </Card>
         )}
 
-        {/* Non-Negotiables */}
-        {profile.non_negotiables && profile.non_negotiables.length > 0 && (
-          <Card className="mb-4 border-border bg-card">
-            <CardHeader><CardTitle className="font-serif text-lg flex items-center gap-2"><Ban className="h-5 w-5 text-destructive" />Non-Negotiables</CardTitle></CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {profile.non_negotiables.map((item) => (
-                  <Badge key={item} variant="destructive" className="text-xs">
-                    {item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Love To Date / Not For Me buttons */}
         {!isOwnProfile && (
