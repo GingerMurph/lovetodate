@@ -837,6 +837,34 @@ const ProfileSetup = () => {
           <Card className="border-border bg-card">
             <CardHeader><CardTitle className="font-serif text-lg">About You</CardTitle></CardHeader>
             <CardContent className="space-y-3">
+              <Label className="text-sm font-medium">Describe yourself <span className="text-muted-foreground font-normal">(tap to select)</span></Label>
+              <div className="flex flex-wrap gap-1.5">
+                {ABOUT_YOU_TAGS.map((tag) => {
+                  const selected = form.interests.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (selected) {
+                          update("interests", form.interests.filter((t: string) => t !== tag));
+                        } else {
+                          update("interests", [...form.interests, tag]);
+                        }
+                      }}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                        selected
+                          ? "bg-gold/20 border-gold text-gold font-medium"
+                          : "border-border bg-secondary/30 text-muted-foreground hover:border-gold/40 hover:text-foreground"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Label className="text-sm font-medium pt-2">Bio</Label>
               <Textarea value={form.bio} onChange={(e) => update("bio", e.target.value)} placeholder="Tell potential matches about yourself, what makes you unique, what you're looking for..." rows={5} className="resize-none" />
               
               <div className="flex items-center gap-2">
