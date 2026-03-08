@@ -7,6 +7,8 @@ import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { AvatarImage } from "@/components/AvatarImage";
+import VerifiedBadge from "@/components/VerifiedBadge";
+import SubscriberBadge from "@/components/SubscriberBadge";
 
 type LikeProfile = {
   user_id: string;
@@ -15,6 +17,8 @@ type LikeProfile = {
   location_city: string | null;
   nationality: string | null;
   age: number | null;
+  is_verified?: boolean;
+  is_subscribed?: boolean;
 };
 
 const Likes = () => {
