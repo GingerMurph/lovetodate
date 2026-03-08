@@ -70,7 +70,7 @@ export default function ConversationStarters() {
                 </div>
               ))
             : starters.map((s, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-border p-4 transition-all hover:border-gold/30 hover:bg-accent/50">
+                <div key={i} className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:border-gold/30 hover:bg-card/90">
                   <MessageCircle className="h-4 w-4 text-gold shrink-0" />
                   <p className="text-sm text-foreground">{s}</p>
                 </div>
