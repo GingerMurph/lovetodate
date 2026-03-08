@@ -1,4 +1,4 @@
-import { ArrowLeft, Grid3X3, Circle, HelpCircle, Gamepad2, Trophy, Users } from "lucide-react";
+import { ArrowLeft, Grid3X3, Circle, HelpCircle, Gamepad2, Trophy, Users, Home } from "lucide-react";
 import BackgroundImage from "@/components/BackgroundImage";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
