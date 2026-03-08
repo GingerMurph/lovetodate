@@ -546,15 +546,16 @@ const ProfileView = () => {
             <CardHeader className="pb-3">
               <CardTitle className="font-serif text-lg flex items-center gap-2">
                 <Sparkles className={`h-5 w-5 text-gold ${compatScore ? 'animate-pulse' : ''}`} />
-                Compatibility Score
+                AI Compatibility Analysis
+                {compatScore && <Badge variant="secondary" className="ml-auto text-[10px]">Advanced AI</Badge>}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {compatScore ? (
-                <div className="animate-fade-in space-y-4">
+                <div className="animate-fade-in space-y-5">
                   {/* Score ring */}
                   <div className="flex items-center gap-5">
-                    <div className="relative h-20 w-20 shrink-0">
+                    <div className="relative h-24 w-24 shrink-0">
                       <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
                         <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(var(--secondary))" strokeWidth="8" />
                         <circle
@@ -567,40 +568,124 @@ const ProfileView = () => {
                           className="transition-all duration-300 ease-out"
                         />
                       </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-gold">
+                      <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-gold">
                         {displayedScore}%
                       </span>
                     </div>
                     <div className="flex-1 space-y-2">
-                      <Progress value={displayedScore} className="h-2" />
-                      <p className={`text-sm text-muted-foreground transition-opacity duration-500 ${scoreRevealed ? 'opacity-100' : 'opacity-0'}`}>
+                      <p className={`text-sm font-medium transition-opacity duration-500 ${scoreRevealed ? 'opacity-100' : 'opacity-0'}`}>
                         {compatScore.summary}
                       </p>
                       {compatScore.hasGameData && scoreRevealed && (
-                        <div className="flex items-center gap-1.5 mt-1 animate-fade-in">
+                        <div className="flex items-center gap-1.5 animate-fade-in">
                           <Gamepad2 className="h-3.5 w-3.5 text-purple-500" />
-                          <span className="text-xs font-medium text-purple-500">Includes game data</span>
+                          <span className="text-xs font-medium text-purple-500">
+                            Game data included {compatScore.gameMatchPercent ? `(${compatScore.gameMatchPercent}% match)` : ''}
+                          </span>
+                        </div>
+                      )}
+                      <p className={`text-xs font-medium uppercase tracking-wider transition-opacity duration-700 ${scoreRevealed ? 'opacity-100' : 'opacity-0'} ${
+                        displayedScore >= 80 ? 'text-green-600' : displayedScore >= 50 ? 'text-gold' : 'text-muted-foreground'
+                      }`}>
+                        {displayedScore >= 80 ? '🔥 Excellent Match!' : displayedScore >= 60 ? '✨ Great Potential!' : displayedScore >= 40 ? '💫 Worth Exploring' : '🌱 See Where It Goes'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Dimension breakdown */}
+                  {scoreRevealed && compatScore.dimensions && (
+                    <div className="animate-fade-in space-y-2 pt-2 border-t border-border">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Compatibility Breakdown</p>
+                      <div className="grid grid-cols-5 gap-2 text-center">
+                        {[
+                          { key: 'values', label: '💫 Values', color: 'bg-purple-500' },
+                          { key: 'lifestyle', label: '🏃 Lifestyle', color: 'bg-blue-500' },
+                          { key: 'goals', label: '🎯 Goals', color: 'bg-green-500' },
+                          { key: 'personality', label: '💭 Vibe', color: 'bg-pink-500' },
+                          { key: 'interests', label: '🎮 Fun', color: 'bg-orange-500' },
+                        ].map(({ key, label, color }) => {
+                          const val = compatScore.dimensions![key as keyof typeof compatScore.dimensions] || 0;
+                          return (
+                            <div key={key} className="flex flex-col items-center gap-1">
+                              <div className="relative h-12 w-12">
+                                <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+                                  <circle cx="18" cy="18" r="14" fill="none" stroke="hsl(var(--secondary))" strokeWidth="3" />
+                                  <circle
+                                    cx="18" cy="18" r="14" fill="none"
+                                    className={color.replace('bg-', 'stroke-')}
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeDasharray={`${2 * Math.PI * 14}`}
+                                    strokeDashoffset={`${2 * Math.PI * 14 * (1 - val / 100)}`}
+                                  />
+                                </svg>
+                                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">{val}</span>
+                              </div>
+                              <span className="text-[9px] text-muted-foreground leading-tight">{label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Commonalities */}
+                  {scoreRevealed && compatScore.commonalities && compatScore.commonalities.length > 0 && (
+                    <div className="animate-fade-in pt-2 border-t border-border">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">💞 What You Have in Common</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {compatScore.commonalities.map((item, i) => (
+                          <Badge key={i} variant="secondary" className="text-xs">{item}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Conversation starters */}
+                  {scoreRevealed && compatScore.conversationStarters && compatScore.conversationStarters.length > 0 && (
+                    <div className="animate-fade-in pt-2 border-t border-border">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">💬 AI Conversation Starters</p>
+                      <div className="space-y-2">
+                        {compatScore.conversationStarters.map((starter, i) => (
+                          <p key={i} className="text-sm text-foreground bg-accent/50 rounded-lg px-3 py-2 italic">"{starter}"</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Strength & watch-out notes */}
+                  {scoreRevealed && (compatScore.strengthsNote || compatScore.watchOutNote) && (
+                    <div className="animate-fade-in flex gap-3 pt-2 border-t border-border text-xs">
+                      {compatScore.strengthsNote && (
+                        <div className="flex-1 bg-green-500/10 rounded-lg p-2">
+                          <span className="font-semibold text-green-600">💪 Strength:</span>{' '}
+                          <span className="text-muted-foreground">{compatScore.strengthsNote}</span>
+                        </div>
+                      )}
+                      {compatScore.watchOutNote && (
+                        <div className="flex-1 bg-amber-500/10 rounded-lg p-2">
+                          <span className="font-semibold text-amber-600">👀 Explore:</span>{' '}
+                          <span className="text-muted-foreground">{compatScore.watchOutNote}</span>
                         </div>
                       )}
                     </div>
-                  </div>
-                  {/* Score label */}
-                  <p className={`text-center text-xs font-medium uppercase tracking-wider transition-opacity duration-700 ${scoreRevealed ? 'opacity-100' : 'opacity-0'} ${
-                    displayedScore >= 80 ? 'text-green-500' : displayedScore >= 50 ? 'text-gold' : 'text-muted-foreground'
-                  }`}>
-                    {displayedScore >= 80 ? '🔥 Excellent Match!' : displayedScore >= 60 ? '✨ Great Potential!' : displayedScore >= 40 ? '💫 Worth Exploring' : '🌱 See Where It Goes'}
-                  </p>
+                  )}
                 </div>
               ) : (
-                <Button
-                  variant="outline"
-                  className="w-full border-gold/30 text-gold hover:bg-gold/10 hover-scale"
-                  onClick={fetchCompatibility}
-                  disabled={loadingCompat}
-                >
-                  {loadingCompat ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                  {loadingCompat ? "Analysing..." : "Check Compatibility"}
-                </Button>
+                <div className="space-y-3">
+                  <p className="text-xs text-muted-foreground text-center">
+                    Our advanced AI analyzes 15+ compatibility dimensions including values, lifestyle, goals, and real game data.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full border-gold/30 text-gold hover:bg-gold/10 hover-scale"
+                    onClick={fetchCompatibility}
+                    disabled={loadingCompat}
+                  >
+                    {loadingCompat ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                    {loadingCompat ? "Deep Analysis..." : "Run AI Compatibility Analysis"}
+                  </Button>
+                </div>
               )}
             </CardContent>
           </Card>
