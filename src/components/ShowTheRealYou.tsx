@@ -41,7 +41,6 @@ export default function ShowTheRealYou() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [addingPrompt, setAddingPrompt] = useState(false);
-  const [selectedNewPrompt, setSelectedNewPrompt] = useState("");
 
   useEffect(() => {
     if (!user) return;
