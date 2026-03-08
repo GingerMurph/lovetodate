@@ -335,18 +335,26 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
           if (ball.x - BALL_RADIUS < 10) {
             ball.x = BALL_RADIUS + 10;
             ball.vx = -ball.vx * 0.8;
+            const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            if (speed > 0.5) playCollision(speed / MAX_POWER);
           }
           if (ball.x + BALL_RADIUS > TABLE_WIDTH - 10) {
             ball.x = TABLE_WIDTH - BALL_RADIUS - 10;
             ball.vx = -ball.vx * 0.8;
+            const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            if (speed > 0.5) playCollision(speed / MAX_POWER);
           }
           if (ball.y - BALL_RADIUS < 10) {
             ball.y = BALL_RADIUS + 10;
             ball.vy = -ball.vy * 0.8;
+            const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            if (speed > 0.5) playCollision(speed / MAX_POWER);
           }
           if (ball.y + BALL_RADIUS > TABLE_HEIGHT - 10) {
             ball.y = TABLE_HEIGHT - BALL_RADIUS - 10;
             ball.vy = -ball.vy * 0.8;
+            const speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+            if (speed > 0.5) playCollision(speed / MAX_POWER);
           }
 
           // Check pocketing
@@ -355,6 +363,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
             ball.vx = 0;
             ball.vy = 0;
             pocketedThisTurn.push(ball);
+            playPocket();
           }
 
           // Apply friction
@@ -375,7 +384,12 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
           for (let j = i + 1; j < simBalls.length; j++) {
             if (simBalls[i].pocketed || simBalls[j].pocketed) continue;
             if (checkCollision(simBalls[i], simBalls[j])) {
+              const relSpeed = Math.sqrt(
+                Math.pow(simBalls[i].vx - simBalls[j].vx, 2) +
+                Math.pow(simBalls[i].vy - simBalls[j].vy, 2)
+              );
               resolveCollision(simBalls[i], simBalls[j]);
+              if (relSpeed > 0.5) playCollision(relSpeed / MAX_POWER);
             }
           }
         }
@@ -393,7 +407,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
       setIsAnimating(true);
       animationRef.current = requestAnimationFrame(step);
     });
-  }, []);
+  }, [playCollision, playPocket]);
 
   const handleShot = async () => {
     if (!aimStart || !aimEnd || isAnimating || !isMyTurn) return;
