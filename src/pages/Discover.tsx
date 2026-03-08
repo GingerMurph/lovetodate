@@ -315,10 +315,12 @@ const Discover = () => {
                         {/* Non-negotiables removed from photo overlay — shown below */}
                       </div>
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
-                        <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5">
-                          {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
-                          {currentProfile.is_verified && <VerifiedBadge size="md" />}
-                          {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
+                        <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
+                          <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
+                          <span className="flex items-center gap-1 shrink-0">
+                            {currentProfile.is_verified && <VerifiedBadge size="md" />}
+                            {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
+                          </span>
                         </h3>
                         <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
