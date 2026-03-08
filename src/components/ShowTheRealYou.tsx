@@ -61,15 +61,6 @@ export default function ShowTheRealYou() {
   const usedPrompts = new Set(prompts.map((p) => p.prompt_text));
   const availableForAdd = AVAILABLE_PROMPTS.filter((p) => !usedPrompts.has(p));
 
-  const handleAddPrompt = () => {
-    if (!selectedNewPrompt) return;
-    setPrompts((prev) => [
-      ...prev,
-      { prompt_text: selectedNewPrompt, answer_text: "", display_order: prev.length },
-    ]);
-    setSelectedNewPrompt("");
-    setAddingPrompt(false);
-  };
 
   const handleUpdateAnswer = (index: number, answer: string) => {
     if (answer.length > MAX_ANSWER_LENGTH) return;
