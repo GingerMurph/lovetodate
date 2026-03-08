@@ -91,7 +91,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("generate-agora-token error:", error);
-    return new Response(JSON.stringify({ error: error.message || "Internal error" }), {
+    return new Response(JSON.stringify({ error: "An error occurred processing your request." }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
