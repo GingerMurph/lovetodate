@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import BackgroundImage from "@/components/BackgroundImage";
 import { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy, Home } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
@@ -104,6 +105,7 @@ export default function GameLobby() {
 
   return (
     <div className="min-h-screen bg-background">
+      <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>

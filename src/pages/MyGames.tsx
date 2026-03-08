@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackgroundImage from "@/components/BackgroundImage";
 import { ArrowLeft, Check, X, Gamepad2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,7 @@ export default function MyGames() {
 
   return (
     <div className="min-h-screen bg-background">
+      <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
