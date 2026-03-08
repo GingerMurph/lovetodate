@@ -463,6 +463,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
       if (ownBallsRemaining === 0 && !cuePocketed) {
         newState.gameOver = true;
         newState.winner = userId;
+        playWin();
       } else {
         newState.gameOver = true;
         newState.winner = isPlayer1 ? "player2" : "player1";
