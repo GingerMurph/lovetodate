@@ -115,6 +115,7 @@ export default function GameLobby() {
             <Link to="/" className="ml-auto">
               <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
             </Link>
+          </div>
       </header>
       <main className="container mx-auto px-4 py-12 max-w-md">
         {invitedName ? (

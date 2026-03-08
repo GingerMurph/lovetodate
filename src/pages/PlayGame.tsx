@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BackgroundImage from "@/components/BackgroundImage";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
