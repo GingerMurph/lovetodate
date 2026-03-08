@@ -111,6 +111,8 @@ const Messages = () => {
         lastMessage: lastMsg.content,
         lastMessageTime: lastMsg.created_at,
         unreadCount,
+        isVerified: data?.profile?.is_verified || false,
+        isSubscribed: data?.profile?.is_subscribed || false,
       });
     }
 
