@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
-import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy, Home } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
