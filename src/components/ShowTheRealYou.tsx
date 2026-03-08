@@ -179,24 +179,28 @@ export default function ShowTheRealYou() {
         {prompts.length < MAX_PROMPTS && (
           <>
             {addingPrompt ? (
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
-                  <Select value={selectedNewPrompt} onValueChange={setSelectedNewPrompt}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose a prompt..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableForAdd.map((p) => (
-                        <SelectItem key={p} value={p}>{p}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">Tap a prompt to add it:</p>
+                <div className="flex flex-col gap-1.5">
+                  {availableForAdd.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => {
+                        setPrompts((prev) => [
+                          ...prev,
+                          { prompt_text: p, answer_text: "", display_order: prev.length },
+                        ]);
+                        if (availableForAdd.length <= 1) setAddingPrompt(false);
+                      }}
+                      className="text-left text-sm px-3 py-2.5 rounded-md border border-border bg-secondary/20 hover:bg-gold/10 hover:border-gold/30 text-foreground transition-colors"
+                    >
+                      {p}
+                    </button>
+                  ))}
                 </div>
-                <Button type="button" size="sm" onClick={handleAddPrompt} disabled={!selectedNewPrompt} className="gap-1">
-                  <Plus className="h-3.5 w-3.5" /> Add
-                </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={() => { setAddingPrompt(false); setSelectedNewPrompt(""); }}>
-                  Cancel
+                <Button type="button" size="sm" variant="ghost" onClick={() => setAddingPrompt(false)} className="w-full">
+                  Close
                 </Button>
               </div>
             ) : (
