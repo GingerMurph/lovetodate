@@ -28,6 +28,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background pb-16 sm:pb-0">
+      <BackgroundImage />
       {/* Desktop header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
