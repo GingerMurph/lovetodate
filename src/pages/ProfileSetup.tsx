@@ -316,6 +316,15 @@ const ProfileSetup = () => {
       } as any).eq("user_id", user.id);
 
       if (error) throw error;
+
+      // Also save DOB to profile_private_data
+      if (form.date_of_birth) {
+        await supabase.from("profile_private_data" as any).upsert({
+          user_id: user.id,
+          date_of_birth: form.date_of_birth,
+        }, { onConflict: "user_id" });
+      }
+
       toast.success("Profile updated!");
       navigate("/discover");
     } catch (err: any) {
