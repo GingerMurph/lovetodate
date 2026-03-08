@@ -273,38 +273,42 @@ const ProfileView = () => {
     setLoadingCompat(true);
     setScoreRevealed(false);
     setDisplayedScore(0);
-    const { data, error } = await supabase.functions.invoke("compatibility-score", {
-      body: { partnerId: userId },
-    });
-    if (!error && data && !data.error) {
-      setCompatScore({
-        score: data.score,
-        summary: data.summary,
-        hasGameData: data.hasGameData,
-        gameMatchPercent: data.gameMatchPercent,
-        dimensions: data.dimensions,
-        commonalities: data.commonalities,
-        conversationStarters: data.conversationStarters,
-        strengthsNote: data.strengthsNote,
-        watchOutNote: data.watchOutNote,
+    try {
+      const { data, error } = await supabase.functions.invoke("compatibility-score", {
+        body: { partnerId: userId },
       });
-      // Trigger count-up animation
-      const target = data.score;
-      const duration = 1200;
-      const steps = 40;
-      const increment = target / steps;
-      let current = 0;
-      let step = 0;
-      const timer = setInterval(() => {
-        step++;
-        current = Math.min(Math.round(increment * step), target);
-        setDisplayedScore(current);
-        if (step >= steps) {
-          clearInterval(timer);
-          setDisplayedScore(target);
-          setTimeout(() => setScoreRevealed(true), 200);
-        }
-      }, duration / steps);
+      if (!error && data && !data.error) {
+        setCompatScore({
+          score: data.score,
+          summary: data.summary,
+          hasGameData: data.hasGameData,
+          gameMatchPercent: data.gameMatchPercent,
+          dimensions: data.dimensions,
+          commonalities: data.commonalities,
+          conversationStarters: data.conversationStarters,
+          strengthsNote: data.strengthsNote,
+          watchOutNote: data.watchOutNote,
+        });
+        const target = data.score;
+        const duration = 1200;
+        const steps = 40;
+        const increment = target / steps;
+        let step = 0;
+        const timer = setInterval(() => {
+          step++;
+          const current = Math.min(Math.round(increment * step), target);
+          setDisplayedScore(current);
+          if (step >= steps) {
+            clearInterval(timer);
+            setDisplayedScore(target);
+            setTimeout(() => setScoreRevealed(true), 200);
+          }
+        }, duration / steps);
+      } else {
+        console.error("Compatibility score error:", error || data?.error);
+      }
+    } catch (err) {
+      console.error("Compatibility score fetch failed:", err);
     }
     setLoadingCompat(false);
   };
