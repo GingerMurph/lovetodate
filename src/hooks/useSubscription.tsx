@@ -15,29 +15,29 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(u
 // Map Stripe product IDs to tier names
 export const SUBSCRIPTION_TIERS = {
   week: {
-    price_id: "price_1T7a1lQLBBTimpxJ4o8hf5eW",
-    product_id: "prod_U5lYdTBToUpTVG",
+    price_id: "price_1T8hYvQLBBTimpxJc5LhrWmx",
+    product_id: "prod_U6vPVtTXA6xNdK",
     label: "1 Week",
     price: 9.99,
     perWeek: 9.99,
   },
   month: {
-    price_id: "price_1T7aLjQLBBTimpxJs3foHvjO",
-    product_id: "prod_U5ltrSNCjiGiVI",
+    price_id: "price_1T8hYwQLBBTimpxJICkGrYR2",
+    product_id: "prod_U6vPkYeEAz7XXI",
     label: "1 Month",
     price: 18.99,
     perWeek: 18.99 / 4.33,
   },
   sixMonths: {
-    price_id: "price_1T7aLqQLBBTimpxJFfOQ99VI",
-    product_id: "prod_U5ltiCll0KI92h",
+    price_id: "price_1T8hYwQLBBTimpxJQ5Izugkq",
+    product_id: "prod_U6vPoSYCH4W4V6",
     label: "6 Months",
     price: 56.99,
     perWeek: 56.99 / 26,
   },
   year: {
-    price_id: "price_1T7aLtQLBBTimpxJ3va7XE2K",
-    product_id: "prod_U5ltIyaGr82VjB",
+    price_id: "price_1T8hYxQLBBTimpxJ7ifj1kHJ",
+    product_id: "prod_U6vPfJHOi8KJdT",
     label: "12 Months",
     price: 79.99,
     perWeek: 79.99 / 52,
