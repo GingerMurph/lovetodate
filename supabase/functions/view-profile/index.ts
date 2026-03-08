@@ -82,7 +82,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { date_of_birth, avatar_url, photo_urls, ...rest } = profileRes.data;
+    const { avatar_url, photo_urls, ...rest } = profileRes.data;
+    const date_of_birth = privateDataRes.data?.date_of_birth || null;
     const latitude = locationRes.data?.latitude ?? null;
     const longitude = locationRes.data?.longitude ?? null;
 
