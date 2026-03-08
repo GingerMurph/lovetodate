@@ -9,6 +9,7 @@ import NoughtsCrossesBoard from "@/components/games/NoughtsCrossesBoard";
 import Connect4Board from "@/components/games/Connect4Board";
 import HypotheticalQuestions, { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 import EightBallPool from "@/components/games/EightBallPool";
+import WhosWhoQuiz, { WHOS_WHO_TOTAL_ROUNDS } from "@/components/games/WhosWhoQuiz";
 
 interface GameData {
   id: string;
