@@ -137,7 +137,17 @@ const ProfileView = () => {
   const [freeConnectionAvailable, setFreeConnectionAvailable] = useState(false);
   const [loading, setLoading] = useState(true);
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [compatScore, setCompatScore] = useState<{ score: number; summary: string; hasGameData?: boolean } | null>(null);
+  const [compatScore, setCompatScore] = useState<{
+    score: number;
+    summary: string;
+    hasGameData?: boolean;
+    gameMatchPercent?: number;
+    dimensions?: { values: number; lifestyle: number; goals: number; personality: number; interests: number };
+    commonalities?: string[];
+    conversationStarters?: string[];
+    strengthsNote?: string;
+    watchOutNote?: string;
+  } | null>(null);
   const [loadingCompat, setLoadingCompat] = useState(false);
   const [displayedScore, setDisplayedScore] = useState(0);
   const [scoreRevealed, setScoreRevealed] = useState(false);
