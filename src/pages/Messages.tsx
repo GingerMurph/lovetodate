@@ -164,12 +164,18 @@ const Messages = () => {
                 onClick={() => navigate(`/messages/${conv.partnerId}`)}
                 className="w-full flex items-center gap-3 rounded-xl px-4 py-3 hover:bg-card transition-colors text-left"
               >
-                <div className="h-12 w-12 overflow-hidden rounded-full border border-border bg-secondary shrink-0">
+                <div className="relative h-12 w-12 overflow-hidden rounded-full border border-border bg-secondary shrink-0">
                   <AvatarImage
                     avatarUrl={conv.partnerAvatar}
                     displayName={conv.partnerName}
                     iconSize="h-6 w-6"
                   />
+                  {(conv.isVerified || conv.isSubscribed) && (
+                    <div className="absolute -bottom-0.5 -right-0.5 flex items-center gap-0.5">
+                      {conv.isVerified && <span className="bg-background rounded-full p-0.5"><VerifiedBadge size="sm" /></span>}
+                      {conv.isSubscribed && <span className="bg-background rounded-full p-0.5"><SubscriberBadge size="sm" /></span>}
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
