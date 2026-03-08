@@ -392,12 +392,12 @@ const Discover = () => {
                         {/* Match score badge */}
                         {currentProfile.match_score !== null && (
                           <div className="absolute top-3 right-3 z-10">
-                            <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold backdrop-blur-sm shadow-lg ${
-                              currentProfile.match_score >= 70 ? "bg-green-500/90 text-white" :
-                              currentProfile.match_score >= 50 ? "bg-gold/90 text-primary-foreground" :
-                              "bg-muted/80 text-muted-foreground"
+                            <div className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-extrabold shadow-xl border ${
+                              currentProfile.match_score >= 70 ? "bg-green-500 text-white border-green-400 shadow-green-500/40" :
+                              currentProfile.match_score >= 50 ? "bg-gold text-primary-foreground border-gold shadow-gold/40" :
+                              "bg-muted/90 text-foreground border-border"
                             }`}>
-                              <Sparkles className="h-3 w-3" />
+                              <Sparkles className="h-4 w-4" />
                               {currentProfile.match_score}% Match
                             </div>
                           </div>
