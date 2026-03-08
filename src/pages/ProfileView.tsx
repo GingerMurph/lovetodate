@@ -126,9 +126,10 @@ const ProfileView = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const navState = location.state as { fromDiscover?: boolean; discoverIndex?: number } | null;
+  const navState = location.state as { fromDiscover?: boolean; discoverIndex?: number; matchScore?: number | null } | null;
   const fromDiscover = navState?.fromDiscover ?? false;
   const discoverIndex = navState?.discoverIndex ?? 0;
+  const passedMatchScore = navState?.matchScore ?? null;
   const [profile, setProfile] = useState<ViewProfile | null>(null);
   const [isLiked, setIsLiked] = useState(false);
   const [isLikedBack, setIsLikedBack] = useState(false);
