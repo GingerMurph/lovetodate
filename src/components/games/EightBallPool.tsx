@@ -430,6 +430,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
     setAimStart(null);
     setAimEnd(null);
     setPower(0);
+    playCueHit();
 
     const { finalBalls, pocketedThisTurn } = await simulatePhysics(newBalls);
 
