@@ -297,11 +297,40 @@ const Discover = () => {
                 >
                   <Card className="overflow-hidden border-border bg-card">
                     <Link to={`/profile/${currentProfile.user_id}`} state={{ fromDiscover: true, discoverIndex: currentIndex }}>
-                      <PhotoCarousel
-                        avatarUrl={currentProfile.avatar_url}
-                        photoUrls={currentProfile.photo_urls || []}
-                        displayName={currentProfile.display_name}
-                      />
+                      <div className="relative">
+                        <PhotoCarousel
+                          avatarUrl={currentProfile.avatar_url}
+                          photoUrls={currentProfile.photo_urls || []}
+                          displayName={currentProfile.display_name}
+                        />
+                        {/* Non-negotiables overlay on photo */}
+                        {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
+                          <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
+                            <TooltipProvider delayDuration={0}>
+                              {currentProfile.non_negotiables.slice(0, 4).map((item) => {
+                                const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                                return (
+                                  <Tooltip key={item}>
+                                    <TooltipTrigger asChild>
+                                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 pointer-events-auto cursor-pointer backdrop-blur-sm bg-destructive/90 shadow-sm">
+                                        🚫 {label}
+                                      </Badge>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="left" className="max-w-[200px] text-center animate-scale-in">
+                                      <p className="text-xs">{currentProfile.display_name} won't date someone who is: <strong>{label}</strong></p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                );
+                              })}
+                              {currentProfile.non_negotiables.length > 4 && (
+                                <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm">
+                                  +{currentProfile.non_negotiables.length - 4} more
+                                </Badge>
+                              )}
+                            </TooltipProvider>
+                          </div>
+                        )}
+                      </div>
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5">
                           {currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}
