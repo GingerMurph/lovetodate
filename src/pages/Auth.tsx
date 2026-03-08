@@ -191,15 +191,9 @@ const Auth = () => {
                       />
                       <label htmlFor="privacy" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
                         I agree to the{" "}
-                        <button type="button" onClick={() => toast.info(
-                          "Privacy Policy: We collect your name, email, phone number, photos, and location data to provide our dating service. Your ID documents are used solely for age verification. We never sell your data. Data is stored securely and encrypted. You can request deletion of your data at any time through account settings. For full details, contact support@lovetodate.com.",
-                          { duration: 15000 }
-                        )} className="text-gold hover:underline font-medium">Privacy Policy</button>
+                        <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline font-medium">Privacy Policy</a>
                         {" "}and{" "}
-                        <button type="button" onClick={() => toast.info(
-                          "Terms of Service: You must be 18+ to use Love To Date. You agree to provide accurate information, not harass other users, and not use the service for illegal purposes. We reserve the right to suspend accounts that violate these terms. Phone verification and age verification are required. By using this service, you consent to our data processing as described in our Privacy Policy.",
-                          { duration: 15000 }
-                        )} className="text-gold hover:underline font-medium">Terms of Service</button>
+                        <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-gold hover:underline font-medium">Terms of Service</a>
                       </label>
                     </div>
                     <div className="rounded-md bg-muted/50 p-2.5 text-[10px] text-muted-foreground leading-relaxed">
