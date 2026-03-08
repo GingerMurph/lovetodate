@@ -24,7 +24,7 @@ const ETHNICITIES = ["White", "Black", "Asian", "Hispanic/Latino", "Middle Easte
 const LANGUAGES = ["English", "French", "Spanish", "German", "Italian", "Portuguese", "Polish", "Romanian", "Arabic", "Hindi", "Urdu", "Chinese", "Japanese", "Korean", "Turkish", "Russian", "Dutch", "Swedish", "Other"];
 const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pets"];
 
-const COUNTRIES = ["United Kingdom", "Ireland", "United States", "Canada", "Australia", "France", "Germany", "Italy", "Spain", "Portugal", "Poland", "Romania", "India", "Pakistan", "China", "Japan", "South Korea", "Brazil", "Nigeria", "South Africa", "Other"];
+
 const OCCUPATIONS = ["Student", "Teacher", "Engineer", "Doctor", "Nurse", "Lawyer", "Accountant", "Designer", "Developer", "Manager", "Entrepreneur", "Freelancer", "Artist", "Writer", "Chef", "Retail", "Finance", "Marketing", "Sales", "HR", "Consultant", "Scientist", "Researcher", "Civil Servant", "Military", "Retired", "Other"];
 const EDUCATION_LEVELS = ["Secondary School", "College", "Undergraduate Degree", "Postgraduate Degree", "Master's Degree", "PhD / Doctorate", "Professional Qualification", "Self-taught", "Prefer not to say", "Other"];
 const MUSIC_GENRES = ["Pop", "Rock", "Hip-Hop", "R&B", "Jazz", "Classical", "Country", "Electronic", "House", "Chillout", "Drum & Bass", "Indie", "Reggae", "Latin", "Metal", "Folk", "Soul", "Blues", "Punk", "Afrobeats", "K-Pop", "Other"];
