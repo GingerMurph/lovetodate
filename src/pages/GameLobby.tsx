@@ -176,7 +176,7 @@ export default function GameLobby() {
               <p className="text-center text-muted-foreground">Loading...</p>
             ) : connections.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-muted-foreground mb-4">No connections yet. Like some profiles first!</p>
+                <p className="text-muted-foreground mb-4">No unlocked connections yet. Unlock someone to invite them to play!</p>
                 <Button onClick={() => navigate("/discover")} className="gradient-gold text-primary-foreground">
                   Discover People
                 </Button>
