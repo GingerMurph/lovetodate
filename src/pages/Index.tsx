@@ -108,7 +108,17 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">Affordable subscriptions. No surprises!</p>
+            <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
+                <Sparkles className="h-3 w-3 text-gold" /> AI-Powered Matching
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
+                <Eye className="h-3 w-3 text-gold" /> See Who Likes You — Free
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
+                <Shield className="h-3 w-3 text-gold" /> Affordable Subscriptions
+              </span>
+            </div>
           </div>
         </section>
 
