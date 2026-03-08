@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
-import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Gamepad2, Trophy, Home } from "lucide-react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -154,6 +154,12 @@ export default function GameLobby() {
                 <Button className="gradient-gold text-primary-foreground gap-2 w-full">
                   <Trophy className="h-4 w-4" />
                   View My Games
+                </Button>
+              </Link>
+              <Link to="/discover">
+                <Button variant="outline" className="gap-2 w-full">
+                  <Home className="h-4 w-4" />
+                  Back to Home
                 </Button>
               </Link>
             </div>
