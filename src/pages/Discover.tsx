@@ -380,36 +380,38 @@ const Discover = () => {
                   onSwipeLeft={() => { handlePass(); advanceCard(); }}
                 >
                   <Card className="overflow-hidden border-border bg-card">
-                    <Link to={`/profile/${currentProfile.user_id}`} state={{ fromDiscover: true, discoverIndex: currentIndex }}>
-                      <div className="relative">
-                        <PhotoCarousel
-                          avatarUrl={currentProfile.avatar_url}
-                          photoUrls={currentProfile.photo_urls || []}
-                          displayName={currentProfile.display_name}
-                          isVerified={currentProfile.is_verified}
-                          isSubscribed={currentProfile.is_subscribed}
-                        />
-                        {/* Name & location overlay on photo */}
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background/90 via-background/50 to-transparent p-3 pt-10 pointer-events-none">
-                          <h3 className="font-serif text-lg font-semibold text-foreground flex items-center gap-1.5 max-w-full">
-                            <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
-                            <span className="flex items-center gap-1 shrink-0">
-                              {currentProfile.is_verified && <VerifiedBadge size="md" />}
-                              {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
-                            </span>
-                          </h3>
-                          <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                            {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
-                            {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
-                            {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
-                            {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
-                            {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
-                          </div>
+                    <div className="relative">
+                      <PhotoCarousel
+                        avatarUrl={currentProfile.avatar_url}
+                        photoUrls={currentProfile.photo_urls || []}
+                        displayName={currentProfile.display_name}
+                        isVerified={currentProfile.is_verified}
+                        isSubscribed={currentProfile.is_subscribed}
+                        onMiddleTap={() => {
+                          navigate(`/profile/${currentProfile.user_id}`, { state: { fromDiscover: true, discoverIndex: currentIndex } });
+                        }}
+                      />
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8 pointer-events-none">
+                        <p className="text-center text-xs text-white/80 font-medium">TAP TO VIEW PROFILE</p>
+                      </div>
+                    </div>
+                    <CardContent className="p-3 space-y-2">
+                      <div>
+                        <h3 className="font-serif text-lg font-semibold text-foreground flex items-center gap-1.5 max-w-full">
+                          <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
+                          <span className="flex items-center gap-1 shrink-0">
+                            {currentProfile.is_verified && <VerifiedBadge size="md" />}
+                            {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
+                          </span>
+                        </h3>
+                        <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                          {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                          {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
+                          {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
+                          {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
+                          {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
                         </div>
                       </div>
-                    </Link>
-                    <CardContent className="p-3 space-y-2">
-                      {/* Match score + Non-negotiables */}
                       <div className="flex flex-wrap items-center gap-1.5">
                         {currentProfile.match_score !== null && (
                           <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
