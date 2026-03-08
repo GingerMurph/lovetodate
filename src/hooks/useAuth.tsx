@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        emailRedirectTo: "https://lovetodate.lovable.app",
+        emailRedirectTo: "https://lovetodate.lovable.app/profile",
         data: { display_name: displayName, phone_number: phoneNumber || "" },
       },
     });
