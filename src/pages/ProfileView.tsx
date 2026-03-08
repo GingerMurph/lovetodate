@@ -450,6 +450,8 @@ const ProfileView = () => {
               photoUrls={profile.photo_urls || []}
               displayName={profile.display_name}
               aspectClass="aspect-[3/4]"
+              isVerified={profile.is_verified}
+              isSubscribed={profile.is_subscribed}
             />
             {/* Badge overlays on photo */}
             <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 pointer-events-none">
