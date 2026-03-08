@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import BackgroundImage from "@/components/BackgroundImage";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
@@ -57,6 +58,7 @@ const ResetPassword = () => {
   if (!isRecovery) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <BackgroundImage />
         <Card className="w-full max-w-md border-border bg-card">
           <CardHeader className="text-center">
             <CardTitle className="font-serif text-2xl">Invalid Link</CardTitle>
@@ -74,6 +76,7 @@ const ResetPassword = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
           <span className="font-serif text-3xl text-gold">Love To Date</span>
