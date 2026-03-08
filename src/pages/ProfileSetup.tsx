@@ -65,6 +65,7 @@ const ProfileSetup = () => {
     education: "",
     smoking: "",
     drinking: "",
+    diet: "",
     children: "",
     religion: "",
     ethnicity: "",
