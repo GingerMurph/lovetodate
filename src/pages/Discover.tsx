@@ -242,6 +242,15 @@ const Discover = () => {
                   <SelectItem value="two_spirit">Two-Spirit</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={filters.looking_for} onValueChange={(v) => setFilters(f => ({ ...f, looking_for: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Looking for" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Anyone</SelectItem>
+                  <SelectItem value="male">Men</SelectItem>
+                  <SelectItem value="female">Women</SelectItem>
+                  <SelectItem value="everyone">Everyone</SelectItem>
+                </SelectContent>
+              </Select>
               <Select value={filters.body_build} onValueChange={(v) => setFilters(f => ({ ...f, body_build: v === "all" ? "" : v }))}>
                 <SelectTrigger><SelectValue placeholder="Build" /></SelectTrigger>
                 <SelectContent>
@@ -262,8 +271,15 @@ const Discover = () => {
                   {NATIONALITIES.map((n) => <SelectItem key={n} value={n}>{n}</SelectItem>)}
                 </SelectContent>
               </Select>
+              <Select value={filters.ethnicity} onValueChange={(v) => setFilters(f => ({ ...f, ethnicity: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Ethnicity" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {ETHNICITY_OPTIONS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <Select value={filters.distance} onValueChange={(v) => setFilters(f => ({ ...f, distance: v === "anywhere" ? "" : v }))}>
-                <SelectTrigger><SelectValue placeholder="Distance from me" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder="Distance" /></SelectTrigger>
                 <SelectContent>
                   {DISTANCE_OPTIONS.map((d) => (
                     <SelectItem key={d.value || "anywhere"} value={d.value || "anywhere"}>{d.label}</SelectItem>
@@ -279,6 +295,13 @@ const Discover = () => {
                 <SelectContent>
                   <SelectItem value="all">All Religions</SelectItem>
                   {RELIGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.education} onValueChange={(v) => setFilters(f => ({ ...f, education: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Education" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {EDUCATION_LEVELS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={filters.smoking} onValueChange={(v) => setFilters(f => ({ ...f, smoking: v === "all" ? "" : v }))}>
@@ -299,6 +322,27 @@ const Discover = () => {
                   <SelectItem value="non_drinker">Non-Drinker</SelectItem>
                   <SelectItem value="social">Social</SelectItem>
                   <SelectItem value="regular">Regular</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filters.children} onValueChange={(v) => setFilters(f => ({ ...f, children: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Children" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {CHILDREN_OPTIONS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.pets} onValueChange={(v) => setFilters(f => ({ ...f, pets: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Pets" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {PETS_OPTIONS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={filters.diet} onValueChange={(v) => setFilters(f => ({ ...f, diet: v === "all" ? "" : v }))}>
+                <SelectTrigger><SelectValue placeholder="Diet" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {DIET_OPTIONS.map((d) => <SelectItem key={d} value={d}>{d}</SelectItem>)}
                 </SelectContent>
               </Select>
               <Select value={filters.personality_type} onValueChange={(v) => setFilters(f => ({ ...f, personality_type: v === "all" ? "" : v }))}>
