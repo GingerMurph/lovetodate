@@ -278,6 +278,7 @@ const ProfileSetup = () => {
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         non_negotiables: form.non_negotiables,
+        interests: form.interests,
         avatar_url,
         photo_urls,
       } as any).eq("user_id", user.id);
