@@ -131,6 +131,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
   const [aimEnd, setAimEnd] = useState<{ x: number; y: number } | null>(null);
   const [power, setPower] = useState(0);
   const [placingCueBall, setPlacingCueBall] = useState(gameState.cueBallInHand);
+  const { playCollision, playPocket, playWin, playCueHit } = usePoolSounds();
 
   const isPlayer1 = userId === creatorId;
   const myType = isPlayer1 ? gameState.player1Type : gameState.player2Type;
