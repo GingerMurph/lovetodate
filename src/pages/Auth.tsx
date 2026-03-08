@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import BackgroundImage from "@/components/BackgroundImage";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -105,10 +106,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'radial-gradient(ellipse at 50% 30%, hsl(38 70% 55% / 0.2), transparent 70%)'
-      }} />
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center relative">
           <button onClick={() => navigate(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
