@@ -89,6 +89,11 @@ export default function GameLobby() {
       const name = connections.find((c) => c.user_id === opponentId)?.display_name || "them";
       setInvitedName(name);
       toast({ title: "Invite sent!", description: "They'll be notified to play." });
+
+      // Send notification (fire-and-forget)
+      supabase.functions.invoke("send-game-notification", {
+        body: { recipientId: opponentId, gameType },
+      }).catch(() => {});
     }
     setSending(null);
   };
