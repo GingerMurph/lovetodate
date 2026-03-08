@@ -34,6 +34,10 @@ import GameLobby from "./pages/GameLobby";
 import PlayGame from "./pages/PlayGame";
 import Subscription from "./pages/Subscription";
 import VideoCall from "./pages/VideoCall";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
+import CookieConsentBanner from "./components/CookieConsentBanner";
 
 const queryClient = new QueryClient();
 
