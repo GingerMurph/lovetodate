@@ -242,6 +242,12 @@ const ProfileView = () => {
     loadProfile();
   }, [userId, user, myLocation]);
 
+  // Auto-fetch compatibility score when profile loads
+  useEffect(() => {
+    if (!profile || isOwnProfile || !userId || !user || compatScore) return;
+    fetchCompatibility();
+  }, [profile, isOwnProfile]);
+
   const loadProfile = async () => {
     if (!userId || !user) return;
     setLoading(true);
