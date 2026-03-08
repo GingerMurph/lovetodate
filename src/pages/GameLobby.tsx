@@ -33,23 +33,27 @@ export default function GameLobby() {
   useEffect(() => {
     if (!user) return;
     const fetchConnections = async () => {
-      // Get users who have liked the current user or vice versa
-      const { data: likes } = await supabase
-        .from("likes")
-        .select("liker_id, liked_id")
-        .or(`liker_id.eq.${user.id},liked_id.eq.${user.id}`);
+      // Fetch unlocked connections in both directions
+      const [asUnlocker, asTarget] = await Promise.all([
+        supabase.from("unlocked_connections").select("target_id").eq("unlocker_id", user.id),
+        supabase.from("unlocked_connections").select("unlocker_id").eq("target_id", user.id),
+      ]);
 
-      if (!likes?.length) {
+      const ids = [
+        ...(asUnlocker.data?.map(r => r.target_id) || []),
+        ...(asTarget.data?.map(r => r.unlocker_id) || []),
+      ];
+      const uniqueIds = [...new Set(ids)];
+
+      if (!uniqueIds.length) {
         setLoading(false);
         return;
       }
 
-      const userIds = [...new Set(likes.map((l) => (l.liker_id === user.id ? l.liked_id : l.liker_id)))];
-
       const { data: profiles } = await supabase
         .from("profiles")
         .select("user_id, display_name")
-        .in("user_id", userIds);
+        .in("user_id", uniqueIds);
 
       setConnections(profiles || []);
       setLoading(false);
