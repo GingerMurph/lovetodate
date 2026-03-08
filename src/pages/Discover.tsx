@@ -391,25 +391,24 @@ const Discover = () => {
                         />
                       
                       </div>
-                      
-                      <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
-                        <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
-                          <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
-                          <span className="flex items-center gap-1 shrink-0">
-                            {currentProfile.is_verified && <VerifiedBadge size="md" />}
-                            {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
-                          </span>
-                        </h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                          {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
-                          {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
-                          {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
-                          {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
-                          {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
-                        </div>
-                      </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
+                      {/* Name, age, badges */}
+                      <h3 className="font-serif text-lg font-semibold text-foreground flex items-center gap-1.5 max-w-full">
+                        <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
+                        <span className="flex items-center gap-1 shrink-0">
+                          {currentProfile.is_verified && <VerifiedBadge size="md" />}
+                          {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
+                        </span>
+                      </h3>
+                      {/* Location, distance, height, etc */}
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
+                        {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
+                        {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
+                        {currentProfile.body_build && <span className="capitalize">{currentProfile.body_build}</span>}
+                        {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
+                      </div>
                       {/* Match score + Non-negotiables */}
                       <div className="flex flex-wrap items-center gap-1.5">
                         {currentProfile.match_score !== null && (
