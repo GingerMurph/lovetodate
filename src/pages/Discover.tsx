@@ -52,6 +52,7 @@ type DiscoverProfile = {
   is_subscribed: boolean;
   non_negotiables: string[];
   prompts?: { prompt_text: string; answer_text: string }[];
+  interests?: string[];
 };
 
 const Discover = () => {
