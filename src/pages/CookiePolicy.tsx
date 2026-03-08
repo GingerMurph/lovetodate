@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
 import BackgroundImage from "@/components/BackgroundImage";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
