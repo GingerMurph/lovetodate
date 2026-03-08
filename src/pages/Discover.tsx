@@ -396,8 +396,8 @@ const Discover = () => {
                         <p className="text-center text-xs text-white/80 font-medium">TAP TO VIEW PROFILE</p>
                       </div>
                     </div>
-                    <CardContent className="px-4 pt-4 pb-3 space-y-3">
-                      {/* Name & metadata */}
+                    <CardContent className="px-4 pt-4 pb-3 space-y-2.5">
+                      {/* Name & metadata — always first */}
                       <div>
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
                           <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
@@ -414,7 +414,7 @@ const Discover = () => {
                           {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
                         </div>
                       </div>
-                      {/* Match score */}
+                      {/* Match score — second */}
                       {currentProfile.match_score !== null && (
                         <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
                           currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
@@ -425,9 +425,9 @@ const Discover = () => {
                           {currentProfile.match_score}% Match
                         </div>
                       )}
-                      {/* Non-negotiables */}
+                      {/* Non-negotiables — third, with top border for separation */}
                       {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-1.5">
+                        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border">
                           {currentProfile.non_negotiables.map((item) => {
                             const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
                             return (
@@ -438,8 +438,11 @@ const Discover = () => {
                           })}
                         </div>
                       )}
+                      {/* Prompts — separated from non-negotiables */}
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
-                        <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
+                        <div className="pt-1 border-t border-border">
+                          <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
+                        </div>
                       )}
                       {currentProfile.interests && currentProfile.interests.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-1">
