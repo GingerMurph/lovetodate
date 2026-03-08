@@ -10,9 +10,10 @@ interface PhotoCarouselProps {
   aspectClass?: string;
   isVerified?: boolean;
   isSubscribed?: boolean;
+  onMiddleTap?: () => void;
 }
 
-export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass = "aspect-[3/4]", isVerified, isSubscribed }: PhotoCarouselProps) {
+export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass = "aspect-[3/4]", isVerified, isSubscribed, onMiddleTap }: PhotoCarouselProps) {
   const allPhotos = [avatarUrl, ...photoUrls].filter(Boolean) as string[];
   const [index, setIndex] = useState(0);
   const touchStart = useRef<{ x: number; y: number; time: number } | null>(null);
@@ -61,7 +62,11 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
       didSwipe.current = false;
       return;
     }
-    if (allPhotos.length <= 1) return;
+    if (allPhotos.length <= 1) {
+      // Single photo — middle tap navigates
+      onMiddleTap?.();
+      return;
+    }
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const x = e.clientX - rect.left;
     const third = rect.width / 3;
@@ -73,6 +78,9 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
       e.preventDefault();
       e.stopPropagation();
       goNext();
+    } else {
+      // Middle third — navigate to profile
+      onMiddleTap?.();
     }
   };
 
