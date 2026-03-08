@@ -62,7 +62,7 @@ export default function DatingAdvice() {
         <div className="grid gap-6 md:grid-cols-2 max-w-3xl mx-auto">
           {loading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-border p-5">
+                <div key={i} className="rounded-xl border border-border bg-card p-5">
                   <Skeleton className="h-4 w-1/2 mb-3" />
                   <Skeleton className="h-3 w-full" />
                 </div>
