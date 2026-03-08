@@ -47,17 +47,25 @@ Deno.serve(async (req) => {
         const hoursAgo = digestType === "morning" ? 24 : 12;
         const sinceDate = new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString();
 
-        const { count: newLikesCount } = await admin
-          .from("likes")
-          .select("id", { count: "exact", head: true })
-          .eq("liked_id", pref.user_id)
-          .gte("created_at", sinceDate);
+        const [likesResult, gamesResult] = await Promise.all([
+          admin
+            .from("likes")
+            .select("id", { count: "exact", head: true })
+            .eq("liked_id", pref.user_id)
+            .gte("created_at", sinceDate),
+          admin
+            .from("games")
+            .select("id", { count: "exact", head: true })
+            .eq("opponent_id", pref.user_id)
+            .eq("status", "pending"),
+        ]);
 
         const totalUnread = unreadCount || 0;
-        const totalLikes = newLikesCount || 0;
+        const totalLikes = likesResult.count || 0;
+        const pendingGames = gamesResult.count || 0;
 
         // Skip if nothing to notify about
-        if (totalUnread === 0 && totalLikes === 0) continue;
+        if (totalUnread === 0 && totalLikes === 0 && pendingGames === 0) continue;
 
         // Get unique sender names for unread messages
         const senderIds = [...new Set((unreadMessages || []).map((m) => m.sender_id))];
