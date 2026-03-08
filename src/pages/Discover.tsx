@@ -20,7 +20,19 @@ import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
 const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
-const PERSONALITY_TYPES = ["Introvert", "Extrovert", "Ambivert", "Old Soul", "Free Spirit", "Adventurer", "Empath", "Creative", "Analytical"];
+const PERSONALITY_TYPES = ["Selectively social", "Life of the party", "Bit of both", "More confident once I know you", "Free spirit", "Love trying new things", "Deep thinker", "Heart on my sleeve", "Creative soul", "Analytical mind"];
+const EDUCATION_LEVELS = ["Secondary School", "College", "Undergraduate Degree", "Postgraduate Degree", "Master's Degree", "PhD / Doctorate", "Professional Qualification", "Self-taught", "Prefer not to say", "Other"];
+const ETHNICITY_OPTIONS = ["White", "Black", "Asian", "Mixed", "Hispanic", "Middle Eastern", "Other", "Prefer not to say"];
+const CHILDREN_OPTIONS = ["None", "Have children", "Want children", "Don't want children", "Open to children"];
+const PETS_OPTIONS = ["Dog(s)", "Cat(s)", "Both", "Other pets", "None", "Want pets"];
+const DIET_OPTIONS = ["Eat Anything", "Vegetarian", "Vegan", "Pescatarian", "Halal", "Kosher", "Gluten-free", "Other"];
+const RELATIONSHIP_GOALS = [
+  { value: "long_term", label: "Long Term" },
+  { value: "short_term", label: "Short Term" },
+  { value: "casual", label: "Casual" },
+  { value: "friendship", label: "Friendship" },
+  { value: "not_sure", label: "Not Sure" },
+];
 const DISTANCE_OPTIONS = [
   { label: "Within 5 miles", value: "5" },
   { label: "Within 10 miles", value: "10" },
