@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import BackgroundImage from "@/components/BackgroundImage";
-import { ArrowLeft, Star, Quote } from "lucide-react";
+import { ArrowLeft, Star, Quote, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
