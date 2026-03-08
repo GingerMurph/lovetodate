@@ -634,6 +634,23 @@ const ProfileSetup = () => {
                 </Select>
               </div>
               <div className="space-y-2">
+                <Label>Diet</Label>
+                <Select value={form.diet} onValueChange={(v) => update("diet", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="eat_anything">Eat Anything</SelectItem>
+                    <SelectItem value="vegetarian">Vegetarian</SelectItem>
+                    <SelectItem value="vegan">Vegan</SelectItem>
+                    <SelectItem value="pescatarian">Pescatarian</SelectItem>
+                    <SelectItem value="halal">Halal</SelectItem>
+                    <SelectItem value="kosher">Kosher</SelectItem>
+                    <SelectItem value="gluten_free">Gluten Free</SelectItem>
+                    <SelectItem value="keto">Keto</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
                 <Label>Children</Label>
                 <Select value={form.children} onValueChange={(v) => update("children", v)}>
                   <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>

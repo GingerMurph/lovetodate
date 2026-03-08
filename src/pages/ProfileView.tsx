@@ -754,6 +754,9 @@ const ProfileView = () => {
               {profile.children && (
                 <div className="flex items-center gap-3 text-sm"><Baby className="h-4 w-4 text-gold shrink-0" /><span>Children: {formatEnum(profile.children)}</span></div>
               )}
+              {(profile as any).diet && (
+                <div className="flex items-center gap-3 text-sm"><UtensilsCrossed className="h-4 w-4 text-gold shrink-0" /><span>Diet: {formatEnum((profile as any).diet)}</span></div>
+              )}
               {profile.gender && (
                 <div className="flex items-center gap-3 text-sm"><UserIcon className="h-4 w-4 text-gold shrink-0" /><span>{formatEnum(profile.gender)}</span></div>
               )}
