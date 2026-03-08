@@ -4,6 +4,7 @@ import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { Button } from "@/components/ui/button";
 import { Heart, Search, User, LogOut, MessageSquare, Crown, Home } from "lucide-react";
 import logo from "@/assets/logo.png";
+import BackgroundImage from "@/components/BackgroundImage";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
