@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      age_verifications: {
+        Row: {
+          created_at: string
+          document_type: string
+          extracted_dob: string | null
+          id: string
+          rejection_reason: string | null
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          document_type: string
+          extracted_dob?: string | null
+          id?: string
+          rejection_reason?: string | null
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          document_type?: string
+          extracted_dob?: string | null
+          id?: string
+          rejection_reason?: string | null
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
       game_moves: {
         Row: {
           created_at: string
@@ -166,6 +196,36 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_verifications: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          otp_code: string
+          phone_number: string
+          used: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          otp_code: string
+          phone_number: string
+          used?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          otp_code?: string
+          phone_number?: string
+          used?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       profile_prompts: {
         Row: {
           answer_text: string
@@ -198,12 +258,15 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_verified: boolean
+          age_verified_at: string | null
           avatar_url: string | null
           bio: string | null
           body_build: Database["public"]["Enums"]["body_build"] | null
           children: string | null
           created_at: string
           date_of_birth: string | null
+          date_of_birth_verified: string | null
           display_name: string
           drinking: string | null
           education: string | null
@@ -230,6 +293,8 @@ export type Database = {
           occupation: string | null
           personality_type: string | null
           pets: string | null
+          phone_number: string | null
+          phone_verified: boolean
           photo_urls: string[] | null
           political_beliefs: string | null
           relationship_goal: string[] | null
@@ -242,12 +307,15 @@ export type Database = {
           weight_kg: number | null
         }
         Insert: {
+          age_verified?: boolean
+          age_verified_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           body_build?: Database["public"]["Enums"]["body_build"] | null
           children?: string | null
           created_at?: string
           date_of_birth?: string | null
+          date_of_birth_verified?: string | null
           display_name?: string
           drinking?: string | null
           education?: string | null
@@ -274,6 +342,8 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
+          phone_number?: string | null
+          phone_verified?: boolean
           photo_urls?: string[] | null
           political_beliefs?: string | null
           relationship_goal?: string[] | null
@@ -286,12 +356,15 @@ export type Database = {
           weight_kg?: number | null
         }
         Update: {
+          age_verified?: boolean
+          age_verified_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           body_build?: Database["public"]["Enums"]["body_build"] | null
           children?: string | null
           created_at?: string
           date_of_birth?: string | null
+          date_of_birth_verified?: string | null
           display_name?: string
           drinking?: string | null
           education?: string | null
@@ -318,6 +391,8 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
+          phone_number?: string | null
+          phone_verified?: boolean
           photo_urls?: string[] | null
           political_beliefs?: string | null
           relationship_goal?: string[] | null
