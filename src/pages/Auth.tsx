@@ -6,6 +6,7 @@ import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 
@@ -16,6 +17,8 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signIn, signUp, user } = useAuth();
@@ -64,6 +67,12 @@ const Auth = () => {
         return;
       }
 
+      if (!agreedToPrivacy) {
+        toast.error("Please agree to the Privacy Policy and Terms of Service");
+        setLoading(false);
+        return;
+      }
+
       // Check if email already exists before attempting signup
       try {
         const { data: checkData } = await supabase.functions.invoke("check-email-exists", {
@@ -78,7 +87,7 @@ const Auth = () => {
         // If the check fails, proceed with signup anyway
       }
 
-      const { error, data } = await signUp(email, password, displayName);
+      const { error, data } = await signUp(email, password, displayName, phoneNumber);
       if (error) {
         const msg = error.message?.toLowerCase() || "";
         if (msg.includes("already registered") || msg.includes("already been registered") || msg.includes("already exists")) {
@@ -149,6 +158,13 @@ const Auth = () => {
                   <Label htmlFor="email">Email</Label>
                   <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
+                {!isLogin && (
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input id="phone" type="tel" placeholder="+44 7700 900000" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                    <p className="text-xs text-muted-foreground">Include country code. You'll verify this after signing up.</p>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">Password</Label>
@@ -165,6 +181,33 @@ const Auth = () => {
                     </button>
                   </div>
                 </div>
+                {!isLogin && (
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Checkbox
+                        id="privacy"
+                        checked={agreedToPrivacy}
+                        onCheckedChange={(checked) => setAgreedToPrivacy(checked === true)}
+                        className="mt-0.5"
+                      />
+                      <label htmlFor="privacy" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                        I agree to the{" "}
+                        <button type="button" onClick={() => toast.info(
+                          "Privacy Policy: We collect your name, email, phone number, photos, and location data to provide our dating service. Your ID documents are used solely for age verification. We never sell your data. Data is stored securely and encrypted. You can request deletion of your data at any time through account settings. For full details, contact support@lovetodate.com.",
+                          { duration: 15000 }
+                        )} className="text-gold hover:underline font-medium">Privacy Policy</button>
+                        {" "}and{" "}
+                        <button type="button" onClick={() => toast.info(
+                          "Terms of Service: You must be 18+ to use Love To Date. You agree to provide accurate information, not harass other users, and not use the service for illegal purposes. We reserve the right to suspend accounts that violate these terms. Phone verification and age verification are required. By using this service, you consent to our data processing as described in our Privacy Policy.",
+                          { duration: 15000 }
+                        )} className="text-gold hover:underline font-medium">Terms of Service</button>
+                      </label>
+                    </div>
+                    <div className="rounded-md bg-muted/50 p-2.5 text-[10px] text-muted-foreground leading-relaxed">
+                      <p><strong>🔒 Your data is protected:</strong> We collect personal information (name, email, phone, photos) to provide our dating service. ID documents are processed by AI for age verification only and stored securely. We never share your data with third parties for marketing. You can delete your account and all associated data at any time.</p>
+                    </div>
+                  </div>
+                )}
                 <Button type="submit" className="w-full gradient-gold font-semibold" disabled={loading}>
                   {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
                 </Button>

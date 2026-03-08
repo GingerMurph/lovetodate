@@ -21,6 +21,7 @@ import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Verify from "./pages/Verify";
+import VerifyAccount from "./pages/VerifyAccount";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
 import Testimonials from "./pages/Testimonials";
@@ -73,6 +74,7 @@ const App = () => {
                   <Route path="/messages/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
                   <Route path="/verify" element={<ProtectedRoute><Verify /></ProtectedRoute>} />
+                  <Route path="/verify-account" element={<ProtectedRoute><VerifyAccount /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/video-call/:userId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />

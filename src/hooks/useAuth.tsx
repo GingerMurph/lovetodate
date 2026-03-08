@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName: string) => Promise<{ error: any; data: any }>;
+  signUp: (email: string, password: string, displayName: string, phoneNumber?: string) => Promise<{ error: any; data: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -49,13 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string) => {
+  const signUp = async (email: string, password: string, displayName: string, phoneNumber?: string) => {
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: "https://lovetodate.lovable.app",
-        data: { display_name: displayName },
+        data: { display_name: displayName, phone_number: phoneNumber || "" },
       },
     });
     return { error, data };
