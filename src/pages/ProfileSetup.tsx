@@ -339,6 +339,16 @@ const ProfileSetup = () => {
           <h1 className="font-serif text-3xl font-bold text-center">
             Complete Your <span className="text-gold">Profile</span>
           </h1>
+          {(form.display_name || form.date_of_birth || form.location_city) && (
+            <p className="text-center text-muted-foreground text-sm mt-1">
+              {form.display_name}
+              {form.date_of_birth && (() => {
+                const age = Math.floor((Date.now() - new Date(form.date_of_birth).getTime()) / 31557600000);
+                return age > 0 && age < 120 ? `, ${age}` : "";
+              })()}
+              {form.location_city && ` · ${form.location_city}`}
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
