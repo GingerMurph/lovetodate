@@ -67,6 +67,9 @@ const App = () => {
                   <Route path="/dating-advice" element={<DatingAdvice />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/conversation-starters" element={<ConversationStarters />} />
+                  <Route path="/terms" element={<TermsOfService />} />
+                  <Route path="/privacy" element={<PrivacyPolicy />} />
+                  <Route path="/cookies" element={<CookiePolicy />} />
                   <Route path="/fun" element={<ProtectedRoute><FunStuff /></ProtectedRoute>} />
                   <Route path="/fun/my-games" element={<ProtectedRoute><MyGames /></ProtectedRoute>} />
                   <Route path="/fun/:gameType" element={<ProtectedRoute><GameLobby /></ProtectedRoute>} />
