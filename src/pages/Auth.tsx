@@ -150,17 +150,17 @@ const Auth = () => {
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="name">Display Name</Label>
-                    <Input id="name" placeholder="Your name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required={!isLogin} />
+                    <Input id="name" name="name" autoComplete="name" placeholder="Your name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required={!isLogin} />
                   </div>
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <Input id="email" name="email" type="email" autoComplete={isLogin ? "username" : "email"} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
-                    <Input id="phone" type="tel" placeholder="+44 7700 900000" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+                    <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+44 7700 900000" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
                     <p className="text-xs text-muted-foreground">Include country code. You'll verify this after signing up.</p>
                   </div>
                 )}
@@ -174,7 +174,7 @@ const Auth = () => {
                     )}
                   </div>
                   <div className="relative">
-                    <Input id="password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="pr-10" />
+                    <Input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete={isLogin ? "current-password" : "new-password"} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="pr-10" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
