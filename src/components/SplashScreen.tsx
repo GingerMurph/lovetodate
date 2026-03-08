@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import splashVideo from "@/assets/splash.mp4";
 
-const playSplashCheer = () => {
-  const audio = new Audio("/cheer.mp3");
-  audio.volume = 1.0;
-  audio.play().catch((e) => console.error("Audio play failed:", e));
-};
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -13,8 +8,8 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const called = useRef(false);
-  const soundPlayed = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [started, setStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showSecondLine, setShowSecondLine] = useState(false);
@@ -22,11 +17,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   const handleStart = () => {
     setStarted(true);
-    // Both must be synchronous within the click handler
-    playSplashCheer();
-    if (videoRef.current) {
-      videoRef.current.play();
-    }
+    // Both play calls must be synchronous within the user gesture handler for mobile
+    audioRef.current?.play().catch((e) => console.error("Audio play failed:", e));
+    videoRef.current?.play();
   };
 
   const handleTimeUpdate = useCallback(() => {
@@ -70,6 +63,8 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           </p>
         </button>
       )}
+      {/* Pre-loaded audio element — required for mobile playback from user gesture */}
+      <audio ref={audioRef} src="/cheer.mp3" preload="auto" />
       <video
         ref={videoRef}
         src={splashVideo}
