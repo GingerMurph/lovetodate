@@ -171,6 +171,12 @@ const Discover = () => {
     if (filters.personality_type && p.personality_type !== filters.personality_type) return false;
     if (filters.minAge && p.age !== null && p.age < parseInt(filters.minAge)) return false;
     if (filters.maxAge && p.age !== null && p.age > parseInt(filters.maxAge)) return false;
+    if (filters.education && p.education !== filters.education) return false;
+    if (filters.ethnicity && p.ethnicity !== filters.ethnicity) return false;
+    if (filters.children && p.children !== filters.children) return false;
+    if (filters.pets && p.pets !== filters.pets) return false;
+    if (filters.diet && p.diet !== filters.diet) return false;
+    if (filters.looking_for && p.looking_for !== filters.looking_for) return false;
     if (filters.distance) {
       if (p.distance_miles === null || p.distance_miles > parseInt(filters.distance)) return false;
     }
