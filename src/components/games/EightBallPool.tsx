@@ -425,7 +425,7 @@ export default function EightBallPool({ gameState, userId, creatorId, isMyTurn, 
     // Assign types on first pocket
     if (!gameState.player1Type && pocketedThisTurn.length > 0) {
       const firstNonCue = pocketedThisTurn.find((b) => b.type !== "cue" && b.type !== "eight");
-      if (firstNonCue) {
+      if (firstNonCue && (firstNonCue.type === "solid" || firstNonCue.type === "stripe")) {
         if (isPlayer1) {
           newState.player1Type = firstNonCue.type;
           newState.player2Type = firstNonCue.type === "solid" ? "stripe" : "solid";
