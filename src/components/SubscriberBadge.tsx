@@ -17,10 +17,13 @@ export default function SubscriberBadge({ size = "md", className = "" }: Subscri
     <TooltipProvider delayDuration={0}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Crown className={`${sizeMap[size]} text-gold inline-block shrink-0 ${className}`} />
+          <span className="inline-flex cursor-pointer" role="button" tabIndex={0}>
+            <Crown className={`${sizeMap[size]} text-gold inline-block shrink-0 ${className}`} />
+          </span>
         </TooltipTrigger>
-        <TooltipContent>
-          <p className="text-xs">Premium Subscriber</p>
+        <TooltipContent side="top" className="max-w-[200px]">
+          <p className="text-xs font-medium">Premium Subscriber</p>
+          <p className="text-[10px] text-muted-foreground">This user has an active paid subscription</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
