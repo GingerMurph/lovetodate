@@ -1,0 +1,1 @@
+GRANT SELECT, INSERT, UPDATE ON public.notification_preferences TO authenticated;
