@@ -83,6 +83,7 @@ Deno.serve(async (req) => {
           digestType,
           totalUnread,
           totalLikes,
+          pendingGames,
           senderNames
         );
 
