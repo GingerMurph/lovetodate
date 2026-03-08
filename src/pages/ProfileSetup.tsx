@@ -48,6 +48,31 @@ const ABOUT_YOU_TAGS = [
   "Night owl", "Old soul", "Optimist", "Outgoing", "Overthinking queen/king", "Passionate",
   "Plant parent", "Romantic", "Sarcastic", "Self-aware", "Spontaneous", "Spiritual", "Sporty",
   "Tea lover", "Thrill seeker", "Traveller", "Wine lover", "Witty", "Work hard play hard",
+  "Homebody", "Beach bum", "Festival goer", "Film buff", "Podcast junkie", "Cat & dog parent",
+  "Always laughing", "Big dreamer", "Deep conversations", "Good vibes only", "Bit of a nerd",
+  "Love a pub quiz", "Always up for brunch", "Gym then pizza", "Netflix binger", "Festival lover",
+];
+
+const BIO_SENTENCE_STARTERS = [
+  "I'm happiest when...",
+  "On weekends you'll find me...",
+  "My friends would describe me as...",
+  "I'm looking for someone who...",
+  "One thing you should know about me is...",
+  "I can't stop talking about...",
+  "My ideal date would be...",
+  "The way to my heart is...",
+  "I'm secretly really good at...",
+  "You'll win me over if...",
+];
+
+const BIO_TEMPLATES = [
+  "Love a good adventure but equally happy with a cosy night in. Dog lover, coffee addict, and always up for trying something new 🌍",
+  "Big foodie energy. If you can recommend a great restaurant, you've already won me over. Looking for someone to laugh with ❤️",
+  "Not here to waste anyone's time. Family-oriented, love to travel, and I'll always make you laugh (or at least try to) 😄",
+  "Gym in the morning, pub quiz in the evening. Looking for my partner in crime who doesn't take life too seriously 🍻",
+  "Creative soul with a love for music, art, and deep conversations at 2am. Let's skip the small talk ✨",
+  "Outdoorsy type who also loves a lazy Sunday. Seeking someone genuine who's up for both hiking and a box set binge 🏔️",
 ];
 
 const ProfileSetup = () => {
