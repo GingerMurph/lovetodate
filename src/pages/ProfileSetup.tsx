@@ -397,7 +397,13 @@ const ProfileSetup = () => {
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
                     <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="transgender_male">Transgender Male</SelectItem>
+                    <SelectItem value="transgender_female">Transgender Female</SelectItem>
                     <SelectItem value="non_binary">Non-Binary</SelectItem>
+                    <SelectItem value="genderfluid">Genderfluid</SelectItem>
+                    <SelectItem value="genderqueer">Genderqueer</SelectItem>
+                    <SelectItem value="agender">Agender</SelectItem>
+                    <SelectItem value="two_spirit">Two-Spirit</SelectItem>
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
