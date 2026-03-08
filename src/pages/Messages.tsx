@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AvatarImage } from "@/components/AvatarImage";
 import { MessageSquare, Loader2 } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import VerifiedBadge from "@/components/VerifiedBadge";
+import SubscriberBadge from "@/components/SubscriberBadge";
 
 type Conversation = {
   partnerId: string;
@@ -13,6 +15,8 @@ type Conversation = {
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
+  isVerified?: boolean;
+  isSubscribed?: boolean;
 };
 
 const Messages = () => {
