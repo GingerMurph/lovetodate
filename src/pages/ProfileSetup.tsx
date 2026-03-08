@@ -33,6 +33,15 @@ const FILM_GENRES = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance",
 const SPORTS = ["Football", "Rugby", "Cricket", "Tennis", "Basketball", "Swimming", "Running", "Cycling", "Boxing", "Golf", "Yoga", "Gym / Weightlifting", "Martial Arts", "Hiking", "Dancing", "None", "Other"];
 const HOBBIES = ["Reading", "Cooking", "Travelling", "Photography", "Gaming", "Music", "Art", "Writing", "Gardening", "DIY", "Volunteering", "Fitness", "Movies & TV", "Board Games", "Socialising", "Shopping", "Other"];
 const PERSONALITY_TYPES = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP", "Introvert", "Extrovert", "Ambivert", "Don't know"];
+const ABOUT_YOU_TAGS = [
+  "Adventurous", "Ambitious", "Animal lover", "Bookworm", "Cat person", "Chilled", "Coffee addict",
+  "Creative", "Dog person", "Early bird", "Eco-conscious", "Family-oriented", "Fashionable", "Fitness fanatic",
+  "Foodie", "Free spirit", "Funny", "Geek", "Globetrotter", "Gym rat", "Hopeless romantic",
+  "Introverted", "Kind-hearted", "Life of the party", "Loyal", "Music lover", "Nature lover",
+  "Night owl", "Old soul", "Optimist", "Outgoing", "Overthinking queen/king", "Passionate",
+  "Plant parent", "Romantic", "Sarcastic", "Self-aware", "Spontaneous", "Spiritual", "Sporty",
+  "Tea lover", "Thrill seeker", "Traveller", "Wine lover", "Witty", "Work hard play hard",
+];
 
 const ProfileSetup = () => {
   const { user, signOut } = useAuth();
