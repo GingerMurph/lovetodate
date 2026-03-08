@@ -270,7 +270,17 @@ const ProfileView = () => {
       body: { partnerId: userId },
     });
     if (!error && data && !data.error) {
-      setCompatScore({ score: data.score, summary: data.summary, hasGameData: data.hasGameData });
+      setCompatScore({
+        score: data.score,
+        summary: data.summary,
+        hasGameData: data.hasGameData,
+        gameMatchPercent: data.gameMatchPercent,
+        dimensions: data.dimensions,
+        commonalities: data.commonalities,
+        conversationStarters: data.conversationStarters,
+        strengthsNote: data.strengthsNote,
+        watchOutNote: data.watchOutNote,
+      });
       // Trigger count-up animation
       const target = data.score;
       const duration = 1200;
