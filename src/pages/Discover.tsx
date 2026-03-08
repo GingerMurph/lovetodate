@@ -329,6 +329,27 @@ const Discover = () => {
                       </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
+                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
+                        <div className="flex flex-wrap gap-1.5">
+                          <TooltipProvider delayDuration={0}>
+                            {currentProfile.non_negotiables.map((item) => {
+                              const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                              return (
+                                <Tooltip key={item}>
+                                  <TooltipTrigger asChild>
+                                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 cursor-pointer backdrop-blur-sm bg-destructive/90 shadow-sm">
+                                      🚫 {label}
+                                    </Badge>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="bottom" className="max-w-[200px] text-center animate-scale-in">
+                                    <p className="text-xs">{currentProfile.display_name} won't date someone who is: <strong>{label}</strong></p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            })}
+                          </TooltipProvider>
+                        </div>
+                      )}
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
