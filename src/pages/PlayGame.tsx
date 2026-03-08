@@ -9,6 +9,7 @@ import NoughtsCrossesBoard from "@/components/games/NoughtsCrossesBoard";
 import Connect4Board from "@/components/games/Connect4Board";
 import HypotheticalQuestions, { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
 import EightBallPool from "@/components/games/EightBallPool";
+import WhosWhoQuiz, { WHOS_WHO_TOTAL_ROUNDS } from "@/components/games/WhosWhoQuiz";
 
 interface GameData {
   id: string;
@@ -89,7 +90,7 @@ export default function PlayGame() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">
-            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : game.game_type === "eight_ball_pool" ? "8 Ball Pool" : "Hypothetical Questions"}
+            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : game.game_type === "eight_ball_pool" ? "8 Ball Pool" : game.game_type === "whos_who" ? "Who's Who?" : "Hypothetical Questions"}
           </h1>
         </div>
       </header>
@@ -205,6 +206,38 @@ export default function PlayGame() {
                 newState.gameOver ? null : nextTurn,
                 newState.gameOver ? (winnerId || null) : undefined
               );
+            }}
+          />
+        )}
+
+        {game.game_type === "whos_who" && (
+          <WhosWhoQuiz
+            gameState={game.game_state}
+            userId={user.id}
+            creatorId={game.creator_id}
+            opponentId={game.opponent_id}
+            isMyTurn={isMyTurn && !isCompleted}
+            isCompleted={isCompleted}
+            onAnswer={async (newState) => {
+              const allDone = newState.currentRound >= (newState.questions?.length || WHOS_WHO_TOTAL_ROUNDS);
+              const bothAnsweredLast = newState.answers?.[newState.currentRound - 1] &&
+                Object.keys(newState.answers[newState.currentRound - 1]).length === 2;
+
+              let winnerId: string | null | undefined = undefined;
+              if (allDone && bothAnsweredLast) {
+                const s1 = newState.scores[game.creator_id] || 0;
+                const s2 = newState.scores[game.opponent_id] || 0;
+                winnerId = s1 > s2 ? game.creator_id : s2 > s1 ? game.opponent_id : null;
+              }
+
+              await updateGame(
+                newState,
+                allDone ? null : opponentId,
+                winnerId
+              );
+              if (allDone && bothAnsweredLast) {
+                await supabase.from("games").update({ status: "completed" }).eq("id", gameId);
+              }
             }}
           />
         )}

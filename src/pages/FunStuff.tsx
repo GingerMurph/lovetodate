@@ -1,4 +1,4 @@
-import { ArrowLeft, Grid3X3, Circle, HelpCircle, Gamepad2, Trophy } from "lucide-react";
+import { ArrowLeft, Grid3X3, Circle, HelpCircle, Gamepad2, Trophy, Users } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -33,6 +33,13 @@ const GAMES = [
     desc: "Pot your balls and sink the 8 ball to win. Full physics!",
     icon: Circle,
     color: "text-green-500",
+  },
+  {
+    id: "whos_who",
+    title: "Who's Who?",
+    desc: "Guess facts about each other from your profiles. How well do you know your match?",
+    icon: Users,
+    color: "text-gold",
   },
 ];
 
