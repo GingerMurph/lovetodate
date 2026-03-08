@@ -430,39 +430,24 @@ const ProfileView = () => {
         {/* Header */}
         <div className="mb-6 flex flex-col items-center">
           <div
-            className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4 relative select-none cursor-grab active:cursor-grabbing"
+            className="w-full max-w-sm mx-auto overflow-hidden rounded-2xl border-2 border-gold/30 mb-4 relative select-none"
             style={{
               transform: cardSwipeX !== 0 ? `translateX(${cardSwipeX}px) rotate(${cardSwipeX * 0.05}deg)` : undefined,
               transition: isDraggingCard ? 'none' : 'transform 0.3s ease',
             }}
+            onTouchStart={(e) => { handleCardPointerStart(e.touches[0].clientX, e.touches[0].clientY); setIsDraggingCard(true); }}
+            onTouchMove={(e) => {
+              handleCardPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+              if (cardSwipeLocked.current && cardSwipeRef.current) {
+                e.preventDefault();
+              }
+            }}
+            onTouchEnd={() => handleCardPointerEnd()}
+            onMouseDown={(e) => { handleCardPointerStart(e.clientX, e.clientY); setIsDraggingCard(true); }}
+            onMouseMove={(e) => { if (isDraggingCard) handleCardPointerMove(e.clientX, e.clientY); }}
+            onMouseUp={() => handleCardPointerEnd()}
+            onMouseLeave={() => { if (isDraggingCard) handleCardPointerEnd(); }}
           >
-            {/* Transparent swipe overlay — captures horizontal drags, passes taps to carousel */}
-            <div
-              className="absolute inset-0 z-20"
-              onTouchStart={(e) => { handleCardPointerStart(e.touches[0].clientX, e.touches[0].clientY); setIsDraggingCard(true); }}
-              onTouchMove={(e) => {
-                handleCardPointerMove(e.touches[0].clientX, e.touches[0].clientY);
-                if (cardSwipeLocked.current && cardSwipeRef.current) {
-                  e.preventDefault();
-                }
-              }}
-              onTouchEnd={() => handleCardPointerEnd()}
-              onMouseDown={(e) => { e.preventDefault(); handleCardPointerStart(e.clientX, e.clientY); setIsDraggingCard(true); }}
-              onMouseMove={(e) => { if (isDraggingCard) handleCardPointerMove(e.clientX, e.clientY); }}
-              onMouseUp={() => handleCardPointerEnd()}
-              onMouseLeave={() => { if (isDraggingCard) handleCardPointerEnd(); }}
-              onClick={(e) => {
-                // If no horizontal swipe happened, pass the click through to the carousel
-                if (Math.abs(cardSwipeX) < 10) {
-                  const el = e.currentTarget;
-                  el.style.pointerEvents = 'none';
-                  const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
-                  el.style.pointerEvents = '';
-                  target?.click();
-                }
-              }}
-              style={{ touchAction: 'pan-y' }}
-            />
             {/* Swipe overlay indicators */}
             {cardSwipeX > 50 && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-green-500/20 rounded-2xl pointer-events-none">
