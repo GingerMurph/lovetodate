@@ -315,7 +315,7 @@ const Discover = () => {
                         {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
                           <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
                             <TooltipProvider delayDuration={0}>
-                              {currentProfile.non_negotiables.slice(0, 4).map((item) => {
+                              {currentProfile.non_negotiables.map((item) => {
                                 const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
                                 return (
                                   <Tooltip key={item}>
@@ -330,11 +330,6 @@ const Discover = () => {
                                   </Tooltip>
                                 );
                               })}
-                              {currentProfile.non_negotiables.length > 4 && (
-                                <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm">
-                                  +{currentProfile.non_negotiables.length - 4} more
-                                </Badge>
-                              )}
                             </TooltipProvider>
                           </div>
                         )}
