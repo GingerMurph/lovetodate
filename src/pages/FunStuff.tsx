@@ -27,6 +27,13 @@ const GAMES = [
     icon: HelpCircle,
     color: "text-purple-500",
   },
+  {
+    id: "eight_ball_pool",
+    title: "8 Ball Pool",
+    desc: "Pot your balls and sink the 8 ball to win. Full physics!",
+    icon: Circle,
+    color: "text-green-500",
+  },
 ];
 
 export default function FunStuff() {

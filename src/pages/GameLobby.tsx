@@ -11,6 +11,7 @@ const GAME_LABELS: Record<string, string> = {
   noughts_crosses: "Noughts & Crosses",
   connect4: "Connect 4",
   hypothetical_questions: "Hypothetical Questions",
+  eight_ball_pool: "8 Ball Pool",
 };
 
 interface Connection {
@@ -66,16 +67,18 @@ export default function GameLobby() {
       ? { board: Array(9).fill(null) }
       : gameType === "connect4"
       ? { board: Array(6).fill(null).map(() => Array(7).fill(null)) }
+      : gameType === "eight_ball_pool"
+      ? (await import("@/components/games/EightBallPool")).createInitialPoolState()
       : { questionIndex: 0, answers: {}, questionOrder: shuffledOrder };
 
     const { error } = await supabase.from("games").insert({
-      game_type: gameType as any,
+      game_type: gameType,
       creator_id: user.id,
       opponent_id: opponentId,
       status: "pending",
       current_turn: user.id,
-      game_state: initialState,
-    });
+      game_state: initialState as any,
+    } as any);
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });

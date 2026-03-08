@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import NoughtsCrossesBoard from "@/components/games/NoughtsCrossesBoard";
 import Connect4Board from "@/components/games/Connect4Board";
 import HypotheticalQuestions, { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
+import EightBallPool from "@/components/games/EightBallPool";
 
 interface GameData {
   id: string;
@@ -88,7 +89,7 @@ export default function PlayGame() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">
-            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : "Hypothetical Questions"}
+            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : game.game_type === "eight_ball_pool" ? "8 Ball Pool" : "Hypothetical Questions"}
           </h1>
         </div>
       </header>
@@ -179,6 +180,31 @@ export default function PlayGame() {
               if (allDone) {
                 await supabase.from("games").update({ status: "completed" }).eq("id", gameId);
               }
+            }}
+          />
+        )}
+
+        {game.game_type === "eight_ball_pool" && (
+          <EightBallPool
+            gameState={game.game_state}
+            userId={user.id}
+            creatorId={game.creator_id}
+            isMyTurn={isMyTurn && !isCompleted}
+            isCompleted={isCompleted}
+            onShot={async (newState) => {
+              const winnerId = newState.gameOver
+                ? newState.winner === "player1"
+                  ? game.creator_id
+                  : newState.winner === "player2"
+                  ? game.opponent_id
+                  : newState.winner
+                : undefined;
+              const nextTurn = newState.currentPlayer === "player1" ? game.creator_id : game.opponent_id;
+              await updateGame(
+                newState,
+                newState.gameOver ? null : nextTurn,
+                newState.gameOver ? (winnerId || null) : undefined
+              );
             }}
           />
         )}
