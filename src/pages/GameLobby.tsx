@@ -12,6 +12,7 @@ const GAME_LABELS: Record<string, string> = {
   connect4: "Connect 4",
   hypothetical_questions: "Hypothetical Questions",
   eight_ball_pool: "8 Ball Pool",
+  whos_who: "Who's Who?",
 };
 
 interface Connection {
