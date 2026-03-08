@@ -488,20 +488,6 @@ const ProfileView = () => {
           {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
             <Badge variant="outline" className="mt-3 border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
           )}
-
-          {/* Non-negotiables — spaced below header */}
-          {profile.non_negotiables && profile.non_negotiables.length > 0 && (
-            <div className="mt-4 flex flex-wrap justify-center gap-2">
-              {profile.non_negotiables.map((item) => {
-                const label = item.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-                return (
-                  <Badge key={item} variant="destructive" className="text-xs px-2.5 py-1">
-                    🚫 {label}
-                  </Badge>
-                );
-              })}
-            </div>
-          )}
         </div>
 
         {/* Actions */}
