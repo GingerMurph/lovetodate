@@ -602,6 +602,7 @@ export type Database = {
         | "connect4"
         | "hypothetical_questions"
         | "eight_ball_pool"
+        | "whos_who"
       gender:
         | "male"
         | "female"
@@ -762,6 +763,7 @@ export const Constants = {
         "connect4",
         "hypothetical_questions",
         "eight_ball_pool",
+        "whos_who",
       ],
       gender: [
         "male",
