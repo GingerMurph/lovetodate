@@ -166,8 +166,8 @@ const Verify = () => {
           <CheckCircle className="mx-auto h-16 w-16 text-blue-500 mb-4" />
           <h1 className="font-serif text-2xl font-bold mb-2">Already Verified</h1>
           <p className="text-muted-foreground mb-6">Your identity has been confirmed. You're all set!</p>
-          <Button onClick={() => navigate("/discover")} className="gradient-gold text-primary-foreground">
-            Back to Discover
+          <Button onClick={() => navigate("/profile")} className="gradient-gold text-primary-foreground">
+            Back to Profile
           </Button>
         </div>
       </AppLayout>
