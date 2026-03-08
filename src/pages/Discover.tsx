@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2, Ban } from "lucide-react";
+import { Heart, MapPin, Ruler, Filter, X, ThumbsDown, Undo2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import VerifiedBadge from "@/components/VerifiedBadge";
