@@ -11,6 +11,10 @@ import {
   MessageCircle,
   Gamepad2,
   Crown,
+  Sparkles,
+  Brain,
+  Eye,
+  Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import GameStatsSection from "@/components/GameStatsSection";
