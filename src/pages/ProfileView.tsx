@@ -699,7 +699,22 @@ const ProfileView = () => {
           </Card>
         )}
 
-        {/* Show the Real You - Prompts */}
+        {/* Interest Tags */}
+        {profile.interests && profile.interests.length > 0 && (
+          <Card className="mb-4 border-border bg-card">
+            <CardHeader><CardTitle className="font-serif text-lg">About Them</CardTitle></CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-1.5">
+                {profile.interests.map((tag: string) => (
+                  <span key={tag} className="text-xs px-3 py-1.5 rounded-full bg-gold/15 text-gold border border-gold/20 font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {profile.prompts && profile.prompts.length > 0 && (
           <ProfilePromptDisplay prompts={profile.prompts} />
         )}
