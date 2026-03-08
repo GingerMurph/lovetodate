@@ -459,6 +459,19 @@ const ProfileView = () => {
                 </span>
               )}
             </div>
+            {/* Non-negotiables overlay on photo */}
+            {profile.non_negotiables && profile.non_negotiables.length > 0 && (
+              <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
+                {profile.non_negotiables.map((item) => {
+                  const label = item.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                  return (
+                    <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm">
+                      🚫 {label}
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
           </div>
           <p className="text-xs text-muted-foreground mb-2">Swipe photo right to like, left to pass</p>
           <h1 className="font-serif text-3xl font-bold flex items-center gap-2">

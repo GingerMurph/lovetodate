@@ -351,28 +351,6 @@ const Discover = () => {
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
                       <span className="text-xs text-muted-foreground truncate block">{currentProfile.gender ? currentProfile.gender : "No details yet"}</span>
-                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 items-center">
-                          <Ban className="h-3 w-3 text-destructive shrink-0" />
-                          <TooltipProvider delayDuration={0}>
-                            {currentProfile.non_negotiables.map((item) => {
-                              const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-                              return (
-                                <Tooltip key={item}>
-                                  <TooltipTrigger asChild>
-                                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0 cursor-pointer">
-                                      {label}
-                                    </Badge>
-                                  </TooltipTrigger>
-                                  <TooltipContent side="top" className="max-w-[200px] text-center animate-scale-in">
-                                    <p className="text-xs">{currentProfile.display_name} won't date someone who is: <strong>{label}</strong></p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              );
-                            })}
-                          </TooltipProvider>
-                        </div>
-                      )}
                     </CardContent>
                   </Card>
                 </SwipeCard>
