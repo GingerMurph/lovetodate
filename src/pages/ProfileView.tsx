@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles, Crown } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles, Crown, UtensilsCrossed } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
@@ -753,6 +753,9 @@ const ProfileView = () => {
               )}
               {profile.children && (
                 <div className="flex items-center gap-3 text-sm"><Baby className="h-4 w-4 text-gold shrink-0" /><span>Children: {formatEnum(profile.children)}</span></div>
+              )}
+              {(profile as any).diet && (
+                <div className="flex items-center gap-3 text-sm"><UtensilsCrossed className="h-4 w-4 text-gold shrink-0" /><span>Diet: {formatEnum((profile as any).diet)}</span></div>
               )}
               {profile.gender && (
                 <div className="flex items-center gap-3 text-sm"><UserIcon className="h-4 w-4 text-gold shrink-0" /><span>{formatEnum(profile.gender)}</span></div>

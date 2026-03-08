@@ -267,6 +267,7 @@ export type Database = {
           created_at: string
           date_of_birth: string | null
           date_of_birth_verified: string | null
+          diet: string | null
           display_name: string
           drinking: string | null
           education: string | null
@@ -316,6 +317,7 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           date_of_birth_verified?: string | null
+          diet?: string | null
           display_name?: string
           drinking?: string | null
           education?: string | null
@@ -365,6 +367,7 @@ export type Database = {
           created_at?: string
           date_of_birth?: string | null
           date_of_birth_verified?: string | null
+          diet?: string | null
           display_name?: string
           drinking?: string | null
           education?: string | null

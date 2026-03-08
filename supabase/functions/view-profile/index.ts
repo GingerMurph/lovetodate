@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
 
     const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes, myConnectionsCount, privateDataRes] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables")
+        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables, diet")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),

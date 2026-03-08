@@ -65,6 +65,7 @@ const ProfileSetup = () => {
     education: "",
     smoking: "",
     drinking: "",
+    diet: "",
     children: "",
     religion: "",
     ethnicity: "",
@@ -120,6 +121,7 @@ const ProfileSetup = () => {
           education: data.education || "",
           smoking: data.smoking || "",
           drinking: data.drinking || "",
+          diet: (data as any).diet || "",
           children: data.children || "",
           religion: (data as any).religion || "",
           ethnicity: (data as any).ethnicity || "",
@@ -251,6 +253,7 @@ const ProfileSetup = () => {
         education: form.education,
         smoking: form.smoking,
         drinking: form.drinking,
+        diet: form.diet,
         children: form.children,
         religion: form.religion,
         ethnicity: form.ethnicity,
@@ -627,6 +630,23 @@ const ProfileSetup = () => {
                     <SelectItem value="never">Never</SelectItem>
                     <SelectItem value="social">Socially</SelectItem>
                     <SelectItem value="regular">Regularly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Diet</Label>
+                <Select value={form.diet} onValueChange={(v) => update("diet", v)}>
+                  <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="eat_anything">Eat Anything</SelectItem>
+                    <SelectItem value="vegetarian">Vegetarian</SelectItem>
+                    <SelectItem value="vegan">Vegan</SelectItem>
+                    <SelectItem value="pescatarian">Pescatarian</SelectItem>
+                    <SelectItem value="halal">Halal</SelectItem>
+                    <SelectItem value="kosher">Kosher</SelectItem>
+                    <SelectItem value="gluten_free">Gluten Free</SelectItem>
+                    <SelectItem value="keto">Keto</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
