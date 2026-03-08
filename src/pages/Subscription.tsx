@@ -111,7 +111,7 @@ const Subscription = () => {
             <div>
               <h3 className="font-serif font-bold text-lg">🎉 Launch Special</h3>
               <p className="text-sm text-muted-foreground">
-                Your <strong>first connection is completely free</strong> during our launch period! Start connecting with no commitment.
+                Your <strong>first month is completely free</strong> during our launch period! Start connecting with no commitment.
               </p>
             </div>
           </CardContent>
