@@ -155,7 +155,7 @@ const Auth = () => {
                 )}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                  <Input id="email" name="email" type="email" autoComplete={isLogin ? "username" : "email"} placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 </div>
                 {!isLogin && (
                   <div className="space-y-2">
