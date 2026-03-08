@@ -8,8 +8,8 @@ interface SplashScreenProps {
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const called = useRef(false);
-  const soundPlayed = useRef(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [started, setStarted] = useState(false);
   const [showText, setShowText] = useState(false);
   const [showSecondLine, setShowSecondLine] = useState(false);
