@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import NoughtsCrossesBoard from "@/components/games/NoughtsCrossesBoard";
 import Connect4Board from "@/components/games/Connect4Board";
 import HypotheticalQuestions, { TOTAL_QUESTIONS } from "@/components/games/HypotheticalQuestions";
+import EightBallPool from "@/components/games/EightBallPool";
 
 interface GameData {
   id: string;
