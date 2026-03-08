@@ -109,7 +109,7 @@ const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvail
                 <div className="flex flex-col sm:flex-row gap-2 justify-center">
                   <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
                     <Crown className="h-4 w-4 mr-2" />
-                    See Plans from £6.99/week
+                    See Plans from £1.54/week
                   </Button>
                 </div>
               </>
