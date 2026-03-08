@@ -33,6 +33,15 @@ const FILM_GENRES = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance",
 const SPORTS = ["Football", "Rugby", "Cricket", "Tennis", "Basketball", "Swimming", "Running", "Cycling", "Boxing", "Golf", "Yoga", "Gym / Weightlifting", "Martial Arts", "Hiking", "Dancing", "None", "Other"];
 const HOBBIES = ["Reading", "Cooking", "Travelling", "Photography", "Gaming", "Music", "Art", "Writing", "Gardening", "DIY", "Volunteering", "Fitness", "Movies & TV", "Board Games", "Socialising", "Shopping", "Other"];
 const PERSONALITY_TYPES = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP", "Introvert", "Extrovert", "Ambivert", "Don't know"];
+const ABOUT_YOU_TAGS = [
+  "Adventurous", "Ambitious", "Animal lover", "Bookworm", "Cat person", "Chilled", "Coffee addict",
+  "Creative", "Dog person", "Early bird", "Eco-conscious", "Family-oriented", "Fashionable", "Fitness fanatic",
+  "Foodie", "Free spirit", "Funny", "Geek", "Globetrotter", "Gym rat", "Hopeless romantic",
+  "Introverted", "Kind-hearted", "Life of the party", "Loyal", "Music lover", "Nature lover",
+  "Night owl", "Old soul", "Optimist", "Outgoing", "Overthinking queen/king", "Passionate",
+  "Plant parent", "Romantic", "Sarcastic", "Self-aware", "Spontaneous", "Spiritual", "Sporty",
+  "Tea lover", "Thrill seeker", "Traveller", "Wine lover", "Witty", "Work hard play hard",
+];
 
 const ProfileSetup = () => {
   const { user, signOut } = useAuth();
@@ -55,6 +64,7 @@ const ProfileSetup = () => {
     looking_for: "everyone" as string,
     relationship_goal: [] as string[],
     bio: "",
+    interests: [] as string[],
     height_cm: "",
     weight_kg: "",
     body_build: "" as string,
@@ -124,6 +134,7 @@ const ProfileSetup = () => {
           diet: (data as any).diet || "",
           children: data.children || "",
           religion: (data as any).religion || "",
+          interests: data.interests || [],
           ethnicity: (data as any).ethnicity || "",
           languages: (data as any).languages || [],
           pets: (data as any).pets || "",
@@ -267,6 +278,7 @@ const ProfileSetup = () => {
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         non_negotiables: form.non_negotiables,
+        interests: form.interests,
         avatar_url,
         photo_urls,
       } as any).eq("user_id", user.id);
@@ -308,7 +320,7 @@ const ProfileSetup = () => {
     toast.success("Your account has been deleted.");
   };
 
-  const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const update = (key: string, value: string | string[]) => setForm((f) => ({ ...f, [key]: value }));
 
   return (
     <AppLayout>
@@ -825,6 +837,34 @@ const ProfileSetup = () => {
           <Card className="border-border bg-card">
             <CardHeader><CardTitle className="font-serif text-lg">About You</CardTitle></CardHeader>
             <CardContent className="space-y-3">
+              <Label className="text-sm font-medium">Describe yourself <span className="text-muted-foreground font-normal">(tap to select)</span></Label>
+              <div className="flex flex-wrap gap-1.5">
+                {ABOUT_YOU_TAGS.map((tag) => {
+                  const selected = form.interests.includes(tag);
+                  return (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        if (selected) {
+                          update("interests", form.interests.filter((t: string) => t !== tag));
+                        } else {
+                          update("interests", [...form.interests, tag]);
+                        }
+                      }}
+                      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
+                        selected
+                          ? "bg-gold/20 border-gold text-gold font-medium"
+                          : "border-border bg-secondary/30 text-muted-foreground hover:border-gold/40 hover:text-foreground"
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <Label className="text-sm font-medium pt-2">Bio</Label>
               <Textarea value={form.bio} onChange={(e) => update("bio", e.target.value)} placeholder="Tell potential matches about yourself, what makes you unique, what you're looking for..." rows={5} className="resize-none" />
               
               <div className="flex items-center gap-2">
