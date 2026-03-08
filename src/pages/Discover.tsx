@@ -389,7 +389,19 @@ const Discover = () => {
                           isVerified={currentProfile.is_verified}
                           isSubscribed={currentProfile.is_subscribed}
                         />
-                        {/* Non-negotiables removed from photo overlay — shown below */}
+                        {/* Match score badge */}
+                        {currentProfile.match_score !== null && (
+                          <div className="absolute top-3 right-3 z-10">
+                            <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold backdrop-blur-sm shadow-lg ${
+                              currentProfile.match_score >= 70 ? "bg-green-500/90 text-white" :
+                              currentProfile.match_score >= 50 ? "bg-gold/90 text-primary-foreground" :
+                              "bg-muted/80 text-muted-foreground"
+                            }`}>
+                              <Sparkles className="h-3 w-3" />
+                              {currentProfile.match_score}% Match
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
