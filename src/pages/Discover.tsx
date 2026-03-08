@@ -389,33 +389,9 @@ const Discover = () => {
                           isVerified={currentProfile.is_verified}
                           isSubscribed={currentProfile.is_subscribed}
                         />
-                        {/* Match score badge */}
-                        {currentProfile.match_score !== null && (
-                          <div className="absolute bottom-[8.5rem] right-3 z-10">
-                            <div className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-extrabold shadow-xl border ${
-                              currentProfile.match_score >= 70 ? "bg-green-500 text-white border-green-400 shadow-green-500/40" :
-                              currentProfile.match_score >= 50 ? "bg-gold text-primary-foreground border-gold shadow-gold/40" :
-                              "bg-muted/90 text-foreground border-border"
-                            }`}>
-                              <Sparkles className="h-4 w-4" />
-                              {currentProfile.match_score}% Match
-                            </div>
-                          </div>
-                        )}
+                      
                       </div>
-                      {/* Non-negotiables — above name overlay */}
-                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                        <div className="absolute inset-x-0 bottom-[7.5rem] z-10 px-3 flex flex-wrap gap-1 justify-start pointer-events-none">
-                          {currentProfile.non_negotiables.map((item) => {
-                            const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-                            return (
-                              <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5 backdrop-blur-sm bg-destructive/90 shadow-sm pointer-events-auto">
-                                🚫 {label}
-                              </Badge>
-                            );
-                          })}
-                        </div>
-                      )}
+                      
                       <div className="absolute inset-x-0 bottom-12 bg-gradient-to-t from-background/90 to-transparent p-4 pt-16 pointer-events-none">
                         <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
                           <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
@@ -434,6 +410,27 @@ const Discover = () => {
                       </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
+                      {/* Match score + Non-negotiables */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {currentProfile.match_score !== null && (
+                          <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
+                            currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                            currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                            "bg-muted text-muted-foreground border-border"
+                          }`}>
+                            <Sparkles className="h-3 w-3" />
+                            {currentProfile.match_score}% Match
+                          </div>
+                        )}
+                        {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && currentProfile.non_negotiables.map((item) => {
+                          const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                          return (
+                            <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
+                              🚫 {label}
+                            </Badge>
+                          );
+                        })}
+                      </div>
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
