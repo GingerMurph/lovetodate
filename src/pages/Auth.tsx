@@ -150,7 +150,7 @@ const Auth = () => {
                 {!isLogin && (
                   <div className="space-y-2">
                     <Label htmlFor="name">Display Name</Label>
-                    <Input id="name" placeholder="Your name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required={!isLogin} />
+                    <Input id="name" name="name" autoComplete="name" placeholder="Your name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required={!isLogin} />
                   </div>
                 )}
                 <div className="space-y-2">
