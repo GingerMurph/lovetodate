@@ -313,7 +313,7 @@ const Discover = () => {
                         />
                         {/* Non-negotiables overlay on photo */}
                         {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                          <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
+                          <div className="absolute top-16 sm:top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
                             <TooltipProvider delayDuration={0}>
                               {currentProfile.non_negotiables.map((item) => {
                                 const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
