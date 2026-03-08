@@ -53,6 +53,9 @@ export default function DatingAdvice() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">Dating Advice</h1>
+          <Link to="/" className="ml-auto">
+            <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+          </Link>
         </div>
       </header>
       <main className="container mx-auto px-4 py-12">
