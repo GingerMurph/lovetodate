@@ -46,18 +46,19 @@ Deno.serve(async (req) => {
     }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
-    const [{ data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }] = await Promise.all([
+    const [{ data: profiles, error }, { data: locations }, { data: allPrompts }, { data: subscriberCache }, { data: privateData }] = await Promise.all([
       adminClient
         .from("profiles")
         .select(
           "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
-          "location_city, nationality, date_of_birth, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables"
+          "location_city, nationality, religion, smoking, drinking, personality_type, max_distance_miles, relationship_goal, is_verified, non_negotiables"
         )
         .neq("user_id", user.id)
         .neq("is_paused", true),
       adminClient.from("user_locations").select("user_id, latitude, longitude"),
       adminClient.from("profile_prompts").select("user_id, prompt_text, answer_text, display_order").order("display_order"),
       adminClient.from("subscriber_cache").select("user_id, is_subscribed").eq("is_subscribed", true),
+      adminClient.from("profile_private_data").select("user_id, date_of_birth"),
     ]);
 
     const locationMap = new Map((locations || []).map(l => [l.user_id, l]));
