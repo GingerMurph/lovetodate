@@ -210,14 +210,20 @@ export default function ShowTheRealYou() {
 
         <Button
           type="button"
-          onClick={handleSave}
-          disabled={saving || answeredCount < MIN_PROMPTS}
-          className="w-full gradient-gold text-primary-foreground gap-2"
+          onClick={() => {
+            if (answeredCount < MIN_PROMPTS) {
+              toast.error(`Please answer at least ${MIN_PROMPTS} prompts to save.`);
+              return;
+            }
+            handleSave();
+          }}
+          disabled={saving}
+          className={`w-full gap-2 ${answeredCount >= MIN_PROMPTS ? "gradient-gold text-primary-foreground" : "bg-muted text-muted-foreground"}`}
         >
           {saving ? "Saving..." : (
             <>
               <Sparkles className="h-4 w-4" />
-              Save Prompts
+              Save Prompts {answeredCount < MIN_PROMPTS ? `(${answeredCount}/${MIN_PROMPTS} answered)` : ""}
             </>
           )}
         </Button>
