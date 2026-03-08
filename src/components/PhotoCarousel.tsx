@@ -62,7 +62,11 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
       didSwipe.current = false;
       return;
     }
-    if (allPhotos.length <= 1) return;
+    if (allPhotos.length <= 1) {
+      // Single photo — middle tap navigates
+      onMiddleTap?.();
+      return;
+    }
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const x = e.clientX - rect.left;
     const third = rect.width / 3;
@@ -74,6 +78,9 @@ export function PhotoCarousel({ avatarUrl, photoUrls, displayName, aspectClass =
       e.preventDefault();
       e.stopPropagation();
       goNext();
+    } else {
+      // Middle third — navigate to profile
+      onMiddleTap?.();
     }
   };
 
