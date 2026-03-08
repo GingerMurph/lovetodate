@@ -89,7 +89,7 @@ export default function PlayGame() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">
-            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : "Hypothetical Questions"}
+            {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : game.game_type === "eight_ball_pool" ? "8 Ball Pool" : "Hypothetical Questions"}
           </h1>
         </div>
       </header>
