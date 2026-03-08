@@ -356,6 +356,15 @@ const Index = () => {
           <div className="container mx-auto px-4 text-center">
             <p className="font-serif text-xl text-gold mb-2">Love To Date</p>
             <p className="text-sm text-muted-foreground">Only pay when you find someone you would Love To Date</p>
+            <div className="mt-4 flex items-center justify-center gap-4 flex-wrap">
+              <Link to="/terms" className="text-xs text-muted-foreground hover:text-gold transition-colors">Terms of Service</Link>
+              <span className="text-muted-foreground/30">|</span>
+              <Link to="/privacy" className="text-xs text-muted-foreground hover:text-gold transition-colors">Privacy Policy</Link>
+              <span className="text-muted-foreground/30">|</span>
+              <Link to="/cookies" className="text-xs text-muted-foreground hover:text-gold transition-colors">Cookie Policy</Link>
+              <span className="text-muted-foreground/30">|</span>
+              <a href="mailto:support@lovetodate.co.uk" className="text-xs text-muted-foreground hover:text-gold transition-colors">support@lovetodate.co.uk</a>
+            </div>
             <p className="mt-4 text-xs text-muted-foreground">
               © {new Date().getFullYear()} lovetodate.co.uk. All rights reserved.
             </p>
