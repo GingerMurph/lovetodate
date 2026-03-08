@@ -391,7 +391,7 @@ const Discover = () => {
                         />
                         {/* Match score badge */}
                         {currentProfile.match_score !== null && (
-                          <div className="absolute top-3 right-3 z-10">
+                          <div className="absolute top-12 right-3 z-10">
                             <div className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-extrabold shadow-xl border ${
                               currentProfile.match_score >= 70 ? "bg-green-500 text-white border-green-400 shadow-green-500/40" :
                               currentProfile.match_score >= 50 ? "bg-gold text-primary-foreground border-gold shadow-gold/40" :
@@ -422,14 +422,15 @@ const Discover = () => {
                     </Link>
                     <CardContent className="p-3 space-y-2">
                       {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5">
+                        <div className="flex flex-wrap gap-1.5 pb-1 mb-1 border-b border-border">
+                          <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide w-full">Deal Breakers</span>
                           <TooltipProvider delayDuration={0}>
                             {currentProfile.non_negotiables.map((item) => {
                               const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
                               return (
                                 <Tooltip key={item}>
                                   <TooltipTrigger asChild>
-                                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 cursor-pointer backdrop-blur-sm bg-destructive/90 shadow-sm">
+                                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0.5 cursor-pointer">
                                       🚫 {label}
                                     </Badge>
                                   </TooltipTrigger>
