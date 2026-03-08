@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 import { toast } from "sonner";
 import { Sparkles, Plus, X, MessageCircleHeart, Check } from "lucide-react";
 
@@ -41,7 +41,6 @@ export default function ShowTheRealYou() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [addingPrompt, setAddingPrompt] = useState(false);
-  const [selectedNewPrompt, setSelectedNewPrompt] = useState("");
 
   useEffect(() => {
     if (!user) return;
@@ -62,15 +61,6 @@ export default function ShowTheRealYou() {
   const usedPrompts = new Set(prompts.map((p) => p.prompt_text));
   const availableForAdd = AVAILABLE_PROMPTS.filter((p) => !usedPrompts.has(p));
 
-  const handleAddPrompt = () => {
-    if (!selectedNewPrompt) return;
-    setPrompts((prev) => [
-      ...prev,
-      { prompt_text: selectedNewPrompt, answer_text: "", display_order: prev.length },
-    ]);
-    setSelectedNewPrompt("");
-    setAddingPrompt(false);
-  };
 
   const handleUpdateAnswer = (index: number, answer: string) => {
     if (answer.length > MAX_ANSWER_LENGTH) return;
@@ -179,24 +169,28 @@ export default function ShowTheRealYou() {
         {prompts.length < MAX_PROMPTS && (
           <>
             {addingPrompt ? (
-              <div className="flex gap-2 items-end">
-                <div className="flex-1">
-                  <Select value={selectedNewPrompt} onValueChange={setSelectedNewPrompt}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose a prompt..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableForAdd.map((p) => (
-                        <SelectItem key={p} value={p}>{p}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">Tap a prompt to add it:</p>
+                <div className="flex flex-col gap-1.5">
+                  {availableForAdd.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => {
+                        setPrompts((prev) => [
+                          ...prev,
+                          { prompt_text: p, answer_text: "", display_order: prev.length },
+                        ]);
+                        if (availableForAdd.length <= 1) setAddingPrompt(false);
+                      }}
+                      className="text-left text-sm px-3 py-2.5 rounded-md border border-border bg-secondary/20 hover:bg-gold/10 hover:border-gold/30 text-foreground transition-colors"
+                    >
+                      {p}
+                    </button>
+                  ))}
                 </div>
-                <Button type="button" size="sm" onClick={handleAddPrompt} disabled={!selectedNewPrompt} className="gap-1">
-                  <Plus className="h-3.5 w-3.5" /> Add
-                </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={() => { setAddingPrompt(false); setSelectedNewPrompt(""); }}>
-                  Cancel
+                <Button type="button" size="sm" variant="ghost" onClick={() => setAddingPrompt(false)} className="w-full">
+                  Close
                 </Button>
               </div>
             ) : (
