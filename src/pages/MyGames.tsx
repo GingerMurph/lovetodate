@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BackgroundImage from "@/components/BackgroundImage";
-import { ArrowLeft, Check, X, Gamepad2 } from "lucide-react";
+import { ArrowLeft, Check, X, Gamepad2, Home } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -111,6 +111,9 @@ export default function MyGames() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">My Games</h1>
+          <Link to="/" className="ml-auto">
+            <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+          </Link>
         </div>
       </header>
       <main className="container mx-auto px-4 py-8 max-w-2xl">

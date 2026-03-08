@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import BackgroundImage from "@/components/BackgroundImage";
-import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, Home } from "lucide-react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -94,6 +94,9 @@ export default function PlayGame() {
           <h1 className="font-serif text-xl text-gold">
             {game.game_type === "noughts_crosses" ? "Noughts & Crosses" : game.game_type === "connect4" ? "Connect 4" : game.game_type === "eight_ball_pool" ? "8 Ball Pool" : game.game_type === "whos_who" ? "Who's Who?" : "Hypothetical Questions"}
           </h1>
+          <Link to="/" className="ml-auto">
+            <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+          </Link>
         </div>
       </header>
       <main className="container mx-auto px-4 py-8 max-w-md">
