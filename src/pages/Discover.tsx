@@ -409,17 +409,16 @@ const Discover = () => {
                           {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
                         </div>
                       </div>
-                      {/* Match score — second */}
-                      {currentProfile.match_score !== null && (
-                        <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
-                          currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
-                          currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
-                          "bg-muted text-muted-foreground border-border"
-                        }`}>
-                          <Sparkles className="h-3 w-3" />
-                          {currentProfile.match_score}% Match
-                        </div>
-                      )}
+                      {/* Match score — always visible */}
+                      <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
+                        currentProfile.match_score === null ? "bg-muted text-muted-foreground border-border" :
+                        currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                        currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                        "bg-muted text-muted-foreground border-border"
+                      }`}>
+                        <Sparkles className="h-3 w-3" />
+                        {currentProfile.match_score !== null ? `${currentProfile.match_score}% Match` : "Calculating..."}
+                      </div>
                       {/* Non-negotiables — third, with top border for separation */}
                       {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
                         <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border">
