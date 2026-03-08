@@ -67,6 +67,12 @@ const Auth = () => {
         return;
       }
 
+      if (!agreedToPrivacy) {
+        toast.error("Please agree to the Privacy Policy and Terms of Service");
+        setLoading(false);
+        return;
+      }
+
       // Check if email already exists before attempting signup
       try {
         const { data: checkData } = await supabase.functions.invoke("check-email-exists", {
