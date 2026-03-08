@@ -15,7 +15,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
-import heroBg from "@/assets/hero-bg.png";
+import BackgroundImage from "@/components/BackgroundImage";
 
 const Index = () => {
   const { user, loading } = useAuth();
