@@ -441,10 +441,25 @@ const ProfileView = () => {
         {/* Header */}
         <div className="mb-6">
           {/* Photo card */}
+          {/* Photo carousel — separate from swipe area so taps navigate photos */}
+          <div className="w-full max-w-sm mx-auto rounded-2xl border-2 border-gold/30 overflow-hidden">
+            <PhotoCarousel
+              avatarUrl={profile.avatar_url}
+              photoUrls={profile.photo_urls || []}
+              displayName={profile.display_name}
+              aspectClass="aspect-[3/4]"
+              isVerified={profile.is_verified}
+              isSubscribed={profile.is_subscribed}
+            />
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center mt-2 mb-4">Tap left / right to browse photos • Swipe to like or pass</p>
+
+          {/* Invisible swipe layer for like/pass — below photo so it doesn't block taps */}
           <div
-            className="w-full max-w-sm mx-auto rounded-2xl border-2 border-gold/30 relative select-none"
+            className="w-full max-w-sm mx-auto h-16 relative select-none"
             style={{
-              transform: cardSwipeX !== 0 ? `translateX(${cardSwipeX}px) rotate(${cardSwipeX * 0.05}deg)` : undefined,
+              transform: cardSwipeX !== 0 ? `translateX(${cardSwipeX}px)` : undefined,
               transition: isDraggingCard ? 'none' : 'transform 0.3s ease',
             }}
             onTouchStart={(e) => { handleCardPointerStart(e.touches[0].clientX, e.touches[0].clientY); setIsDraggingCard(true); }}
@@ -460,30 +475,17 @@ const ProfileView = () => {
             onMouseUp={() => handleCardPointerEnd()}
             onMouseLeave={() => { if (isDraggingCard) handleCardPointerEnd(); }}
           >
-            {/* Swipe overlay indicators */}
             {cardSwipeX > 50 && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-green-500/20 rounded-2xl pointer-events-none">
-                <span className="text-4xl font-bold text-green-500 rotate-[-15deg] border-4 border-green-500 rounded-lg px-4 py-1">LIKE</span>
+                <span className="text-2xl font-bold text-green-500">LIKE ❤️</span>
               </div>
             )}
             {cardSwipeX < -50 && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-destructive/20 rounded-2xl pointer-events-none">
-                <span className="text-4xl font-bold text-destructive rotate-[15deg] border-4 border-destructive rounded-lg px-4 py-1">NOPE</span>
+                <span className="text-2xl font-bold text-destructive">NOPE 👎</span>
               </div>
             )}
-            <div className="rounded-2xl overflow-hidden">
-              <PhotoCarousel
-                avatarUrl={profile.avatar_url}
-                photoUrls={profile.photo_urls || []}
-                displayName={profile.display_name}
-                aspectClass="aspect-[3/4]"
-                isVerified={profile.is_verified}
-                isSubscribed={profile.is_subscribed}
-              />
-            </div>
           </div>
-
-          <p className="text-xs text-muted-foreground text-center mt-2 mb-4">Swipe photo right to like, left to pass</p>
           
           {/* Name, age, location — clearly in white section below photo */}
           <div className="text-center space-y-2 px-2">

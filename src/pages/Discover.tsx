@@ -381,21 +381,16 @@ const Discover = () => {
                   onSwipeLeft={() => { handlePass(); advanceCard(); }}
                 >
                   <Card className="overflow-hidden border-border bg-card">
-                    <div className="relative">
-                      <PhotoCarousel
-                        avatarUrl={currentProfile.avatar_url}
-                        photoUrls={currentProfile.photo_urls || []}
-                        displayName={currentProfile.display_name}
-                        isVerified={currentProfile.is_verified}
-                        isSubscribed={currentProfile.is_subscribed}
-                        onMiddleTap={() => {
-                          navigate(`/profile/${currentProfile.user_id}`, { state: { fromDiscover: true, discoverIndex: currentIndex, matchScore: currentProfile.match_score } });
-                        }}
-                      />
-                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/40 to-transparent p-3 pt-8 pointer-events-none">
-                        <p className="text-center text-xs text-white/80 font-medium">TAP TO VIEW PROFILE</p>
-                      </div>
-                    </div>
+                    <PhotoCarousel
+                      avatarUrl={currentProfile.avatar_url}
+                      photoUrls={currentProfile.photo_urls || []}
+                      displayName={currentProfile.display_name}
+                      isVerified={currentProfile.is_verified}
+                      isSubscribed={currentProfile.is_subscribed}
+                      onMiddleTap={() => {
+                        navigate(`/profile/${currentProfile.user_id}`, { state: { fromDiscover: true, discoverIndex: currentIndex, matchScore: currentProfile.match_score } });
+                      }}
+                    />
                     <CardContent className="px-4 pt-4 pb-3 space-y-2.5">
                       {/* Name & metadata — always first */}
                       <div>
