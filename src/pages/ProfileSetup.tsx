@@ -320,7 +320,7 @@ const ProfileSetup = () => {
     toast.success("Your account has been deleted.");
   };
 
-  const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const update = (key: string, value: string | string[]) => setForm((f) => ({ ...f, [key]: value }));
 
   return (
     <AppLayout>
