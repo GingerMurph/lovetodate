@@ -226,6 +226,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_private_data: {
+        Row: {
+          created_at: string
+          date_of_birth: string | null
+          phone_number: string | null
+          updated_at: string
+          user_id: string
+          verification_selfie_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth?: string | null
+          phone_number?: string | null
+          updated_at?: string
+          user_id: string
+          verification_selfie_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string | null
+          phone_number?: string | null
+          updated_at?: string
+          user_id?: string
+          verification_selfie_url?: string | null
+        }
+        Relationships: []
+      }
       profile_prompts: {
         Row: {
           answer_text: string
