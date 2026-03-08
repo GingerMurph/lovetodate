@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { usePoolSounds } from "@/hooks/usePoolSounds";
 
 interface Ball {
   id: number;
