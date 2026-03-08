@@ -597,7 +597,11 @@ export type Database = {
         | "heavyset"
         | "petite"
       game_status: "pending" | "active" | "completed" | "declined"
-      game_type: "noughts_crosses" | "connect4" | "hypothetical_questions"
+      game_type:
+        | "noughts_crosses"
+        | "connect4"
+        | "hypothetical_questions"
+        | "eight_ball_pool"
       gender:
         | "male"
         | "female"
@@ -753,7 +757,12 @@ export const Constants = {
         "petite",
       ],
       game_status: ["pending", "active", "completed", "declined"],
-      game_type: ["noughts_crosses", "connect4", "hypothetical_questions"],
+      game_type: [
+        "noughts_crosses",
+        "connect4",
+        "hypothetical_questions",
+        "eight_ball_pool",
+      ],
       gender: [
         "male",
         "female",
