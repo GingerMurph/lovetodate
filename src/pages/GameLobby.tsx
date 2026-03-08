@@ -111,8 +111,10 @@ export default function GameLobby() {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="font-serif text-xl text-gold">{GAME_LABELS[gameType || ""] || "Game"}</h1>
-        </div>
+           <h1 className="font-serif text-xl text-gold">{GAME_LABELS[gameType || ""] || "Game"}</h1>
+            <Link to="/" className="ml-auto">
+              <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+            </Link>
       </header>
       <main className="container mx-auto px-4 py-12 max-w-md">
         {invitedName ? (

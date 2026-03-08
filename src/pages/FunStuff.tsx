@@ -77,12 +77,15 @@ export default function FunStuff() {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="font-serif text-xl text-gold">Fun Stuff</h1>
-          {pendingCount > 0 && (
-            <span className="gradient-gold text-primary-foreground text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1.5">
-              {pendingCount}
-            </span>
-          )}
+           <h1 className="font-serif text-xl text-gold">Fun Stuff</h1>
+            {pendingCount > 0 && (
+              <span className="gradient-gold text-primary-foreground text-xs font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1.5">
+                {pendingCount}
+              </span>
+            )}
+            <Link to="/" className="ml-auto">
+              <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+            </Link>
         </div>
       </header>
       <main className="container mx-auto px-4 py-12">
