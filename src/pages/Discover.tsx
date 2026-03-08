@@ -396,16 +396,17 @@ const Discover = () => {
                         <p className="text-center text-xs text-white/80 font-medium">TAP TO VIEW PROFILE</p>
                       </div>
                     </div>
-                    <CardContent className="p-3 space-y-2">
+                    <CardContent className="px-4 pt-4 pb-3 space-y-3">
+                      {/* Name & metadata */}
                       <div>
-                        <h3 className="font-serif text-lg font-semibold text-foreground flex items-center gap-1.5 max-w-full">
+                        <h3 className="font-serif text-xl font-semibold text-foreground flex items-center gap-1.5 max-w-full">
                           <span className="truncate">{currentProfile.display_name}{currentProfile.age ? `, ${currentProfile.age}` : ""}</span>
                           <span className="flex items-center gap-1 shrink-0">
                             {currentProfile.is_verified && <VerifiedBadge size="md" />}
                             {currentProfile.is_subscribed && <SubscriberBadge size="md" />}
                           </span>
                         </h3>
-                        <div className="mt-0.5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                           {currentProfile.location_city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{currentProfile.location_city}</span>}
                           {currentDistance !== null && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{Math.round(currentDistance)} mi away</span>}
                           {currentProfile.height_cm && <span className="flex items-center gap-1"><Ruler className="h-3 w-3" />{currentProfile.height_cm}cm</span>}
@@ -413,26 +414,30 @@ const Discover = () => {
                           {currentProfile.nationality && <span>{currentProfile.nationality}</span>}
                         </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {currentProfile.match_score !== null && (
-                          <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
-                            currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
-                            currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
-                            "bg-muted text-muted-foreground border-border"
-                          }`}>
-                            <Sparkles className="h-3 w-3" />
-                            {currentProfile.match_score}% Match
-                          </div>
-                        )}
-                        {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && currentProfile.non_negotiables.map((item) => {
-                          const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-                          return (
-                            <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
-                              🚫 {label}
-                            </Badge>
-                          );
-                        })}
-                      </div>
+                      {/* Match score */}
+                      {currentProfile.match_score !== null && (
+                        <div className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
+                          currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                          currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                          "bg-muted text-muted-foreground border-border"
+                        }`}>
+                          <Sparkles className="h-3 w-3" />
+                          {currentProfile.match_score}% Match
+                        </div>
+                      )}
+                      {/* Non-negotiables */}
+                      {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {currentProfile.non_negotiables.map((item) => {
+                            const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                            return (
+                              <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
+                                🚫 {label}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                      )}
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
