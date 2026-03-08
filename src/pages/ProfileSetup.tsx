@@ -719,39 +719,71 @@ const ProfileSetup = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-serif text-lg">🚫 Non-Negotiables</CardTitle>
-              <p className="text-xs text-muted-foreground">Select deal-breakers that are shown on your profile</p>
+              <p className="text-xs text-muted-foreground">Select deal-breakers that are shown on your profile photo</p>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { value: "heavy_drinkers", label: "Heavy Drinkers" },
-                  { value: "smokers", label: "Smokers" },
-                  { value: "vapers", label: "Vapers" },
-                  { value: "drug_takers", label: "Drug Takers" },
-                  { value: "unemployed", label: "Unemployed" },
-                  { value: "unhealthy_lifestyle", label: "Unhealthy Lifestyle" },
-                ].map((item) => (
-                  <button
-                    key={item.value}
-                    type="button"
-                    onClick={() => {
-                      setForm((f) => ({
-                        ...f,
-                        non_negotiables: f.non_negotiables.includes(item.value)
-                          ? f.non_negotiables.filter((n) => n !== item.value)
-                          : [...f.non_negotiables, item.value],
-                      }));
-                    }}
-                    className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
-                      form.non_negotiables.includes(item.value)
-                        ? "bg-destructive text-destructive-foreground border-destructive"
-                        : "bg-secondary text-muted-foreground border-border hover:border-destructive/50"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+            <CardContent className="space-y-3">
+              {/* Selected badges */}
+              {form.non_negotiables.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {form.non_negotiables.map((val) => {
+                    const label = val.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                    return (
+                      <span
+                        key={val}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs bg-destructive text-destructive-foreground border border-destructive"
+                      >
+                        {label}
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, non_negotiables: f.non_negotiables.filter((n) => n !== val) }))}
+                          className="ml-0.5 hover:opacity-70"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              {/* Dropdown selector */}
+              <Select
+                value=""
+                onValueChange={(val) => {
+                  if (!form.non_negotiables.includes(val)) {
+                    setForm((f) => ({ ...f, non_negotiables: [...f.non_negotiables, val] }));
+                  }
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Add a deal-breaker..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {[
+                    { value: "heavy_drinkers", label: "Heavy Drinkers" },
+                    { value: "smokers", label: "Smokers" },
+                    { value: "vapers", label: "Vapers" },
+                    { value: "drug_takers", label: "Drug Takers" },
+                    { value: "unemployed", label: "Unemployed" },
+                    { value: "unhealthy_lifestyle", label: "Unhealthy Lifestyle" },
+                    { value: "no_ambition", label: "No Ambition" },
+                    { value: "dishonesty", label: "Dishonesty" },
+                    { value: "poor_hygiene", label: "Poor Hygiene" },
+                    { value: "excessive_gambling", label: "Excessive Gambling" },
+                    { value: "no_sense_of_humour", label: "No Sense of Humour" },
+                    { value: "controlling_behaviour", label: "Controlling Behaviour" },
+                    { value: "negativity", label: "Constant Negativity" },
+                    { value: "no_kids", label: "Doesn't Want Kids" },
+                    { value: "has_kids", label: "Already Has Kids" },
+                    { value: "long_distance", label: "Long Distance" },
+                  ]
+                    .filter((item) => !form.non_negotiables.includes(item.value))
+                    .map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </CardContent>
           </Card>
 
