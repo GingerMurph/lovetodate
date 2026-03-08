@@ -58,6 +58,7 @@ const ResetPassword = () => {
   if (!isRecovery) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
+        <BackgroundImage />
         <Card className="w-full max-w-md border-border bg-card">
           <CardHeader className="text-center">
             <CardTitle className="font-serif text-2xl">Invalid Link</CardTitle>
