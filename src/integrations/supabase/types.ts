@@ -598,7 +598,17 @@ export type Database = {
         | "petite"
       game_status: "pending" | "active" | "completed" | "declined"
       game_type: "noughts_crosses" | "connect4" | "hypothetical_questions"
-      gender: "male" | "female" | "non_binary" | "other"
+      gender:
+        | "male"
+        | "female"
+        | "non_binary"
+        | "other"
+        | "transgender_male"
+        | "transgender_female"
+        | "genderfluid"
+        | "genderqueer"
+        | "agender"
+        | "two_spirit"
       looking_for: "male" | "female" | "everyone"
       relationship_goal:
         | "long_term"
@@ -744,7 +754,18 @@ export const Constants = {
       ],
       game_status: ["pending", "active", "completed", "declined"],
       game_type: ["noughts_crosses", "connect4", "hypothetical_questions"],
-      gender: ["male", "female", "non_binary", "other"],
+      gender: [
+        "male",
+        "female",
+        "non_binary",
+        "other",
+        "transgender_male",
+        "transgender_female",
+        "genderfluid",
+        "genderqueer",
+        "agender",
+        "two_spirit",
+      ],
       looking_for: ["male", "female", "everyone"],
       relationship_goal: [
         "long_term",
