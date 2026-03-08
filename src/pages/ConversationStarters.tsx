@@ -65,7 +65,7 @@ export default function ConversationStarters() {
         <div className="grid gap-4 md:grid-cols-2 max-w-3xl mx-auto">
           {loading
             ? Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="rounded-xl border border-border p-4">
+                <div key={i} className="rounded-xl border border-border bg-card p-4">
                   <Skeleton className="h-4 w-full" />
                 </div>
               ))
