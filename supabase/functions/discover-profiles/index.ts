@@ -63,6 +63,7 @@ Deno.serve(async (req) => {
 
     const locationMap = new Map((locations || []).map(l => [l.user_id, l]));
     const subscriberSet = new Set((subscriberCache || []).map(s => s.user_id));
+    const dobMap = new Map((privateData || []).map(p => [p.user_id, p.date_of_birth]));
     const promptsMap = new Map<string, { prompt_text: string; answer_text: string }[]>();
     for (const p of (allPrompts || [])) {
       const arr = promptsMap.get(p.user_id) || [];
