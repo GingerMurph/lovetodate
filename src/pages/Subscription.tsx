@@ -97,7 +97,7 @@ const Subscription = () => {
             </h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-3">
-            No more paying blindly. Only pay when you find someone you'd <strong className="text-gold">Love To Date</strong>.
+            No more paying blindly. Only pay when you find someone you'd <strong className="text-gold whitespace-nowrap">Love To Date</strong>.
           </p>
           <p className="text-sm text-muted-foreground">
             Affordable dating with fair, transparent pricing.
