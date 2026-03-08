@@ -48,6 +48,31 @@ const ABOUT_YOU_TAGS = [
   "Night owl", "Old soul", "Optimist", "Outgoing", "Overthinking queen/king", "Passionate",
   "Plant parent", "Romantic", "Sarcastic", "Self-aware", "Spontaneous", "Spiritual", "Sporty",
   "Tea lover", "Thrill seeker", "Traveller", "Wine lover", "Witty", "Work hard play hard",
+  "Homebody", "Beach bum", "Festival goer", "Film buff", "Podcast junkie", "Cat & dog parent",
+  "Always laughing", "Big dreamer", "Deep conversations", "Good vibes only", "Bit of a nerd",
+  "Love a pub quiz", "Always up for brunch", "Gym then pizza", "Netflix binger", "Festival lover",
+];
+
+const BIO_SENTENCE_STARTERS = [
+  "I'm happiest when...",
+  "On weekends you'll find me...",
+  "My friends would describe me as...",
+  "I'm looking for someone who...",
+  "One thing you should know about me is...",
+  "I can't stop talking about...",
+  "My ideal date would be...",
+  "The way to my heart is...",
+  "I'm secretly really good at...",
+  "You'll win me over if...",
+];
+
+const BIO_TEMPLATES = [
+  "Love a good adventure but equally happy with a cosy night in. Dog lover, coffee addict, and always up for trying something new 🌍",
+  "Big foodie energy. If you can recommend a great restaurant, you've already won me over. Looking for someone to laugh with ❤️",
+  "Not here to waste anyone's time. Family-oriented, love to travel, and I'll always make you laugh (or at least try to) 😄",
+  "Gym in the morning, pub quiz in the evening. Looking for my partner in crime who doesn't take life too seriously 🍻",
+  "Creative soul with a love for music, art, and deep conversations at 2am. Let's skip the small talk ✨",
+  "Outdoorsy type who also loves a lazy Sunday. Seeking someone genuine who's up for both hiking and a box set binge 🏔️",
 ];
 
 const ProfileSetup = () => {
@@ -882,6 +907,27 @@ const ProfileSetup = () => {
               </div>
 
               <Label className="text-sm font-medium pt-2">Bio</Label>
+
+              {/* Sentence starters */}
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">Need inspiration? Tap a starter to begin:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {BIO_SENTENCE_STARTERS.map((starter) => (
+                    <button
+                      key={starter}
+                      type="button"
+                      onClick={() => {
+                        const current = form.bio.trim();
+                        update("bio", current ? `${current}\n${starter} ` : `${starter} `);
+                      }}
+                      className="text-[11px] px-2.5 py-1 rounded-full border border-border bg-secondary/30 text-muted-foreground hover:border-gold/40 hover:text-foreground transition-colors"
+                    >
+                      {starter}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <Textarea value={form.bio} onChange={(e) => update("bio", e.target.value)} placeholder="Tell potential matches about yourself, what makes you unique, what you're looking for..." rows={5} className="resize-none" />
               
               <div className="flex items-center gap-2">
@@ -894,6 +940,12 @@ const ProfileSetup = () => {
                     <SelectItem value="sincere">💛 Sincere</SelectItem>
                     <SelectItem value="adventurous">🌍 Adventurous</SelectItem>
                     <SelectItem value="chill">😎 Chill</SelectItem>
+                    <SelectItem value="romantic">💕 Romantic</SelectItem>
+                    <SelectItem value="confident">💪 Confident</SelectItem>
+                    <SelectItem value="mysterious">🌙 Mysterious</SelectItem>
+                    <SelectItem value="playful">🎉 Playful</SelectItem>
+                    <SelectItem value="intellectual">🧠 Intellectual</SelectItem>
+                    <SelectItem value="down_to_earth">🌿 Down to Earth</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
@@ -924,6 +976,27 @@ const ProfileSetup = () => {
                   ))}
                 </div>
               )}
+
+              {/* Pre-written templates */}
+              <div className="space-y-1.5 pt-1">
+                <p className="text-xs text-muted-foreground font-medium">Or pick a ready-made bio:</p>
+                <div className="space-y-1.5">
+                  {BIO_TEMPLATES.map((template, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => update("bio", template)}
+                      className={`w-full text-left text-xs px-3 py-2.5 rounded-lg border transition-colors ${
+                        form.bio === template
+                          ? "border-gold bg-gold/10 text-foreground"
+                          : "border-border bg-secondary/20 text-muted-foreground hover:bg-accent hover:text-foreground"
+                      }`}
+                    >
+                      {template}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
 
