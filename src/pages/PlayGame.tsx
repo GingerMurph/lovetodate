@@ -209,6 +209,38 @@ export default function PlayGame() {
             }}
           />
         )}
+
+        {game.game_type === "whos_who" && (
+          <WhosWhoQuiz
+            gameState={game.game_state}
+            userId={user.id}
+            creatorId={game.creator_id}
+            opponentId={game.opponent_id}
+            isMyTurn={isMyTurn && !isCompleted}
+            isCompleted={isCompleted}
+            onAnswer={async (newState) => {
+              const allDone = newState.currentRound >= (newState.questions?.length || WHOS_WHO_TOTAL_ROUNDS);
+              const bothAnsweredLast = newState.answers?.[newState.currentRound - 1] &&
+                Object.keys(newState.answers[newState.currentRound - 1]).length === 2;
+
+              let winnerId: string | null | undefined = undefined;
+              if (allDone && bothAnsweredLast) {
+                const s1 = newState.scores[game.creator_id] || 0;
+                const s2 = newState.scores[game.opponent_id] || 0;
+                winnerId = s1 > s2 ? game.creator_id : s2 > s1 ? game.opponent_id : null;
+              }
+
+              await updateGame(
+                newState,
+                allDone ? null : opponentId,
+                winnerId
+              );
+              if (allDone && bothAnsweredLast) {
+                await supabase.from("games").update({ status: "completed" }).eq("id", gameId);
+              }
+            }}
+          />
+        )}
       </main>
     </div>
   );
