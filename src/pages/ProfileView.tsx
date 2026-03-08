@@ -436,13 +436,12 @@ const ProfileView = () => {
               transition: isDraggingCard ? 'none' : 'transform 0.3s ease',
             }}
           >
-            {/* Transparent swipe overlay — captures horizontal drags, allows vertical scroll */}
+            {/* Transparent swipe overlay — captures horizontal drags, passes taps to carousel */}
             <div
               className="absolute inset-0 z-20"
               onTouchStart={(e) => { handleCardPointerStart(e.touches[0].clientX, e.touches[0].clientY); setIsDraggingCard(true); }}
               onTouchMove={(e) => {
                 handleCardPointerMove(e.touches[0].clientX, e.touches[0].clientY);
-                // If horizontal swipe is locked in, prevent scroll
                 if (cardSwipeLocked.current && cardSwipeRef.current) {
                   e.preventDefault();
                 }
@@ -452,6 +451,16 @@ const ProfileView = () => {
               onMouseMove={(e) => { if (isDraggingCard) handleCardPointerMove(e.clientX, e.clientY); }}
               onMouseUp={() => handleCardPointerEnd()}
               onMouseLeave={() => { if (isDraggingCard) handleCardPointerEnd(); }}
+              onClick={(e) => {
+                // If no horizontal swipe happened, pass the click through to the carousel
+                if (Math.abs(cardSwipeX) < 10) {
+                  const el = e.currentTarget;
+                  el.style.pointerEvents = 'none';
+                  const target = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+                  el.style.pointerEvents = '';
+                  target?.click();
+                }
+              }}
               style={{ touchAction: 'pan-y' }}
             />
             {/* Swipe overlay indicators */}
