@@ -94,7 +94,7 @@ const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvail
             {freeConnectionAvailable ? (
               <>
                 <p className="text-sm text-muted-foreground">
-                  🎉 <strong className="text-gold">Launch Offer:</strong> Your first connection is completely FREE! Unlock messaging and exchange contact details with {profileName} right now.
+                  🎉 <strong className="text-gold">Launch Offer:</strong> Your first month is completely FREE! Unlock messaging and exchange contact details with {profileName} right now.
                 </p>
                 <Button onClick={handleClaimFree} disabled={claiming} className="gradient-gold text-primary-foreground">
                   {claiming ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Heart className="h-4 w-4 mr-2" />}
