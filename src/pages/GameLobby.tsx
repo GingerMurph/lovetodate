@@ -156,6 +156,12 @@ export default function GameLobby() {
                   View My Games
                 </Button>
               </Link>
+              <Link to="/discover">
+                <Button variant="outline" className="gap-2 w-full">
+                  <Home className="h-4 w-4" />
+                  Back to Home
+                </Button>
+              </Link>
             </div>
 
             <Link to="/fun" className="inline-block mt-6">
