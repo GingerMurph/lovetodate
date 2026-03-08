@@ -77,7 +77,8 @@ Deno.serve(async (req) => {
       adminClient.from("unlocked_connections").delete().eq("target_id", safeUserId),
     ]);
 
-    // Delete profile
+    // Delete private data and profile
+    await adminClient.from("profile_private_data").delete().eq("user_id", user.id);
     await adminClient.from("profiles").delete().eq("user_id", user.id);
 
     // Delete auth user (this is permanent)
