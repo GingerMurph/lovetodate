@@ -32,7 +32,14 @@ const CITIES = ["London", "Manchester", "Birmingham", "Leeds", "Liverpool", "Bri
 const FILM_GENRES = ["Action", "Comedy", "Drama", "Horror", "Sci-Fi", "Romance", "Thriller", "Documentary", "Animation", "Fantasy", "Musical", "Crime", "Western", "Indie", "Other"];
 const SPORTS = ["Football", "Rugby", "Cricket", "Tennis", "Basketball", "Swimming", "Running", "Cycling", "Boxing", "Golf", "Yoga", "Gym / Weightlifting", "Martial Arts", "Hiking", "Dancing", "None", "Other"];
 const HOBBIES = ["Reading", "Cooking", "Travelling", "Photography", "Gaming", "Music", "Art", "Writing", "Gardening", "DIY", "Volunteering", "Fitness", "Movies & TV", "Board Games", "Socialising", "Shopping", "Other"];
-const PERSONALITY_TYPES = ["INTJ", "INTP", "ENTJ", "ENTP", "INFJ", "INFP", "ENFJ", "ENFP", "ISTJ", "ISFJ", "ESTJ", "ESFJ", "ISTP", "ISFP", "ESTP", "ESFP", "Introvert", "Extrovert", "Ambivert", "Don't know"];
+const PERSONALITY_TYPES = [
+  "Introvert", "Extrovert", "Ambivert",
+  "Quiet at first, then can't shut up", "More confident once I know you",
+  "Social butterfly", "Selectively social", "Loud and proud",
+  "Deep thinker", "Go with the flow", "Class clown energy",
+  "Shy but worth the wait", "Life of the party", "Calm and collected",
+  "Awkward but charming", "Don't know",
+];
 const ABOUT_YOU_TAGS = [
   "Adventurous", "Ambitious", "Animal lover", "Bookworm", "Cat person", "Chilled", "Coffee addict",
   "Creative", "Dog person", "Early bird", "Eco-conscious", "Family-oriented", "Fashionable", "Fitness fanatic",
