@@ -238,21 +238,22 @@ const Verify = () => {
                   <>
                     <Settings className="h-12 w-12 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground text-center">
-                      Camera access was denied. Enable camera permissions and try again.
+                      Camera access was denied. You can try again or verify via SMS instead.
                     </p>
                     <div className="flex flex-col gap-3 w-full max-w-[240px]">
                       <Button onClick={() => { setCameraDenied(false); startCamera(); }} className="gradient-gold text-primary-foreground">
                         <Camera className="h-4 w-4 mr-2" />
                         Try Again
                       </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href="app-settings:camera" onClick={(e) => {
-                          e.preventDefault();
-                          toast.info("Tap the lock icon (🔒) in your browser's address bar → Site settings → Camera → Allow", { duration: 8000 });
-                        }}>
-                          <Settings className="h-4 w-4 mr-2" />
-                          How to enable camera
-                        </a>
+                      <Button variant="outline" onClick={() => navigate("/verify-account")}>
+                        <ShieldCheck className="h-4 w-4 mr-2" />
+                        Verify via SMS Instead
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => {
+                        toast.info("Tap the lock icon (🔒) in your browser's address bar → Site settings → Camera → Allow", { duration: 8000 });
+                      }}>
+                        <Settings className="h-4 w-4 mr-2" />
+                        How to enable camera
                       </Button>
                     </div>
                   </>
