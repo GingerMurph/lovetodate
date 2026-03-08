@@ -58,6 +58,13 @@ Deno.serve(async (req) => {
       .select("user_id, display_name, avatar_url, date_of_birth, location_city, nationality, is_verified")
       .in("user_id", allIds);
 
+    // Fetch subscription status
+    const { data: subCache } = await adminClient
+      .from("subscriber_cache")
+      .select("user_id, is_subscribed")
+      .in("user_id", allIds);
+    const subMap = new Map((subCache || []).map((s) => [s.user_id, s.is_subscribed]));
+
     // Sign avatar URLs and compute age
     const signedProfiles = await Promise.all(
       (profiles || []).map(async ({ date_of_birth, avatar_url, ...rest }) => {
@@ -74,6 +81,7 @@ Deno.serve(async (req) => {
         return {
           ...rest,
           avatar_url: signedAvatarUrl,
+          is_subscribed: subMap.get(rest.user_id) || false,
           age: date_of_birth
             ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
             : null,

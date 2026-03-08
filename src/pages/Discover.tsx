@@ -308,6 +308,8 @@ const Discover = () => {
                           avatarUrl={currentProfile.avatar_url}
                           photoUrls={currentProfile.photo_urls || []}
                           displayName={currentProfile.display_name}
+                          isVerified={currentProfile.is_verified}
+                          isSubscribed={currentProfile.is_subscribed}
                         />
                         {/* Non-negotiables overlay on photo */}
                         {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && (

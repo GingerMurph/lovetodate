@@ -7,6 +7,8 @@ import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { AvatarImage } from "@/components/AvatarImage";
+import VerifiedBadge from "@/components/VerifiedBadge";
+import SubscriberBadge from "@/components/SubscriberBadge";
 
 type LikeProfile = {
   user_id: string;
@@ -15,6 +17,8 @@ type LikeProfile = {
   location_city: string | null;
   nationality: string | null;
   age: number | null;
+  is_verified?: boolean;
+  is_subscribed?: boolean;
 };
 
 const Likes = () => {
@@ -45,8 +49,14 @@ const Likes = () => {
     <Link to={`/profile/${profile.user_id}`}>
       <Card className="group overflow-hidden border-border bg-card transition-all hover:border-gold/30">
         <div className="flex items-center gap-4 p-4">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-secondary">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-secondary">
             <AvatarImage avatarUrl={profile.avatar_url} displayName={profile.display_name} iconSize="h-6 w-6" />
+            {(profile.is_verified || profile.is_subscribed) && (
+              <div className="absolute -bottom-0.5 -right-0.5 flex items-center gap-0.5">
+                {profile.is_verified && <span className="bg-background rounded-full p-0.5"><VerifiedBadge size="sm" /></span>}
+                {profile.is_subscribed && <span className="bg-background rounded-full p-0.5"><SubscriberBadge size="sm" /></span>}
+              </div>
+            )}
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="font-serif text-lg font-semibold truncate">

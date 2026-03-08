@@ -450,15 +450,9 @@ const ProfileView = () => {
               photoUrls={profile.photo_urls || []}
               displayName={profile.display_name}
               aspectClass="aspect-[3/4]"
+              isVerified={profile.is_verified}
+              isSubscribed={profile.is_subscribed}
             />
-            {/* Badge overlays on photo */}
-            <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 pointer-events-none">
-              {profile.is_verified && (
-                <span className="bg-background/80 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 text-[10px] font-semibold pointer-events-auto">
-                  <VerifiedBadge size="sm" /> Verified
-                </span>
-              )}
-            </div>
             {/* Non-negotiables overlay on photo */}
             {profile.non_negotiables && profile.non_negotiables.length > 0 && (
               <div className="absolute top-8 right-2 z-10 flex flex-col gap-1 pointer-events-none">
