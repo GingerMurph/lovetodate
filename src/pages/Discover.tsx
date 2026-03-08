@@ -78,6 +78,7 @@ type DiscoverProfile = {
 const Discover = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const resumeIndex = (location.state as any)?.resumeIndex;
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
