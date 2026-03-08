@@ -99,6 +99,13 @@ const Discover = () => {
     personality_type: "",
     minAge: "",
     maxAge: "",
+    education: "",
+    ethnicity: "",
+    children: "",
+    pets: "",
+    diet: "",
+    looking_for: "",
+    relationship_goal: "",
   });
 
   // Get user GPS on mount — sent to edge function for server-side distance, never used client-side
