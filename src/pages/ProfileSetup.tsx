@@ -253,6 +253,7 @@ const ProfileSetup = () => {
         education: form.education,
         smoking: form.smoking,
         drinking: form.drinking,
+        diet: form.diet,
         children: form.children,
         religion: form.religion,
         ethnicity: form.ethnicity,
