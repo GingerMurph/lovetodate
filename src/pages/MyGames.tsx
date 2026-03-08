@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import BackgroundImage from "@/components/BackgroundImage";
 import { ArrowLeft, Check, X, Gamepad2 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
