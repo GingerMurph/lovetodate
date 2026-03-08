@@ -504,29 +504,44 @@ const ProfileView = () => {
             {profile.relationship_goal && (Array.isArray(profile.relationship_goal) ? profile.relationship_goal.length > 0 : true) && (
               <Badge variant="outline" className="border-gold/30 text-gold">{formatArray(profile.relationship_goal)}</Badge>
             )}
-            {/* Quick match score from Discover */}
-            {!isOwnProfile && passedMatchScore !== null && !compatScore && (
-              <div className={`mt-2 inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-extrabold border ${
-                passedMatchScore >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
-                passedMatchScore >= 50 ? "bg-gold/15 text-gold border-gold/30" :
-                "bg-muted text-muted-foreground border-border"
-              }`}>
-                <Sparkles className="h-4 w-4" />
-                {passedMatchScore}% Match
-              </div>
-            )}
-            {/* Non-Negotiables — shown prominently below name, never on the photo */}
-            {profile.non_negotiables && profile.non_negotiables.length > 0 && (
-              <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-                {profile.non_negotiables.map((item) => (
-                  <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
-                    🚫 {item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                  </Badge>
-                ))}
-              </div>
-            )}
           </div>
         </div>
+
+        {/* Match Score & Non-Negotiables — dedicated card below photo, never overlapping */}
+        {!isOwnProfile && (passedMatchScore !== null || (profile.non_negotiables && profile.non_negotiables.length > 0)) && (
+          <Card className="mb-4 border-border bg-card">
+            <CardContent className="py-4 space-y-3">
+              {/* Match score */}
+              {passedMatchScore !== null && !compatScore && (
+                <div className="flex justify-center">
+                  <div className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-extrabold border ${
+                    passedMatchScore >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                    passedMatchScore >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                    "bg-muted text-muted-foreground border-border"
+                  }`}>
+                    <Sparkles className="h-4 w-4" />
+                    {passedMatchScore}% Match
+                  </div>
+                </div>
+              )}
+              {/* Non-negotiables */}
+              {profile.non_negotiables && profile.non_negotiables.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-destructive mb-2 flex items-center gap-1.5">
+                    <Ban className="h-3.5 w-3.5" /> Non-Negotiables
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.non_negotiables.map((item) => (
+                      <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
+                        🚫 {item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* AI Compatibility Score — prominently placed */}
         {!isOwnProfile && (
