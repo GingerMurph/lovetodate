@@ -17,11 +17,9 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
 
   const handleStart = () => {
     setStarted(true);
-    // Both must be synchronous within the click handler
-    playSplashCheer();
-    if (videoRef.current) {
-      videoRef.current.play();
-    }
+    // Both play calls must be synchronous within the user gesture handler for mobile
+    audioRef.current?.play().catch((e) => console.error("Audio play failed:", e));
+    videoRef.current?.play();
   };
 
   const handleTimeUpdate = useCallback(() => {
