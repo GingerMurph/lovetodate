@@ -21,6 +21,7 @@ import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Verify from "./pages/Verify";
+import VerifyAccount from "./pages/VerifyAccount";
 import NotFound from "./pages/NotFound";
 import ResetPassword from "./pages/ResetPassword";
 import Testimonials from "./pages/Testimonials";
