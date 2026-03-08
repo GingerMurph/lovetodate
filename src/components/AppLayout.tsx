@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useGameNotifications } from "@/hooks/useGameNotifications";
 import { Button } from "@/components/ui/button";
 import { Heart, Search, User, LogOut, MessageSquare, Crown, Home } from "lucide-react";
 import logo from "@/assets/logo.png";
@@ -9,6 +10,7 @@ import BackgroundImage from "@/components/BackgroundImage";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
   const { unreadCount } = useUnreadMessages();
+  useGameNotifications();
   const navigate = useNavigate();
   const location = useLocation();
 
