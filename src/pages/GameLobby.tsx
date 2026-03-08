@@ -72,13 +72,13 @@ export default function GameLobby() {
       : { questionIndex: 0, answers: {}, questionOrder: shuffledOrder };
 
     const { error } = await supabase.from("games").insert({
-      game_type: gameType as any,
+      game_type: gameType,
       creator_id: user.id,
       opponent_id: opponentId,
       status: "pending",
       current_turn: user.id,
-      game_state: initialState,
-    });
+      game_state: initialState as any,
+    } as any);
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
