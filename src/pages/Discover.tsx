@@ -410,6 +410,27 @@ const Discover = () => {
                       </div>
                     </Link>
                     <CardContent className="p-3 space-y-2">
+                      {/* Match score + Non-negotiables */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {currentProfile.match_score !== null && (
+                          <div className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-extrabold border ${
+                            currentProfile.match_score >= 70 ? "bg-green-500/15 text-green-500 border-green-500/30" :
+                            currentProfile.match_score >= 50 ? "bg-gold/15 text-gold border-gold/30" :
+                            "bg-muted text-muted-foreground border-border"
+                          }`}>
+                            <Sparkles className="h-3 w-3" />
+                            {currentProfile.match_score}% Match
+                          </div>
+                        )}
+                        {currentProfile.non_negotiables && currentProfile.non_negotiables.length > 0 && currentProfile.non_negotiables.map((item) => {
+                          const label = item.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+                          return (
+                            <Badge key={item} variant="destructive" className="text-[10px] px-1.5 py-0.5">
+                              🚫 {label}
+                            </Badge>
+                          );
+                        })}
+                      </div>
                       {currentProfile.prompts && currentProfile.prompts.length > 0 && (
                         <ProfilePromptDisplay prompts={currentProfile.prompts} compact />
                       )}
