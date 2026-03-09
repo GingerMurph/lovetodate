@@ -74,7 +74,7 @@ const Index = () => {
                 </Link>
                 <Link to="/auth?mode=signup">
                   <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">
-                    Join Free
+                    Join for Free
                   </Button>
                 </Link>
               </>
