@@ -66,6 +66,24 @@ export default function GameLobby() {
     if (!user || !gameType) return;
     setSending(opponentId);
 
+    // Check for existing pending/active game of the same type between these two players
+    const { data: existingGames } = await supabase
+      .from("games")
+      .select("id")
+      .eq("game_type", gameType as any)
+      .in("status", ["pending", "active"])
+      .or(`and(creator_id.eq.${user.id},opponent_id.eq.${opponentId}),and(creator_id.eq.${opponentId},opponent_id.eq.${user.id})`);
+
+    if (existingGames && existingGames.length > 0) {
+      toast({
+        title: "Game already exists",
+        description: `You already have an active or pending ${GAME_LABELS[gameType] || gameType} game with this person.`,
+        variant: "destructive",
+      });
+      setSending(null);
+      return;
+    }
+
     const shuffledOrder = Array.from({ length: TOTAL_QUESTIONS }, (_, i) => i)
       .sort(() => Math.random() - 0.5);
 
