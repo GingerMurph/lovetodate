@@ -23,7 +23,13 @@ import logo from "@/assets/logo.png";
 import BackgroundImage from "@/components/BackgroundImage";
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen relative">
