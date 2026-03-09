@@ -54,11 +54,16 @@ const Index = () => {
             {loading ? (
               <div className="h-8 w-24" />
             ) : user ? (
-              <Link to="/discover">
-                <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">
-                  Browse Profiles
+              <>
+                <Link to="/discover">
+                  <Button size="sm" className="gradient-gold text-primary-foreground font-semibold">
+                    Browse Profiles
+                  </Button>
+                </Link>
+                <Button variant="ghost" size="sm" className="text-muted-foreground" onClick={handleSignOut}>
+                  Log Out
                 </Button>
-              </Link>
+              </>
             ) : (
               <>
                 <Link to="/auth?mode=login">
