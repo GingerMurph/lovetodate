@@ -132,6 +132,11 @@ const Index = () => {
                 <Shield className="h-3 w-3 text-gold" /> Affordable Subscriptions
               </span>
             </div>
+            {user && (
+              <div className="mt-8">
+                <PendingGameInvites />
+              </div>
+            )}
           </div>
         </section>
 
