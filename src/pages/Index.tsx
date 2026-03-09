@@ -17,6 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
 import BackgroundImage from "@/components/BackgroundImage";
