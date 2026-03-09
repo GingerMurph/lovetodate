@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
 import BackgroundImage from "@/components/BackgroundImage";
+import PendingGameInvites from "@/components/PendingGameInvites";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
