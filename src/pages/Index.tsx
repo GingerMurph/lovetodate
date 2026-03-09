@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
 import BackgroundImage from "@/components/BackgroundImage";
+import PendingGameInvites from "@/components/PendingGameInvites";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -131,6 +132,11 @@ const Index = () => {
                 <Shield className="h-3 w-3 text-gold" /> Affordable Subscriptions
               </span>
             </div>
+            {user && (
+              <div className="mt-8">
+                <PendingGameInvites />
+              </div>
+            )}
           </div>
         </section>
 
