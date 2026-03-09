@@ -70,7 +70,7 @@ export default function GameLobby() {
     const { data: existingGames } = await supabase
       .from("games")
       .select("id")
-      .eq("game_type", gameType)
+      .eq("game_type", gameType as any)
       .in("status", ["pending", "active"])
       .or(`and(creator_id.eq.${user.id},opponent_id.eq.${opponentId}),and(creator_id.eq.${opponentId},opponent_id.eq.${user.id})`);
 
