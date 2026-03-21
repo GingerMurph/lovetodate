@@ -132,7 +132,7 @@ function buildDigestContent(
   const smsParts: string[] = [];
 
   if (likesCount > 0) {
-    parts.push(`💕 ${likesCount} new person${likesCount > 1 ? "s" : ""} would Love To Date you`);
+    parts.push(`💕 ${likesCount} new person${likesCount > 1 ? "s" : ""} would LoveToDate you`);
     smsParts.push(`${likesCount} new like${likesCount > 1 ? "s" : ""}`);
   }
 
@@ -152,18 +152,18 @@ function buildDigestContent(
 
   const subject =
     type === "morning"
-      ? `☀️ ${greeting}! Your Love To Date morning summary`
-      : `🌙 ${greeting}! Don't miss out on Love To Date`;
+      ? `☀️ ${greeting}! Your LoveToDate morning summary`
+      : `🌙 ${greeting}! Don't miss out on LoveToDate`;
 
   const textBody =
     type === "morning"
-      ? `${greeting}! Here's your morning summary from Love To Date:\n\n${parts.join("\n")}\n\nOpen the app to see what's waiting for you! 💕`
-      : `${greeting}! You still have activity waiting on Love To Date:\n\n${parts.join("\n")}\n\nDon't keep them waiting — check the app now! 💕`;
+      ? `${greeting}! Here's your morning summary from LoveToDate:\n\n${parts.join("\n")}\n\nOpen the app to see what's waiting for you! 💕`
+      : `${greeting}! You still have activity waiting on LoveToDate:\n\n${parts.join("\n")}\n\nDon't keep them waiting — check the app now! 💕`;
 
   const smsBody =
     type === "morning"
-      ? `☀️ Love To Date: ${smsParts.join(", ")}. Check the app!`
-      : `🌙 Love To Date: Still have ${smsParts.join(", ")} waiting. Don't miss out!`;
+      ? `☀️ LoveToDate: ${smsParts.join(", ")}. Check the app!`
+      : `🌙 LoveToDate: Still have ${smsParts.join(", ")} waiting. Don't miss out!`;
 
   return { subject, textBody, smsBody };
 }
@@ -189,7 +189,7 @@ async function sendDigestEmail(email: string, subject: string, textBody: string)
           {
             role: "system",
             content:
-              "You write beautifully styled HTML email bodies for 'Love To Date', a dating app. Use inline CSS. Warm rose/pink color scheme. Keep it concise and mobile-friendly. Include a prominent CTA button linking to https://lovetodate.lovable.app. Return ONLY the HTML body content, no wrapping <html> tags.",
+              "You write beautifully styled HTML email bodies for 'LoveToDate', a dating app. Use inline CSS. Warm rose/pink color scheme. Keep it concise and mobile-friendly. Include a prominent CTA button linking to https://lovetodate.lovable.app. Return ONLY the HTML body content, no wrapping <html> tags.",
           },
           {
             role: "user",

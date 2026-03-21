@@ -130,7 +130,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are helping a user start a conversation on a dating app called "Love To Date". Generate exactly 3 fun, creative icebreaker messages they could send. Each should be personalized based on the match's profile. Keep them flirty but respectful, casual, and under 150 characters each. Return ONLY a JSON array of 3 strings, no other text.`,
+            content: `You are helping a user start a conversation on a dating app called "LoveToDate". Generate exactly 3 fun, creative icebreaker messages they could send. Each should be personalized based on the match's profile. Keep them flirty but respectful, casual, and under 150 characters each. Return ONLY a JSON array of 3 strings, no other text.`,
           },
           {
             role: "user",
