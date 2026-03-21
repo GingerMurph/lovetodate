@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import {
   Heart,
@@ -121,17 +122,40 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
-                <Sparkles className="h-3 w-3 text-gold" /> AI-Powered Matching
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
-                <Eye className="h-3 w-3 text-gold" /> See Who Likes You — Free
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground">
-                <Shield className="h-3 w-3 text-gold" /> Affordable Subscriptions
-              </span>
-            </div>
+            <TooltipProvider delayDuration={200}>
+              <div className="mt-6 flex items-center justify-center gap-3 flex-wrap">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground cursor-default transition-all hover:bg-accent/80 hover:shadow-md hover:shadow-gold/10">
+                      <Sparkles className="h-3 w-3 text-gold" /> AI-Powered Matching
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[220px] text-center">
+                    <p>Our AI analyses your personality, interests and values to find truly compatible matches.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground cursor-default transition-all hover:bg-accent/80 hover:shadow-md hover:shadow-gold/10">
+                      <Eye className="h-3 w-3 text-gold" /> See Who Likes You — Free
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[220px] text-center">
+                    <p>View full profiles of everyone who's liked you — no subscription needed.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground cursor-default transition-all hover:bg-accent/80 hover:shadow-md hover:shadow-gold/10">
+                      <Shield className="h-3 w-3 text-gold" /> Affordable Subscriptions
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="max-w-[220px] text-center">
+                    <p>Only pay when you find someone you'd genuinely love to date. No hidden fees.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            </TooltipProvider>
             {user && (
               <div className="mt-8">
                 <PendingGameInvites />
