@@ -46,12 +46,12 @@ const Subscription = () => {
     checkSubscription();
   }
 
-  const handleSubscribe = async (priceId: string, tierKey: string) => {
+  const handleSubscribe = async (priceId: string, tierKey: string, withTrial = false) => {
     if (!user) return;
     setLoadingTier(tierKey);
     try {
       const { data, error } = await supabase.functions.invoke("create-subscription-checkout", {
-        body: { priceId },
+        body: { priceId, trial: withTrial },
       });
       if (error || data?.error) {
         toast.error(data?.error || "Failed to start checkout");
