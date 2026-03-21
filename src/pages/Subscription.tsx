@@ -105,17 +105,31 @@ const Subscription = () => {
         </div>
 
         {/* Launch offer */}
-        <Card className="mb-8 border-green-500/30 bg-green-500/5">
-          <CardContent className="flex items-center gap-4 py-4">
-            <Gift className="h-8 w-8 text-green-500 shrink-0" />
-            <div>
-              <h3 className="font-serif font-bold text-lg">🎉 Launch Special</h3>
-              <p className="text-sm text-muted-foreground">
-                Your <strong>first month is completely free</strong> during our launch period! Start connecting with no commitment.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {!subscribed && (
+          <Card className="mb-8 border-green-500/30 bg-green-500/5 hover:shadow-lg transition-shadow">
+            <CardContent className="flex items-center gap-4 py-4">
+              <Gift className="h-8 w-8 text-green-500 shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-serif font-bold text-lg">🎉 Launch Special</h3>
+                <p className="text-sm text-muted-foreground">
+                  Your <strong>first month is completely free</strong> during our launch period! Start connecting with no commitment.
+                </p>
+              </div>
+              <Button
+                className="bg-green-500 hover:bg-green-600 text-white shrink-0"
+                onClick={() => handleSubscribe(SUBSCRIPTION_TIERS.month.price_id, "month_trial", true)}
+                disabled={loadingTier === "month_trial"}
+              >
+                {loadingTier === "month_trial" ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Gift className="h-4 w-4 mr-2" />
+                )}
+                Claim Free Month
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Success message */}
         {isSuccess && (
