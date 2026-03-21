@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
         <p className="text-muted-foreground text-sm">Last updated: {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
 
         <h2 className="font-serif text-foreground">1. Who We Are</h2>
-        <p className="text-muted-foreground">Love To Date is operated by lovetodate.co.uk. We are the data controller for your personal data. Contact us at <a href="mailto:support@lovetodate.co.uk" className="text-gold hover:underline">support@lovetodate.co.uk</a>.</p>
+        <p className="text-muted-foreground">LoveToDate is operated by lovetodate.co.uk. We are the data controller for your personal data. Contact us at <a href="mailto:support@lovetodate.co.uk" className="text-gold hover:underline">support@lovetodate.co.uk</a>.</p>
 
         <h2 className="font-serif text-foreground">2. Data We Collect</h2>
         <p className="text-muted-foreground">We collect the following categories of personal data:</p>
@@ -99,7 +99,7 @@ export default function PrivacyPolicy() {
         <p className="text-muted-foreground">Your exact GPS coordinates are stored in a private, access-restricted table that no other user can read. Only approximate distance (in miles) is calculated server-side and shown to other users. You can choose not to share location data.</p>
 
         <h2 className="font-serif text-foreground">10. Children's Privacy</h2>
-        <p className="text-muted-foreground">Love To Date is strictly for users aged 18 and over. We do not knowingly collect data from anyone under 18. If we discover an underage account, it will be immediately terminated.</p>
+        <p className="text-muted-foreground">LoveToDate is strictly for users aged 18 and over. We do not knowingly collect data from anyone under 18. If we discover an underage account, it will be immediately terminated.</p>
 
         <h2 className="font-serif text-foreground">11. International Transfers</h2>
         <p className="text-muted-foreground">Some of our service providers may process data outside the UK. Where this occurs, we ensure appropriate safeguards are in place (e.g., Standard Contractual Clauses, UK adequacy decisions).</p>

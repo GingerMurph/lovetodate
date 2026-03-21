@@ -160,7 +160,7 @@ This is CRITICAL data - it reveals how they actually think and make decisions to
         messages: [
           {
             role: "system",
-            content: `You are an advanced AI compatibility analyst for "Love To Date", a premium dating platform. Your job is to perform DEEP, NUANCED analysis of two profiles to determine genuine long-term compatibility.
+            content: `You are an advanced AI compatibility analyst for "LoveToDate", a premium dating platform. Your job is to perform DEEP, NUANCED analysis of two profiles to determine genuine long-term compatibility.
 
 ANALYSIS DIMENSIONS (score each 0-100):
 1. **Values Alignment** - Religion, politics, life philosophy, deal-breakers

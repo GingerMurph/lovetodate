@@ -41,7 +41,7 @@ const Index = () => {
       <header className="fixed top-0 w-full z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <Link to="/" className="flex items-center gap-2 min-w-0">
-            <img src={logo} alt="Love To Date logo" className="h-10 w-10 rounded-full object-cover shrink-0" />
+            <img src={logo} alt="LoveToDate logo" className="h-10 w-10 rounded-full object-cover shrink-0" />
             <span className="font-serif text-gold text-lg sm:text-2xl">
               LoveToDate<span className="hidden sm:inline">.co.uk</span>
             </span>
@@ -101,7 +101,7 @@ const Index = () => {
             </h1>
             <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">
               Only pay when you find someone you would
-              <span className="text-gold font-medium"> Love To Date</span>
+              <span className="text-gold font-medium"> LoveToDate</span>
             </p>
             <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link to="/auth?mode=signup">
@@ -299,7 +299,7 @@ const Index = () => {
                   See Who <span className="text-gold">Likes You</span> — Before You Pay
                 </h2>
                 <p className="mb-6 text-muted-foreground">
-                  Other dating sites hide who's interested until you pay. We don't. Browse their full profile, check compatibility, and only pay when you've found someone you'd genuinely Love To Date.
+                  Other dating sites hide who's interested until you pay. We don't. Browse their full profile, check compatibility, and only pay when you've found someone you'd genuinely LoveToDate.
                 </p>
                 <ul className="space-y-3 text-sm text-left">
                   {[
@@ -396,8 +396,8 @@ const Index = () => {
         {/* Footer */}
         <footer className="border-t border-border py-12">
           <div className="container mx-auto px-4 text-center">
-            <p className="font-serif text-xl text-gold mb-2">Love To Date</p>
-            <p className="text-sm text-muted-foreground">Only pay when you find someone you would Love To Date</p>
+            <p className="font-serif text-xl text-gold mb-2">LoveToDate</p>
+            <p className="text-sm text-muted-foreground">Only pay when you find someone you would LoveToDate</p>
             <div className="mt-4 flex items-center justify-center gap-4 flex-wrap">
               <Link to="/terms" className="text-xs text-muted-foreground hover:text-gold transition-colors">Terms of Service</Link>
               <span className="text-muted-foreground/30">|</span>

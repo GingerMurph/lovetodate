@@ -79,7 +79,7 @@ const ResetPassword = () => {
       <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center">
-          <span className="font-serif text-3xl text-gold">Love To Date</span>
+          <span className="font-serif text-3xl text-gold">LoveToDate</span>
         </div>
         <Card className="border-border bg-card">
           <CardHeader className="text-center">

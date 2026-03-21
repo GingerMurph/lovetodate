@@ -22,7 +22,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const nav = [
     { to: "/", icon: Home, label: "Home", badge: 0 },
     { to: "/discover", icon: Search, label: "Discover", badge: 0 },
-    { to: "/likes", icon: Heart, label: "Love To Date", badge: 0 },
+    { to: "/likes", icon: Heart, label: "LoveToDate", badge: 0 },
     { to: "/messages", icon: MessageSquare, label: "Messages", badge: unreadCount },
     { to: "/profile", icon: User, label: "Profile", badge: 0 },
     { to: "/subscription", icon: Crown, label: "Premium", badge: 0 },
@@ -35,8 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
           <Link to="/discover" className="flex items-center gap-2">
-            <img src={logo} alt="Love To Date logo" className="h-8 w-8 rounded-full object-cover" />
-            <span className="font-serif text-xl text-gold">Love To Date</span>
+            <img src={logo} alt="LoveToDate logo" className="h-8 w-8 rounded-full object-cover" />
+            <span className="font-serif text-xl text-gold">LoveToDate</span>
           </Link>
           <nav className="hidden sm:flex items-center gap-1">
             {nav.map((item) => (

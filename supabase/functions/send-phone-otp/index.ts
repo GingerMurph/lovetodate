@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
     }
 
     const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`;
-    const smsBody = `Your Love To Date verification code is: ${otp}. This code expires in 5 minutes.`;
+    const smsBody = `Your LoveToDate verification code is: ${otp}. This code expires in 5 minutes.`;
 
     const smsResponse = await fetch(twilioUrl, {
       method: "POST",

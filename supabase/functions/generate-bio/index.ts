@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a dating profile bio writer for "Love To Date". Write exactly 3 different bio options. Each bio should be ${toneDescriptions[selectedTone]}. Keep each bio between 80-200 characters. Make them feel personal, not generic. Use first person. Don't use clichés like "partner in crime" or "swipe right".`,
+            content: `You are a dating profile bio writer for "LoveToDate". Write exactly 3 different bio options. Each bio should be ${toneDescriptions[selectedTone]}. Keep each bio between 80-200 characters. Make them feel personal, not generic. Use first person. Don't use clichés like "partner in crime" or "swipe right".`,
           },
           {
             role: "user",

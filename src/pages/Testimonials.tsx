@@ -33,7 +33,7 @@ export default function Testimonials() {
             });
             if (error) throw error;
             return {
-              text: data?.content || "Love To Date helped me find someone truly special.",
+              text: data?.content || "LoveToDate helped me find someone truly special.",
               name: data?.name || "Happy User",
               rating: 5,
             };
@@ -42,7 +42,7 @@ export default function Testimonials() {
         setTestimonials(results);
       } catch {
         setTestimonials([
-          { text: "I never thought I'd find someone so perfect for me. Love To Date made it happen!", name: "Sarah, 28, London", rating: 5 },
+          { text: "I never thought I'd find someone so perfect for me. LoveToDate made it happen!", name: "Sarah, 28, London", rating: 5 },
           { text: "The quality of connections here is incredible. Met my partner within weeks.", name: "James, 34, Manchester", rating: 5 },
           { text: "Finally, a dating app that values genuine connections over endless swiping.", name: "Priya, 31, Birmingham", rating: 5 },
         ]);
@@ -69,7 +69,7 @@ export default function Testimonials() {
       </header>
       <main className="container mx-auto px-4 py-12">
         <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
-          Real stories from people who found love through Love To Date
+          Real stories from people who found love through LoveToDate
         </p>
         <div className="grid gap-8 md:grid-cols-3 max-w-4xl mx-auto">
           {loading

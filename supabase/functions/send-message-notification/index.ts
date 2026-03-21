@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: "You are writing a short, friendly email notification for a dating app called 'Love To Date'. Keep it brief and warm. Return ONLY the email body HTML, no subject line. Use inline styles. Keep it under 100 words."
+                  content: "You are writing a short, friendly email notification for a dating app called 'LoveToDate'. Keep it brief and warm. Return ONLY the email body HTML, no subject line. Use inline styles. Keep it under 100 words."
                 },
                 {
                   role: "user",
@@ -116,7 +116,7 @@ Deno.serve(async (req) => {
           if (aiResponse.ok) {
             const aiData = await aiResponse.json();
             const emailBody = aiData.choices?.[0]?.message?.content || 
-              `<p>Hi! <strong>${senderName}</strong> sent you a new message on Love To Date.</p><p>Open the app to read and reply!</p>`;
+              `<p>Hi! <strong>${senderName}</strong> sent you a new message on LoveToDate.</p><p>Open the app to read and reply!</p>`;
 
             // Send via Supabase Auth (magic link email as a workaround for simple email)
             // For production, integrate a proper email service
@@ -140,7 +140,7 @@ Deno.serve(async (req) => {
         const twilioPhone = Deno.env.get("TWILIO_PHONE_NUMBER");
 
         if (twilioSid && twilioToken && twilioPhone) {
-          const smsBody = `💕 Love To Date: ${senderName} sent you a message! Open the app to reply.`;
+          const smsBody = `💕 LoveToDate: ${senderName} sent you a message! Open the app to reply.`;
           
           const twilioResponse = await fetch(
             `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,

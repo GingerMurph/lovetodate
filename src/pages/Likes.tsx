@@ -82,8 +82,8 @@ const Likes = () => {
 
         <Tabs defaultValue="received">
           <TabsList className="w-full">
-            <TabsTrigger value="received" className="flex-1">Love To Date You ({likedMe.length})</TabsTrigger>
-            <TabsTrigger value="sent" className="flex-1">You'd Love To Date ({likedByMe.length})</TabsTrigger>
+            <TabsTrigger value="received" className="flex-1">LoveToDate You ({likedMe.length})</TabsTrigger>
+            <TabsTrigger value="sent" className="flex-1">You'd LoveToDate ({likedByMe.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="received" className="mt-4 space-y-3">

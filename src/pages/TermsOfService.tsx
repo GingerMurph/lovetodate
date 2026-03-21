@@ -24,10 +24,10 @@ export default function TermsOfService() {
         <p className="text-muted-foreground text-sm">Last updated: {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</p>
 
         <h2 className="font-serif text-foreground">1. Acceptance of Terms</h2>
-        <p className="text-muted-foreground">By accessing or using Love To Date ("the Service"), operated by lovetodate.co.uk, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service.</p>
+        <p className="text-muted-foreground">By accessing or using LoveToDate ("the Service"), operated by lovetodate.co.uk, you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service.</p>
 
         <h2 className="font-serif text-foreground">2. Eligibility</h2>
-        <p className="text-muted-foreground">You must be at least 18 years old to use Love To Date. By registering, you confirm that you are 18 or older. We may require age verification via government-issued ID. Users who provide false age information will have their accounts terminated immediately.</p>
+        <p className="text-muted-foreground">You must be at least 18 years old to use LoveToDate. By registering, you confirm that you are 18 or older. We may require age verification via government-issued ID. Users who provide false age information will have their accounts terminated immediately.</p>
 
         <h2 className="font-serif text-foreground">3. Account Registration</h2>
         <p className="text-muted-foreground">You agree to provide accurate, current, and complete information during registration, including your real name, valid email address, and phone number. Phone verification via SMS OTP is mandatory. You are responsible for maintaining the confidentiality of your account credentials.</p>
@@ -45,16 +45,16 @@ export default function TermsOfService() {
         </ul>
 
         <h2 className="font-serif text-foreground">5. Profile Content</h2>
-        <p className="text-muted-foreground">You retain ownership of content you upload but grant Love To Date a non-exclusive, worldwide licence to use, display, and distribute your profile content for the purpose of operating the Service. You must only upload photos of yourself and must have rights to all content you share.</p>
+        <p className="text-muted-foreground">You retain ownership of content you upload but grant LoveToDate a non-exclusive, worldwide licence to use, display, and distribute your profile content for the purpose of operating the Service. You must only upload photos of yourself and must have rights to all content you share.</p>
 
         <h2 className="font-serif text-foreground">6. Verification</h2>
-        <p className="text-muted-foreground">Love To Date offers optional identity and age verification. Verified badges indicate that a user has completed our verification process but do not constitute an endorsement or guarantee of safety. ID documents submitted for verification are processed securely and not stored longer than necessary.</p>
+        <p className="text-muted-foreground">LoveToDate offers optional identity and age verification. Verified badges indicate that a user has completed our verification process but do not constitute an endorsement or guarantee of safety. ID documents submitted for verification are processed securely and not stored longer than necessary.</p>
 
         <h2 className="font-serif text-foreground">7. Payments & Subscriptions</h2>
-        <p className="text-muted-foreground">Love To Date operates a hybrid model: browsing profiles and seeing who likes you is free. Connecting with matches requires either a one-time payment or an active subscription. Subscription prices are displayed in GBP. Subscriptions auto-renew unless cancelled before the renewal date. Refunds are handled in accordance with UK consumer law and our refund policy. You may manage your subscription through the Stripe customer portal.</p>
+        <p className="text-muted-foreground">LoveToDate operates a hybrid model: browsing profiles and seeing who likes you is free. Connecting with matches requires either a one-time payment or an active subscription. Subscription prices are displayed in GBP. Subscriptions auto-renew unless cancelled before the renewal date. Refunds are handled in accordance with UK consumer law and our refund policy. You may manage your subscription through the Stripe customer portal.</p>
 
         <h2 className="font-serif text-foreground">8. AI Features</h2>
-        <p className="text-muted-foreground">Love To Date uses artificial intelligence for compatibility scoring, conversation starters, and content generation. AI-generated content is provided for entertainment and guidance only. Compatibility scores are algorithmic estimates and should not be solely relied upon for dating decisions.</p>
+        <p className="text-muted-foreground">LoveToDate uses artificial intelligence for compatibility scoring, conversation starters, and content generation. AI-generated content is provided for entertainment and guidance only. Compatibility scores are algorithmic estimates and should not be solely relied upon for dating decisions.</p>
 
         <h2 className="font-serif text-foreground">9. Games</h2>
         <p className="text-muted-foreground">Interactive games are provided to enhance the dating experience. Game results may be used to inform compatibility scores. Games are offered as-is and we do not guarantee their availability at all times.</p>
@@ -63,7 +63,7 @@ export default function TermsOfService() {
         <p className="text-muted-foreground">You may report or block any user at any time. We take reports seriously and will investigate violations of these terms. We reserve the right to suspend or permanently ban accounts that violate our policies, without prior notice.</p>
 
         <h2 className="font-serif text-foreground">11. Limitation of Liability</h2>
-        <p className="text-muted-foreground">Love To Date is provided "as is" without warranties of any kind. We are not responsible for the actions of other users, including any harm arising from in-person meetings. We strongly recommend meeting in public places and informing a trusted person of your plans. Our total liability shall not exceed the amount you paid us in the 12 months preceding any claim.</p>
+        <p className="text-muted-foreground">LoveToDate is provided "as is" without warranties of any kind. We are not responsible for the actions of other users, including any harm arising from in-person meetings. We strongly recommend meeting in public places and informing a trusted person of your plans. Our total liability shall not exceed the amount you paid us in the 12 months preceding any claim.</p>
 
         <h2 className="font-serif text-foreground">12. Termination</h2>
         <p className="text-muted-foreground">You may delete your account at any time through account settings. We may terminate or suspend your account for violations of these terms. Upon termination, your profile data will be deleted in accordance with our Privacy Policy.</p>

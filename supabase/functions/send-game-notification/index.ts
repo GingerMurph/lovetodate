@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: "You are writing a short, friendly email notification for a dating app called 'Love To Date'. Keep it brief, warm and playful. Return ONLY the email body HTML with inline styles. Keep it under 80 words. Use a gold (#D4A574) accent color for emphasis.",
+                  content: "You are writing a short, friendly email notification for a dating app called 'LoveToDate'. Keep it brief, warm and playful. Return ONLY the email body HTML with inline styles. Keep it under 80 words. Use a gold (#D4A574) accent color for emphasis.",
                 },
                 {
                   role: "user",
@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
             const aiData = await aiResponse.json();
             const emailBody =
               aiData.choices?.[0]?.message?.content ||
-              `<p>Hi! <strong>${senderName}</strong> has challenged you to a game of <strong>${gameName}</strong> on Love To Date! 🎮</p><p>Open the app to accept the challenge!</p>`;
+              `<p>Hi! <strong>${senderName}</strong> has challenged you to a game of <strong>${gameName}</strong> on LoveToDate! 🎮</p><p>Open the app to accept the challenge!</p>`;
 
             const maskedEmail = recipientEmail.replace(/(.{2}).*(@.*)/, "$1***$2");
             console.log(`[GAME-NOTIFY] Email notification queued for ${maskedEmail}`);
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
         const twilioPhone = Deno.env.get("TWILIO_PHONE_NUMBER");
 
         if (twilioSid && twilioToken && twilioPhone) {
-          const smsBody = `🎮 Love To Date: ${senderName} has challenged you to ${gameName}! Open the app to accept.`;
+          const smsBody = `🎮 LoveToDate: ${senderName} has challenged you to ${gameName}! Open the app to accept.`;
 
           const twilioResponse = await fetch(
             `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,

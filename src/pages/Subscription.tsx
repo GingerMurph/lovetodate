@@ -97,7 +97,7 @@ const Subscription = () => {
             </h1>
           </div>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-3">
-            No more paying blindly. Only pay when you find someone you'd <strong className="text-gold whitespace-nowrap">Love To Date</strong>.
+            No more paying blindly. Only pay when you find someone you'd <strong className="text-gold whitespace-nowrap">LoveToDate</strong>.
           </p>
           <p className="text-sm text-muted-foreground">
             Affordable dating with fair, transparent pricing.
@@ -242,7 +242,7 @@ const Subscription = () => {
         {/* Bottom CTA */}
         <div className="text-center text-sm text-muted-foreground">
           <p>Cancel anytime. No hidden fees. No more paying blindly.</p>
-          <p className="mt-1 font-medium text-gold">Only pay when you find someone you'd Love To Date ❤️</p>
+          <p className="mt-1 font-medium text-gold">Only pay when you find someone you'd LoveToDate ❤️</p>
         </div>
       </div>
     </AppLayout>

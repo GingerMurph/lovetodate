@@ -113,7 +113,7 @@ const Auth = () => {
           <button onClick={() => navigate(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <Link to="/" className="font-serif text-3xl text-gold">Love To Date</Link>
+          <Link to="/" className="font-serif text-3xl text-gold">LoveToDate</Link>
         </div>
 
         {isForgotPassword ? (
@@ -142,7 +142,7 @@ const Auth = () => {
         ) : (
           <Card className="border-border bg-card">
             <CardHeader className="text-center">
-              <CardTitle className="font-serif text-2xl">{isLogin ? "Welcome Back" : "Join Love To Date"}</CardTitle>
+              <CardTitle className="font-serif text-2xl">{isLogin ? "Welcome Back" : "Join LoveToDate"}</CardTitle>
               <CardDescription>{isLogin ? "Sign in to your account" : "Create your free account"}</CardDescription>
             </CardHeader>
             <CardContent>

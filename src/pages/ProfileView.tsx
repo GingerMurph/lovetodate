@@ -104,7 +104,7 @@ const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvail
             ) : (
               <>
                 <p className="text-sm text-muted-foreground">
-                  Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">Love To Date</strong>.
+                  Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">LoveToDate</strong>.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center">
                   <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
@@ -334,7 +334,7 @@ const ProfileView = () => {
     if (cardSwipeX > threshold) {
       if (!isLiked) {
         handleLike();
-        toast.success("Love To Date! ❤️");
+        toast.success("LoveToDate! ❤️");
       }
       if (fromDiscover) {
         navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
@@ -844,7 +844,7 @@ const ProfileView = () => {
         )}
 
 
-        {/* Love To Date / Not For Me buttons */}
+        {/* LoveToDate / Not For Me buttons */}
         {!isOwnProfile && (
           <div className="mb-6 flex justify-center gap-4">
             <Button
@@ -866,7 +866,7 @@ const ProfileView = () => {
               className="flex-1 max-w-[200px] gap-2 gradient-gold text-primary-foreground"
               onClick={() => {
                 handleLike();
-                toast.success("Love To Date! ❤️");
+                toast.success("LoveToDate! ❤️");
                 if (fromDiscover) {
                   navigate("/discover", { state: { resumeIndex: discoverIndex + 1 } });
                 } else {
@@ -876,7 +876,7 @@ const ProfileView = () => {
               disabled={isLiked}
             >
               <Heart className="h-5 w-5" />
-              {isLiked ? "Already Liked" : "Love To Date"}
+              {isLiked ? "Already Liked" : "LoveToDate"}
             </Button>
           </div>
         )}
