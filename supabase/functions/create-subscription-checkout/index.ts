@@ -25,7 +25,7 @@ serve(async (req) => {
     if (!user?.email) throw new Error("User not authenticated");
 
     const body = await req.json();
-    const { priceId } = body;
+    const { priceId, trial } = body;
     if (!priceId || typeof priceId !== "string") {
       return new Response(JSON.stringify({ error: "priceId is required" }), {
         status: 400,
