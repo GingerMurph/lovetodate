@@ -18,15 +18,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigateRef = useRef<ReturnType<typeof useNavigate> | null>(null);
+
+  // We need navigate but can't call useNavigate conditionally
+  // Store it in a ref so the auth listener can use it
+  try {
+    navigateRef.current = useNavigate();
+  } catch {
+    // Outside router context during initial render
+  }
 
   useEffect(() => {
     let isMounted = true;
 
     // Listener for ONGOING auth changes (does NOT control loading)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
       setSession(session);
       setUser(session?.user ?? null);
+
+      // Redirect to reset password page on recovery event
+      if (event === "PASSWORD_RECOVERY" && navigateRef.current) {
+        navigateRef.current("/reset-password");
+      }
     });
 
     // INITIAL load (controls loading state)
