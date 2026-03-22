@@ -12,6 +12,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
   const { unreadCount } = useUnreadMessages();
   useGameNotifications();
+  useLikeNotifications();
   const navigate = useNavigate();
   const location = useLocation();
 
