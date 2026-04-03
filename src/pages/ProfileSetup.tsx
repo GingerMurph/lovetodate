@@ -1001,6 +1001,20 @@ const ProfileSetup = () => {
             </CardContent>
           </Card>
 
+          {/* Voice Intro */}
+          <Card className="border-border bg-card">
+            <CardHeader><CardTitle className="font-serif text-lg flex items-center gap-2">🎙️ Voice Intro</CardTitle></CardHeader>
+            <CardContent>
+              {user && (
+                <VoiceIntroRecorder
+                  userId={user.id}
+                  existingUrl={voiceIntroUrl}
+                  onSaved={(path) => setVoiceIntroUrl(path)}
+                />
+              )}
+            </CardContent>
+          </Card>
+
           <Button type="submit" className="w-full gradient-gold text-primary-foreground font-semibold py-6 text-lg" disabled={loading}>
             {loading ? "Saving..." : "Save Profile"}
           </Button>
