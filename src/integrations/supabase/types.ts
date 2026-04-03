@@ -332,6 +332,7 @@ export type Database = {
           user_id: string
           verification_selfie_url: string | null
           verified_at: string | null
+          voice_intro_url: string | null
           weight_kg: number | null
         }
         Insert: {
@@ -382,6 +383,7 @@ export type Database = {
           user_id: string
           verification_selfie_url?: string | null
           verified_at?: string | null
+          voice_intro_url?: string | null
           weight_kg?: number | null
         }
         Update: {
@@ -432,6 +434,7 @@ export type Database = {
           user_id?: string
           verification_selfie_url?: string | null
           verified_at?: string | null
+          voice_intro_url?: string | null
           weight_kg?: number | null
         }
         Relationships: []
