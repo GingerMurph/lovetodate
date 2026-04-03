@@ -17,6 +17,7 @@ import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
 import ShowTheRealYou from "@/components/ShowTheRealYou";
+import VoiceIntroRecorder from "@/components/VoiceIntroRecorder";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
