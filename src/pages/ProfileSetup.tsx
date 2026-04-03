@@ -17,6 +17,7 @@ import AppLayout from "@/components/AppLayout";
 import acornLogo from "@/assets/logo.png";
 import NotificationPreferences from "@/components/NotificationPreferences";
 import ShowTheRealYou from "@/components/ShowTheRealYou";
+import VoiceIntroRecorder from "@/components/VoiceIntroRecorder";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "Other"];
 
@@ -90,6 +91,7 @@ const ProfileSetup = () => {
   const [bioSuggestions, setBioSuggestions] = useState<string[]>([]);
   const [loadingBio, setLoadingBio] = useState(false);
   const [bioTone, setBioTone] = useState("sincere");
+  const [voiceIntroUrl, setVoiceIntroUrl] = useState<string | null>(null);
   const [form, setForm] = useState({
     display_name: "",
     date_of_birth: "",
@@ -181,6 +183,7 @@ const ProfileSetup = () => {
           non_negotiables: (data as any).non_negotiables || [],
         });
         setIsPaused(data.is_paused || false);
+        setVoiceIntroUrl((data as any).voice_intro_url || null);
 
         // Load all photos: avatar_url is photo 0, photo_urls has photos 1-5
         const allPaths: (string | null)[] = [null, null, null, null, null, null];
@@ -998,6 +1001,20 @@ const ProfileSetup = () => {
                   ))}
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Voice Intro */}
+          <Card className="border-border bg-card">
+            <CardHeader><CardTitle className="font-serif text-lg flex items-center gap-2">🎙️ Voice Intro</CardTitle></CardHeader>
+            <CardContent>
+              {user && (
+                <VoiceIntroRecorder
+                  userId={user.id}
+                  existingUrl={voiceIntroUrl}
+                  onSaved={(path) => setVoiceIntroUrl(path)}
+                />
+              )}
             </CardContent>
           </Card>
 

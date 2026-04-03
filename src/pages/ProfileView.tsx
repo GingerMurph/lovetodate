@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles, Crown, UtensilsCrossed, Send } from "lucide-react";
+import { Heart, MapPin, Ruler, Weight, Briefcase, GraduationCap, Wine, Cigarette, Baby, Globe, Lock, User as UserIcon, Loader2, Trash2, MessageSquare, Music, Film, Dumbbell, Gamepad2, Brain, Vote, ThumbsDown, ArrowLeft, Ban, Sparkles, Crown, UtensilsCrossed, Send, Play, Pause, Mic } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
@@ -52,6 +52,43 @@ type ViewProfile = {
   is_subscribed: boolean;
   non_negotiables: string[] | null;
   prompts?: { prompt_text: string; answer_text: string }[];
+  voice_intro_url?: string | null;
+};
+
+const VoiceIntroPlayer = ({ url, displayName }: { url: string; displayName: string }) => {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const toggle = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(url);
+      audioRef.current.onended = () => setPlaying(false);
+    }
+    if (playing) {
+      audioRef.current.pause();
+      setPlaying(false);
+    } else {
+      audioRef.current.src = url;
+      audioRef.current.play();
+      setPlaying(true);
+    }
+  };
+
+  return (
+    <Card className="mb-4 border-border bg-card">
+      <CardContent className="py-4">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={toggle} className="gap-2 border-gold/30">
+            {playing ? <Pause className="h-4 w-4 text-gold" /> : <Play className="h-4 w-4 text-gold" />}
+            <Mic className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {playing ? "Playing..." : `Hear ${displayName}'s voice intro`}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
 
 const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvailable, onConnectionClaimed }: {
@@ -754,6 +791,11 @@ const ProfileView = () => {
             <CardHeader><CardTitle className="font-serif text-lg">About</CardTitle></CardHeader>
             <CardContent><p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{profile.bio}</p></CardContent>
           </Card>
+        )}
+
+        {/* Voice Intro */}
+        {profile.voice_intro_url && (
+          <VoiceIntroPlayer url={profile.voice_intro_url} displayName={profile.display_name} />
         )}
 
         {/* Interest Tags */}

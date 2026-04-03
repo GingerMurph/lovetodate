@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
 
     const [profileRes, likeRes, likeBackRes, connForward, connReverse, locationRes, promptsRes, subCacheRes, myConnectionsCount, privateDataRes] = await Promise.all([
       adminClient.from("profiles")
-        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables, diet")
+        .select("user_id, display_name, avatar_url, photo_urls, bio, gender, body_build, height_cm, weight_kg, location_city, location_country, nationality, occupation, education, smoking, drinking, children, interests, relationship_goal, looking_for, is_paused, religion, ethnicity, languages, pets, political_beliefs, favourite_music, favourite_film, favourite_sport, favourite_hobbies, personality_type, is_verified, non_negotiables, diet, voice_intro_url")
         .eq("user_id", userId)
         .maybeSingle(),
       adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", userId).maybeSingle(),
@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { avatar_url, photo_urls, date_of_birth: profileDob, ...rest } = profileRes.data;
+    const { avatar_url, photo_urls, voice_intro_url, date_of_birth: profileDob, ...rest } = profileRes.data;
     const date_of_birth = privateDataRes.data?.date_of_birth || profileDob || null;
     const latitude = locationRes.data?.latitude ?? null;
     const longitude = locationRes.data?.longitude ?? null;
@@ -101,6 +101,15 @@ Deno.serve(async (req) => {
     const signedAvatarUrl = await signUrl(avatar_url);
     const extraPhotos: string[] = Array.isArray(photo_urls) ? photo_urls : [];
     const signedPhotoUrls = await Promise.all(extraPhotos.map(signUrl));
+
+    // Sign voice intro URL
+    let signedVoiceIntroUrl: string | null = null;
+    if (voice_intro_url) {
+      const { data: voiceSigned } = await adminClient.storage
+        .from("voice-intros")
+        .createSignedUrl(voice_intro_url, 3600);
+      signedVoiceIntroUrl = voiceSigned?.signedUrl || null;
+    }
 
     const isOwnProfile = user.id === userId;
     const isLiked = !!likeRes.data;
@@ -127,7 +136,7 @@ Deno.serve(async (req) => {
     }
 
     const prompts = (promptsRes.data || []).map(({ prompt_text, answer_text }: any) => ({ prompt_text, answer_text }));
-    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), voice_intro_url: signedVoiceIntroUrl, age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
 
     const freeConnectionAvailable = (myConnectionsCount.count ?? 0) === 0;
 
