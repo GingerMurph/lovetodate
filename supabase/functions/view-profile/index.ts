@@ -102,6 +102,15 @@ Deno.serve(async (req) => {
     const extraPhotos: string[] = Array.isArray(photo_urls) ? photo_urls : [];
     const signedPhotoUrls = await Promise.all(extraPhotos.map(signUrl));
 
+    // Sign voice intro URL
+    let signedVoiceIntroUrl: string | null = null;
+    if (voice_intro_url) {
+      const { data: voiceSigned } = await adminClient.storage
+        .from("voice-intros")
+        .createSignedUrl(voice_intro_url, 3600);
+      signedVoiceIntroUrl = voiceSigned?.signedUrl || null;
+    }
+
     const isOwnProfile = user.id === userId;
     const isLiked = !!likeRes.data;
     const isLikedBack = !!likeBackRes.data;
