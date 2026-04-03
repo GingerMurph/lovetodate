@@ -91,6 +91,7 @@ const ProfileSetup = () => {
   const [bioSuggestions, setBioSuggestions] = useState<string[]>([]);
   const [loadingBio, setLoadingBio] = useState(false);
   const [bioTone, setBioTone] = useState("sincere");
+  const [voiceIntroUrl, setVoiceIntroUrl] = useState<string | null>(null);
   const [form, setForm] = useState({
     display_name: "",
     date_of_birth: "",
