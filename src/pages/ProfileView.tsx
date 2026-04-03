@@ -757,6 +757,11 @@ const ProfileView = () => {
           </Card>
         )}
 
+        {/* Voice Intro */}
+        {profile.voice_intro_url && (
+          <VoiceIntroPlayer url={profile.voice_intro_url} displayName={profile.display_name} />
+        )}
+
         {/* Interest Tags */}
         {profile.interests && profile.interests.length > 0 && (
           <Card className="mb-4 border-border bg-card">
