@@ -55,6 +55,42 @@ type ViewProfile = {
   voice_intro_url?: string | null;
 };
 
+const VoiceIntroPlayer = ({ url, displayName }: { url: string; displayName: string }) => {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const toggle = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(url);
+      audioRef.current.onended = () => setPlaying(false);
+    }
+    if (playing) {
+      audioRef.current.pause();
+      setPlaying(false);
+    } else {
+      audioRef.current.src = url;
+      audioRef.current.play();
+      setPlaying(true);
+    }
+  };
+
+  return (
+    <Card className="mb-4 border-border bg-card">
+      <CardContent className="py-4">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={toggle} className="gap-2 border-gold/30">
+            {playing ? <Pause className="h-4 w-4 text-gold" /> : <Play className="h-4 w-4 text-gold" />}
+            <Mic className="h-3.5 w-3.5 text-muted-foreground" />
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            {playing ? "Playing..." : `Hear ${displayName}'s voice intro`}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvailable, onConnectionClaimed }: {
   profileName: string;
   userId: string;
