@@ -136,7 +136,7 @@ Deno.serve(async (req) => {
     }
 
     const prompts = (promptsRes.data || []).map(({ prompt_text, answer_text }: any) => ({ prompt_text, answer_text }));
-    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
+    const profile: Record<string, unknown> = { ...rest, avatar_url: signedAvatarUrl, photo_urls: signedPhotoUrls.filter(Boolean), voice_intro_url: signedVoiceIntroUrl, age, distance_miles: distanceMiles, prompts, is_subscribed: isSubscribed };
 
     const freeConnectionAvailable = (myConnectionsCount.count ?? 0) === 0;
 
