@@ -52,6 +52,7 @@ type ViewProfile = {
   is_subscribed: boolean;
   non_negotiables: string[] | null;
   prompts?: { prompt_text: string; answer_text: string }[];
+  voice_intro_url?: string | null;
 };
 
 const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvailable, onConnectionClaimed }: {
