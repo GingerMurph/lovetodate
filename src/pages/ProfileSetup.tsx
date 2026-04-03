@@ -183,6 +183,7 @@ const ProfileSetup = () => {
           non_negotiables: (data as any).non_negotiables || [],
         });
         setIsPaused(data.is_paused || false);
+        setVoiceIntroUrl((data as any).voice_intro_url || null);
 
         // Load all photos: avatar_url is photo 0, photo_urls has photos 1-5
         const allPaths: (string | null)[] = [null, null, null, null, null, null];
