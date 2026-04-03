@@ -652,7 +652,34 @@ const ProfileView = () => {
                       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">💬 AI Conversation Starters</p>
                       <div className="space-y-2">
                         {compatScore.conversationStarters.map((starter, i) => (
-                          <p key={i} className="text-sm text-foreground bg-accent/50 rounded-lg px-3 py-2 italic">"{starter}"</p>
+                          <div key={i} className="flex items-start gap-2">
+                            <p className="text-sm text-foreground bg-accent/50 rounded-lg px-3 py-2 italic flex-1">"{starter}"</p>
+                            {isUnlocked && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="shrink-0 text-gold hover:text-gold/80 mt-0.5"
+                                onClick={async () => {
+                                  const { error } = await supabase.from("messages").insert({
+                                    sender_id: user!.id,
+                                    recipient_id: userId!,
+                                    content: starter,
+                                  });
+                                  if (error) {
+                                    toast.error("Failed to send. Make sure you have an unlocked connection.");
+                                  } else {
+                                    toast.success("Message sent! 💬");
+                                    supabase.functions.invoke("send-message-notification", {
+                                      body: { recipientId: userId, messagePreview: starter },
+                                    }).catch(() => {});
+                                  }
+                                }}
+                                title="Send as message"
+                              >
+                                <Send className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         ))}
                       </div>
                     </div>
