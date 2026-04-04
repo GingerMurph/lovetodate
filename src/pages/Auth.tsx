@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import BackgroundImage from "@/components/BackgroundImage";
@@ -22,6 +23,8 @@ const Auth = () => {
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [useMinCompat, setUseMinCompat] = useState(false);
+  const [minCompatScore, setMinCompatScore] = useState(50);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
@@ -88,7 +91,7 @@ const Auth = () => {
         // If the check fails, proceed with signup anyway
       }
 
-      const { error, data } = await signUp(email, password, displayName, phoneNumber);
+      const { error, data } = await signUp(email, password, displayName, phoneNumber, useMinCompat ? minCompatScore : null);
       if (error) {
         const msg = error.message?.toLowerCase() || "";
         if (msg.includes("already registered") || msg.includes("already been registered") || msg.includes("already exists")) {
@@ -182,6 +185,38 @@ const Auth = () => {
                 </div>
                 {!isLogin && (
                   <div className="space-y-3">
+                    <div className="rounded-md border border-gold/20 bg-gold/5 p-3 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          id="min-compat"
+                          checked={useMinCompat}
+                          onCheckedChange={(checked) => setUseMinCompat(checked === true)}
+                          className="mt-0.5"
+                        />
+                        <label htmlFor="min-compat" className="text-sm font-medium leading-relaxed cursor-pointer">
+                          Set a minimum compatibility score
+                        </label>
+                      </div>
+                      {useMinCompat && (
+                        <div className="space-y-2 pl-6">
+                          <p className="text-xs text-muted-foreground">
+                            Only show me matches with at least <span className="font-bold text-gold">{minCompatScore}%</span> compatibility
+                          </p>
+                          <Slider
+                            value={[minCompatScore]}
+                            onValueChange={(val) => setMinCompatScore(val[0])}
+                            min={10}
+                            max={90}
+                            step={5}
+                            className="w-full"
+                          />
+                          <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>10% — More matches</span>
+                            <span>90% — Highly compatible</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex items-start gap-2">
                       <Checkbox
                         id="privacy"

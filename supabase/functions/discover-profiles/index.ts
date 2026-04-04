@@ -10,7 +10,7 @@ const PROFILE_FIELDS =
   "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
   "location_city, nationality, religion, smoking, drinking, personality_type, " +
   "max_distance_miles, relationship_goal, is_verified, non_negotiables, interests, " +
-  "education, occupation, ethnicity, children, pets, diet, languages, looking_for, political_beliefs, bio";
+  "education, occupation, ethnicity, children, pets, diet, languages, looking_for, political_beliefs, bio, min_compatibility_score";
 
 /**
  * Compute a lightweight 0-100 compatibility score between two profile objects.
@@ -256,10 +256,16 @@ Deno.serve(async (req) => {
       })
     );
 
-    // Sort by match score descending (best matches first)
-    sanitized.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
+    // Filter by viewer's minimum compatibility score preference
+    const viewerMinCompat = viewerProfile?.min_compatibility_score ?? null;
+    const filtered = viewerMinCompat != null
+      ? sanitized.filter(p => (p.match_score ?? 0) >= viewerMinCompat)
+      : sanitized;
 
-    return new Response(JSON.stringify(sanitized), {
+    // Sort by match score descending (best matches first)
+    filtered.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
+
+    return new Response(JSON.stringify(filtered), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
