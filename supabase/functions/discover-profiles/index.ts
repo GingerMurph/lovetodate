@@ -256,8 +256,14 @@ Deno.serve(async (req) => {
       })
     );
 
+    // Filter by viewer's minimum compatibility score preference
+    const viewerMinCompat = viewerProfile?.min_compatibility_score ?? null;
+    const filtered = viewerMinCompat != null
+      ? sanitized.filter(p => (p.match_score ?? 0) >= viewerMinCompat)
+      : sanitized;
+
     // Sort by match score descending (best matches first)
-    sanitized.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
+    filtered.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
 
     return new Response(JSON.stringify(sanitized), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
