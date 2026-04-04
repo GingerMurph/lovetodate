@@ -94,7 +94,7 @@ const Auth = () => {
         // If the check fails, proceed with signup anyway
       }
 
-      const { error, data } = await signUp(email, password, displayName, phoneNumber);
+      const { error, data } = await signUp(email, password, displayName, phoneNumber, useMinCompat ? minCompatScore : null);
       if (error) {
         const msg = error.message?.toLowerCase() || "";
         if (msg.includes("already registered") || msg.includes("already been registered") || msg.includes("already exists")) {
