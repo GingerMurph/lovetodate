@@ -10,7 +10,7 @@ const PROFILE_FIELDS =
   "user_id, display_name, avatar_url, photo_urls, gender, body_build, height_cm, " +
   "location_city, nationality, religion, smoking, drinking, personality_type, " +
   "max_distance_miles, relationship_goal, is_verified, non_negotiables, interests, " +
-  "education, occupation, ethnicity, children, pets, diet, languages, looking_for, political_beliefs, bio";
+  "education, occupation, ethnicity, children, pets, diet, languages, looking_for, political_beliefs, bio, min_compatibility_score";
 
 /**
  * Compute a lightweight 0-100 compatibility score between two profile objects.
