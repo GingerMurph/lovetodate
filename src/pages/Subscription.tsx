@@ -38,6 +38,7 @@ const Subscription = () => {
   const { subscribed, productId, subscriptionEnd, checkSubscription } = useSubscription();
   const [searchParams] = useSearchParams();
   const isSuccess = searchParams.get("success") === "true";
+  const isFromMatch = searchParams.get("from") === "match";
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [managingPortal, setManagingPortal] = useState(false);
 
@@ -103,6 +104,22 @@ const Subscription = () => {
             Affordable dating with fair, transparent pricing.
           </p>
         </div>
+
+        {/* Match congratulations */}
+        {isFromMatch && !subscribed && (
+          <Card className="mb-8 border-gold/30 bg-gold/5 hover:shadow-lg transition-shadow">
+            <CardContent className="py-5 text-center">
+              <Sparkles className="h-8 w-8 text-gold mx-auto mb-2" />
+              <h3 className="font-serif font-bold text-lg mb-1">
+                Congratulations on finding someone that you would{" "}
+                <span className="text-gold">LoveToDate</span>!
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Let's hope this is your last payment you'll ever make. Good Luck! 💕
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Launch offer */}
         {!subscribed && (
