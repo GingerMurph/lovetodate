@@ -185,6 +185,38 @@ const Auth = () => {
                 </div>
                 {!isLogin && (
                   <div className="space-y-3">
+                    <div className="rounded-md border border-gold/20 bg-gold/5 p-3 space-y-3">
+                      <div className="flex items-start gap-2">
+                        <Checkbox
+                          id="min-compat"
+                          checked={useMinCompat}
+                          onCheckedChange={(checked) => setUseMinCompat(checked === true)}
+                          className="mt-0.5"
+                        />
+                        <label htmlFor="min-compat" className="text-sm font-medium leading-relaxed cursor-pointer">
+                          Set a minimum compatibility score
+                        </label>
+                      </div>
+                      {useMinCompat && (
+                        <div className="space-y-2 pl-6">
+                          <p className="text-xs text-muted-foreground">
+                            Only show me matches with at least <span className="font-bold text-gold">{minCompatScore}%</span> compatibility
+                          </p>
+                          <Slider
+                            value={[minCompatScore]}
+                            onValueChange={(val) => setMinCompatScore(val[0])}
+                            min={10}
+                            max={90}
+                            step={5}
+                            className="w-full"
+                          />
+                          <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>10% — More matches</span>
+                            <span>90% — Highly compatible</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex items-start gap-2">
                       <Checkbox
                         id="privacy"
