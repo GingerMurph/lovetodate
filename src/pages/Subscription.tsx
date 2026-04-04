@@ -38,6 +38,7 @@ const Subscription = () => {
   const { subscribed, productId, subscriptionEnd, checkSubscription } = useSubscription();
   const [searchParams] = useSearchParams();
   const isSuccess = searchParams.get("success") === "true";
+  const isFromMatch = searchParams.get("from") === "match";
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [managingPortal, setManagingPortal] = useState(false);
 
