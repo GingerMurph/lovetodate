@@ -57,34 +57,90 @@ type ViewProfile = {
 
 const VoiceIntroPlayer = ({ url, displayName }: { url: string; displayName: string }) => {
   const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const animRef = useRef<number | null>(null);
+
+  const updateProgress = () => {
+    if (audioRef.current) {
+      const { currentTime, duration: dur } = audioRef.current;
+      if (dur && dur > 0) {
+        setProgress((currentTime / dur) * 100);
+        setDuration(dur);
+      }
+    }
+    animRef.current = requestAnimationFrame(updateProgress);
+  };
 
   const toggle = () => {
     if (!audioRef.current) {
       audioRef.current = new Audio(url);
-      audioRef.current.onended = () => setPlaying(false);
+      audioRef.current.onended = () => {
+        setPlaying(false);
+        setProgress(0);
+        if (animRef.current) cancelAnimationFrame(animRef.current);
+      };
     }
     if (playing) {
       audioRef.current.pause();
       setPlaying(false);
+      if (animRef.current) cancelAnimationFrame(animRef.current);
     } else {
       audioRef.current.src = url;
       audioRef.current.play();
       setPlaying(true);
+      animRef.current = requestAnimationFrame(updateProgress);
     }
   };
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  const currentTime = duration > 0 ? (progress / 100) * duration : 0;
+
+  // Generate static waveform bars
+  const bars = Array.from({ length: 28 }, (_, i) => {
+    const h = 20 + Math.sin(i * 0.8) * 30 + Math.cos(i * 1.3) * 25 + (i % 3) * 8;
+    return Math.min(95, Math.max(15, h));
+  });
 
   return (
     <Card className="mb-4 border-border bg-card">
       <CardContent className="py-4">
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" onClick={toggle} className="gap-2 border-gold/30">
-            {playing ? <Pause className="h-4 w-4 text-gold" /> : <Play className="h-4 w-4 text-gold" />}
-            <Mic className="h-3.5 w-3.5 text-muted-foreground" />
+          <Button variant="outline" size="icon" onClick={toggle} className="h-9 w-9 shrink-0 rounded-full border-gold/30">
+            {playing ? <Pause className="h-4 w-4 text-gold" /> : <Play className="h-4 w-4 text-gold ml-0.5" />}
           </Button>
-          <span className="text-sm text-muted-foreground">
-            {playing ? "Playing..." : `Hear ${displayName}'s voice intro`}
-          </span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-end gap-[2px] h-8 mb-1">
+              {bars.map((h, i) => {
+                const barProgress = (i / bars.length) * 100;
+                const isActive = barProgress < progress;
+                return (
+                  <div
+                    key={i}
+                    className={`flex-1 rounded-full transition-colors duration-150 ${
+                      isActive ? "bg-gold" : "bg-muted-foreground/20"
+                    } ${playing && isActive ? "animate-pulse" : ""}`}
+                    style={{ height: `${h}%` }}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-[11px] text-muted-foreground">
+                {playing ? formatTime(currentTime) : `Hear ${displayName}'s voice intro`}
+              </span>
+              {duration > 0 && (
+                <span className="text-[11px] text-muted-foreground">{formatTime(duration)}</span>
+              )}
+            </div>
+          </div>
+          <Mic className="h-3.5 w-3.5 text-muted-foreground/50 shrink-0" />
         </div>
       </CardContent>
     </Card>
