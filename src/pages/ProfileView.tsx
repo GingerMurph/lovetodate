@@ -200,7 +200,7 @@ const MutualLikePrompt = ({ profileName, userId, isUnlocked, freeConnectionAvail
                   Subscribe to start messaging and exchange contact details. No more paying blindly — only pay when you find someone you'd <strong className="text-gold">LoveToDate</strong>.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                  <Button onClick={() => navigate("/subscription")} className="gradient-gold text-primary-foreground">
+                  <Button onClick={() => navigate("/subscription?from=match")} className="gradient-gold text-primary-foreground">
                     <Crown className="h-4 w-4 mr-2" />
                     See Plans from £1.54/week
                   </Button>
