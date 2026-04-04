@@ -26,6 +26,8 @@ const Auth = () => {
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [useMinCompat, setUseMinCompat] = useState(false);
+  const [minCompatScore, setMinCompatScore] = useState(50);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
