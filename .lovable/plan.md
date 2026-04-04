@@ -1,10 +1,13 @@
 
 
-## Plan: Add Background Image to Home Page Hero
+## Plan: Tighten Messages page layout on wide screens
 
-1. **Copy the uploaded image** to `src/assets/hero-bg.png`
-2. **Update `src/pages/Index.tsx`** hero section to use the image as a full-bleed background with a dark overlay so text remains readable
-   - Import the image
-   - Add it as an `<img>` with `absolute inset-0 object-cover w-full h-full` behind the hero content
-   - Adjust the gradient overlay to be darker for contrast against the black-and-white photo
+**Problem**: The Messages page uses `max-w-2xl` (672px) which is fine for width, but the conversation list items stretch edge-to-edge within that container. On wide monitors the content feels spread out.
+
+**Solution**: A single-file change in `src/pages/Messages.tsx`:
+
+1. Reduce the outer container max-width from `max-w-2xl` to `max-w-lg` (512px) so the conversation list stays compact and centered on wide screens.
+2. This keeps the layout comfortable on mobile (unchanged) while pulling everything closer together on desktop.
+
+**File**: `src/pages/Messages.tsx` — change `max-w-2xl` → `max-w-lg` on the container div (line ~141).
 
