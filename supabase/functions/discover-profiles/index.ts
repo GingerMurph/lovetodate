@@ -265,7 +265,7 @@ Deno.serve(async (req) => {
     // Sort by match score descending (best matches first)
     filtered.sort((a, b) => (b.match_score ?? 0) - (a.match_score ?? 0));
 
-    return new Response(JSON.stringify(sanitized), {
+    return new Response(JSON.stringify(filtered), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
