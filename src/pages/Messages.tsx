@@ -139,7 +139,7 @@ const Messages = () => {
 
   return (
     <AppLayout>
-      <div className="container mx-auto max-w-2xl px-4 py-6">
+      <div className="container mx-auto max-w-lg px-4 py-6">
         <h1 className="mb-6 font-serif text-2xl font-bold text-center">
           <span className="text-gold">Messages</span>
         </h1>
