@@ -63,13 +63,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string, phoneNumber?: string) => {
+  const signUp = async (email: string, password: string, displayName: string, phoneNumber?: string, minCompatibilityScore?: number | null) => {
+    const metadata: Record<string, any> = {
+      display_name: displayName,
+      phone_number: phoneNumber || "",
+    };
+    if (minCompatibilityScore != null) {
+      metadata.min_compatibility_score = minCompatibilityScore;
+    }
     const { error, data } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: "https://lovetodate.lovable.app/profile",
-        data: { display_name: displayName, phone_number: phoneNumber || "" },
+        data: metadata,
       },
     });
     return { error, data };
