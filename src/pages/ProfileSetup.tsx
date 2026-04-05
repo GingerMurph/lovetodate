@@ -809,7 +809,57 @@ const ProfileSetup = () => {
             </CardContent>
           </Card>
 
-          {/* Non-Negotiables */}
+          {/* Compatibility Preference */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-gold" />
+                Compatibility Preference
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Only be shown profiles that meet your minimum compatibility score</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="compat-toggle"
+                  checked={form.min_compatibility_score !== null}
+                  onCheckedChange={(checked) => {
+                    setForm((f) => ({
+                      ...f,
+                      min_compatibility_score: checked ? 50 : null,
+                    }));
+                  }}
+                />
+                <Label htmlFor="compat-toggle" className="cursor-pointer">
+                  Set a minimum compatibility score
+                </Label>
+              </div>
+              {form.min_compatibility_score !== null && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Minimum score</span>
+                    <span className="text-sm font-semibold text-primary">{form.min_compatibility_score}%</span>
+                  </div>
+                  <Slider
+                    value={[form.min_compatibility_score]}
+                    onValueChange={(vals) => setForm((f) => ({ ...f, min_compatibility_score: vals[0] }))}
+                    min={10}
+                    max={90}
+                    step={5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>10%</span>
+                    <span>90%</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Higher values mean fewer but more compatible matches
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-serif text-lg">🚫 Non-Negotiables</CardTitle>
