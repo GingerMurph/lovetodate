@@ -182,6 +182,7 @@ const ProfileSetup = () => {
           personality_type: (data as any).personality_type || "",
           max_distance_miles: (data as any).max_distance_miles?.toString() || "",
           non_negotiables: (data as any).non_negotiables || [],
+          min_compatibility_score: (data as any).min_compatibility_score ?? null,
         });
         setIsPaused(data.is_paused || false);
         setVoiceIntroUrl((data as any).voice_intro_url || null);
