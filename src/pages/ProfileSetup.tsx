@@ -316,6 +316,7 @@ const ProfileSetup = () => {
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         non_negotiables: form.non_negotiables,
+        min_compatibility_score: form.min_compatibility_score,
         interests: form.interests,
         avatar_url,
         photo_urls,
