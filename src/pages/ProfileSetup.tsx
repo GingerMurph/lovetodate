@@ -124,6 +124,7 @@ const ProfileSetup = () => {
     personality_type: "",
     max_distance_miles: "",
     non_negotiables: [] as string[],
+    min_compatibility_score: null as number | null,
   });
 
   // Capture GPS location
