@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { Camera, Loader2, Trash2, BadgeCheck, ShieldCheck, Sparkles } from "lucide-react";
@@ -124,6 +126,7 @@ const ProfileSetup = () => {
     personality_type: "",
     max_distance_miles: "",
     non_negotiables: [] as string[],
+    min_compatibility_score: null as number | null,
   });
 
   // Capture GPS location
@@ -181,6 +184,7 @@ const ProfileSetup = () => {
           personality_type: (data as any).personality_type || "",
           max_distance_miles: (data as any).max_distance_miles?.toString() || "",
           non_negotiables: (data as any).non_negotiables || [],
+          min_compatibility_score: (data as any).min_compatibility_score ?? null,
         });
         setIsPaused(data.is_paused || false);
         setVoiceIntroUrl((data as any).voice_intro_url || null);
@@ -314,6 +318,7 @@ const ProfileSetup = () => {
         personality_type: form.personality_type,
         max_distance_miles: form.max_distance_miles ? parseInt(form.max_distance_miles) : null,
         non_negotiables: form.non_negotiables,
+        min_compatibility_score: form.min_compatibility_score,
         interests: form.interests,
         avatar_url,
         photo_urls,
@@ -804,7 +809,57 @@ const ProfileSetup = () => {
             </CardContent>
           </Card>
 
-          {/* Non-Negotiables */}
+          {/* Compatibility Preference */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="font-serif text-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-gold" />
+                Compatibility Preference
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Only be shown profiles that meet your minimum compatibility score</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="compat-toggle"
+                  checked={form.min_compatibility_score !== null}
+                  onCheckedChange={(checked) => {
+                    setForm((f) => ({
+                      ...f,
+                      min_compatibility_score: checked ? 50 : null,
+                    }));
+                  }}
+                />
+                <Label htmlFor="compat-toggle" className="cursor-pointer">
+                  Set a minimum compatibility score
+                </Label>
+              </div>
+              {form.min_compatibility_score !== null && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Minimum score</span>
+                    <span className="text-sm font-semibold text-primary">{form.min_compatibility_score}%</span>
+                  </div>
+                  <Slider
+                    value={[form.min_compatibility_score]}
+                    onValueChange={(vals) => setForm((f) => ({ ...f, min_compatibility_score: vals[0] }))}
+                    min={10}
+                    max={90}
+                    step={5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>10%</span>
+                    <span>90%</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Higher values mean fewer but more compatible matches
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="font-serif text-lg">🚫 Non-Negotiables</CardTitle>
