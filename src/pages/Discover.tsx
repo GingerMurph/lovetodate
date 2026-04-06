@@ -359,6 +359,27 @@ const Discover = () => {
           </Card>
         )}
 
+        {minCompatScore !== null && !loading && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-foreground">
+            <Sparkles className="h-4 w-4 text-gold shrink-0" />
+            <span>Showing profiles with <strong>{minCompatScore}%+</strong> compatibility</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+              onClick={async () => {
+                await supabase.from("profiles").update({ min_compatibility_score: null }).eq("user_id", user!.id);
+                setMinCompatScore(null);
+                toast.success("Compatibility filter removed");
+                loadData();
+              }}
+            >
+              <X className="h-3 w-3 mr-1" />
+              Clear
+            </Button>
+          </div>
+        )}
+
         {loading ? (
           <div className="flex h-64 items-center justify-center text-muted-foreground">Loading profiles...</div>
         ) : !currentProfile ? (
