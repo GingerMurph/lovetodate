@@ -129,15 +129,17 @@ const Discover = () => {
     if (!user) return;
     setLoading(true);
 
-    const [discoverRes, likesRes] = await Promise.all([
+    const [discoverRes, likesRes, profileRes] = await Promise.all([
       supabase.functions.invoke("discover-profiles", {
         body: myLocation ? { lat: myLocation.lat, lng: myLocation.lng } : {},
       }),
       supabase.from("likes").select("liked_id").eq("liker_id", user.id),
+      supabase.from("profiles").select("min_compatibility_score").eq("user_id", user.id).single(),
     ]);
 
     if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
+    if (profileRes.data) setMinCompatScore(profileRes.data.min_compatibility_score ?? null);
     setHistory([]);
     setLoading(false);
   };
