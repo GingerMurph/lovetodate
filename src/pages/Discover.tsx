@@ -361,23 +361,43 @@ const Discover = () => {
         )}
 
         {minCompatScore !== null && !loading && (
-          <div className="mb-4 flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-foreground">
-            <Sparkles className="h-4 w-4 text-gold shrink-0" />
-            <span>Showing profiles with <strong>{minCompatScore}%+</strong> compatibility</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="ml-auto h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
-              onClick={async () => {
-                await supabase.from("profiles").update({ min_compatibility_score: null }).eq("user_id", user!.id);
-                setMinCompatScore(null);
-                toast.success("Compatibility filter removed");
-                loadData();
-              }}
-            >
-              <X className="h-3 w-3 mr-1" />
-              Clear
-            </Button>
+          <div className="mb-4 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2 text-sm text-foreground">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-gold shrink-0" />
+              <span>Min compatibility: <strong>{minCompatScore}%</strong></span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="ml-auto h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                onClick={async () => {
+                  await supabase.from("profiles").update({ min_compatibility_score: null }).eq("user_id", user!.id);
+                  setMinCompatScore(null);
+                  toast.success("Compatibility filter removed");
+                  loadData();
+                }}
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear
+              </Button>
+            </div>
+            <div className="mt-2 px-1">
+              <Slider
+                value={[minCompatScore]}
+                min={10}
+                max={90}
+                step={5}
+                onValueChange={(vals) => setMinCompatScore(vals[0])}
+                onValueCommit={async (vals) => {
+                  await supabase.from("profiles").update({ min_compatibility_score: vals[0] }).eq("user_id", user!.id);
+                  toast.success(`Threshold set to ${vals[0]}%`);
+                  loadData();
+                }}
+              />
+              <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+                <span>10%</span>
+                <span>90%</span>
+              </div>
+            </div>
           </div>
         )}
 
