@@ -82,6 +82,7 @@ const Discover = () => {
   const resumeIndex = (location.state as any)?.resumeIndex;
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [minCompatScore, setMinCompatScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(resumeIndex ?? 0);
@@ -128,15 +129,17 @@ const Discover = () => {
     if (!user) return;
     setLoading(true);
 
-    const [discoverRes, likesRes] = await Promise.all([
+    const [discoverRes, likesRes, profileRes] = await Promise.all([
       supabase.functions.invoke("discover-profiles", {
         body: myLocation ? { lat: myLocation.lat, lng: myLocation.lng } : {},
       }),
       supabase.from("likes").select("liked_id").eq("liker_id", user.id),
+      supabase.from("profiles").select("min_compatibility_score").eq("user_id", user.id).single(),
     ]);
 
     if (discoverRes.data && !discoverRes.error) setProfiles(discoverRes.data as DiscoverProfile[]);
     if (likesRes.data) setLikedIds(new Set(likesRes.data.map((l) => l.liked_id)));
+    if (profileRes.data) setMinCompatScore(profileRes.data.min_compatibility_score ?? null);
     setHistory([]);
     setLoading(false);
   };
@@ -361,8 +364,43 @@ const Discover = () => {
           <div className="flex h-64 items-center justify-center text-muted-foreground">Loading profiles...</div>
         ) : !currentProfile ? (
           <div className="flex h-64 flex-col items-center justify-center gap-4 text-muted-foreground">
-            <p>No more profiles to discover</p>
-            <Button variant="outline" onClick={() => { setCurrentIndex(0); loadData(); }}>Refresh</Button>
+            {minCompatScore !== null && profiles.length === 0 ? (
+              <>
+                <Sparkles className="h-8 w-8 text-gold" />
+                <p className="text-center font-medium text-foreground">Your compatibility threshold is set to {minCompatScore}%</p>
+                <p className="text-center text-sm">No profiles currently meet this level. Try lowering it to see more people.</p>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={async () => {
+                      const newScore = Math.max(10, minCompatScore - 10);
+                      await supabase.from("profiles").update({ min_compatibility_score: newScore }).eq("user_id", user!.id);
+                      setMinCompatScore(newScore);
+                      toast.success(`Lowered to ${newScore}%`);
+                      loadData();
+                    }}
+                  >
+                    Lower to {Math.max(10, minCompatScore - 10)}%
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={async () => {
+                      await supabase.from("profiles").update({ min_compatibility_score: null }).eq("user_id", user!.id);
+                      setMinCompatScore(null);
+                      toast.success("Compatibility filter removed");
+                      loadData();
+                    }}
+                  >
+                    Remove filter
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p>No more profiles to discover</p>
+                <Button variant="outline" onClick={() => { setCurrentIndex(0); loadData(); }}>Refresh</Button>
+              </>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center">
