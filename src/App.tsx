@@ -17,6 +17,7 @@ import Discover from "./pages/Discover";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfileView from "./pages/ProfileView";
 import Likes from "./pages/Likes";
+import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
@@ -78,6 +79,7 @@ const App = () => {
                   <Route path="/profile" element={<ProtectedRoute><ProfileSetup /></ProtectedRoute>} />
                   <Route path="/profile/:userId" element={<ProtectedRoute><ProfileView /></ProtectedRoute>} />
                   <Route path="/likes" element={<ProtectedRoute><Likes /></ProtectedRoute>} />
+                  <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
                   <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
                   <Route path="/messages/:userId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                   <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
