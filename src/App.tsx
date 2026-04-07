@@ -17,6 +17,7 @@ import Discover from "./pages/Discover";
 import ProfileSetup from "./pages/ProfileSetup";
 import ProfileView from "./pages/ProfileView";
 import Likes from "./pages/Likes";
+import Matches from "./pages/Matches";
 import Messages from "./pages/Messages";
 import Chat from "./pages/Chat";
 import PaymentSuccess from "./pages/PaymentSuccess";
