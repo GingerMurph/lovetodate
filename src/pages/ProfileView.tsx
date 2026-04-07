@@ -416,7 +416,23 @@ const ProfileView = () => {
       const { error } = await supabase.from("likes").insert({ liker_id: user.id, liked_id: userId });
       if (error) { toast.error(error.message); return; }
       setIsLiked(true);
-      toast.success("Liked!");
+
+      // Check for mutual match
+      const { data: mutualLike } = await supabase
+        .from("likes")
+        .select("id")
+        .eq("liker_id", userId)
+        .eq("liked_id", user.id)
+        .maybeSingle();
+
+      if (mutualLike) {
+        toast.success("💕 It's a Match!");
+        supabase.functions.invoke("send-match-notification", {
+          body: { matched_user_id: userId },
+        }).catch(console.error);
+      } else {
+        toast.success("Liked!");
+      }
     }
   };
 
