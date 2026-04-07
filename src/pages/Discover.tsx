@@ -156,7 +156,24 @@ const Discover = () => {
       const { error } = await supabase.from("likes").insert({ liker_id: user.id, liked_id: targetUserId });
       if (error) { toast.error(error.message); return; }
       setLikedIds((prev) => new Set(prev).add(targetUserId));
-      toast.success("Liked!");
+
+      // Check for mutual match
+      const { data: mutualLike } = await supabase
+        .from("likes")
+        .select("id")
+        .eq("liker_id", targetUserId)
+        .eq("liked_id", user.id)
+        .maybeSingle();
+
+      if (mutualLike) {
+        toast.success("💕 It's a Match!");
+        // Send push notification to the other user
+        supabase.functions.invoke("send-match-notification", {
+          body: { matched_user_id: targetUserId },
+        }).catch(console.error);
+      } else {
+        toast.success("Liked!");
+      }
     }
   };
 

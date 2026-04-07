@@ -14,6 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { unreadCount } = useUnreadMessages();
   useGameNotifications();
   useLikeNotifications();
+  usePushSubscription();
   const navigate = useNavigate();
   const location = useLocation();
 
