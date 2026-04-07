@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import { useGameNotifications } from "@/hooks/useGameNotifications";
 import { useLikeNotifications } from "@/hooks/useLikeNotifications";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
 import { Button } from "@/components/ui/button";
 import { Heart, Search, User, LogOut, MessageSquare, Crown, Home } from "lucide-react";
 import logo from "@/assets/logo.png";
@@ -13,6 +14,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { unreadCount } = useUnreadMessages();
   useGameNotifications();
   useLikeNotifications();
+  usePushSubscription();
   const navigate = useNavigate();
   const location = useLocation();
 
