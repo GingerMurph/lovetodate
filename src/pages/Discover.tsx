@@ -84,6 +84,7 @@ const Discover = () => {
   const resumeIndex = (location.state as any)?.resumeIndex;
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [showHearts, setShowHearts] = useState(false);
   const [minCompatScore, setMinCompatScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -167,6 +168,7 @@ const Discover = () => {
         .maybeSingle();
 
       if (mutualLike) {
+        setShowHearts(true);
         toast.success("💕 It's a Match!");
         // Send push notification to the other user
         supabase.functions.invoke("send-match-notification", {
