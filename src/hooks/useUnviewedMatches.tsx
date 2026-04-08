@@ -13,7 +13,6 @@ export function useUnviewedMatches() {
 
     const lastViewed = localStorage.getItem(`${STORAGE_KEY}_${user.id}`) || "1970-01-01T00:00:00Z";
 
-    // Get all likes I sent
     const { data: sent } = await supabase
       .from("likes")
       .select("liked_id")
@@ -23,7 +22,6 @@ export function useUnviewedMatches() {
 
     const sentIds = sent.map((l) => l.liked_id);
 
-    // Get mutual likes (people I liked who also liked me) created after lastViewed
     const { data: mutual, error } = await supabase
       .from("likes")
       .select("id")
@@ -41,7 +39,6 @@ export function useUnviewedMatches() {
 
     if (!user) return;
 
-    // Listen for new likes targeting me (potential new matches)
     const channel = supabase
       .channel("unviewed-matches")
       .on(
@@ -51,13 +48,27 @@ export function useUnviewedMatches() {
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    // Listen for storage changes from other hook instances (same tab)
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === `${STORAGE_KEY}_${user.id}`) {
+        setCount(0);
+      }
+    };
+    window.addEventListener("storage", onStorage);
+
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener("storage", onStorage);
+    };
   }, [user, fetchCount]);
 
   const markViewed = useCallback(() => {
     if (!user) return;
-    localStorage.setItem(`${STORAGE_KEY}_${user.id}`, new Date().toISOString());
+    const key = `${STORAGE_KEY}_${user.id}`;
+    localStorage.setItem(key, new Date().toISOString());
     setCount(0);
+    // Dispatch storage event for other instances in the same tab
+    window.dispatchEvent(new StorageEvent("storage", { key }));
   }, [user]);
 
   return { unviewedMatchCount: count, markViewed };
