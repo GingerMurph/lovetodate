@@ -237,6 +237,7 @@ const Discover = () => {
 
   return (
     <AppLayout>
+      {showHearts && <HeartsCelebration onComplete={() => setShowHearts(false)} />}
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-serif text-2xl font-bold">
