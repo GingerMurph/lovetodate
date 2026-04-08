@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useUnviewedMatches } from "@/hooks/useUnviewedMatches";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,12 +39,14 @@ const STARTER_PROMPTS = [
 const Matches = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { markViewed } = useUnviewedMatches();
   const [matches, setMatches] = useState<MatchProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [sendingTo, setSendingTo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
+    markViewed();
     loadMatches();
   }, [user]);
 

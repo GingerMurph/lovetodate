@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useUnviewedMatches } from "@/hooks/useUnviewedMatches";
 import { useGameNotifications } from "@/hooks/useGameNotifications";
 import { useLikeNotifications } from "@/hooks/useLikeNotifications";
 import { usePushSubscription } from "@/hooks/usePushSubscription";
@@ -12,6 +13,7 @@ import BackgroundImage from "@/components/BackgroundImage";
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { signOut, user } = useAuth();
   const { unreadCount } = useUnreadMessages();
+  const { unviewedMatchCount } = useUnviewedMatches();
   useGameNotifications();
   useLikeNotifications();
   usePushSubscription();
@@ -27,7 +29,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { to: "/", icon: Home, label: "Home", badge: 0 },
     { to: "/discover", icon: Search, label: "Discover", badge: 0 },
     { to: "/likes", icon: Heart, label: "LoveToDate", badge: 0 },
-    { to: "/matches", icon: Sparkles, label: "Matches", badge: 0 },
+    { to: "/matches", icon: Sparkles, label: "Matches", badge: unviewedMatchCount },
     { to: "/messages", icon: MessageSquare, label: "Messages", badge: unreadCount },
     { to: "/profile", icon: User, label: "Profile", badge: 0 },
     { to: "/subscription", icon: Crown, label: "Premium", badge: 0 },
