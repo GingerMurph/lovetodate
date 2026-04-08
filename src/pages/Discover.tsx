@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import AppLayout from "@/components/AppLayout";
 import SwipeCard from "@/components/SwipeCard";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
+import HeartsCelebration from "@/components/HeartsCelebration";
 
 const NATIONALITIES = ["British", "Irish", "American", "Canadian", "Australian", "French", "German", "Italian", "Spanish", "Portuguese", "Polish", "Romanian", "Indian", "Pakistani", "Chinese", "Japanese", "Korean", "Brazilian", "Nigerian", "South African", "European", "African", "Asian", "South American", "Middle Eastern"];
 const RELIGIONS = ["Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism", "Spiritual", "Agnostic", "Atheist", "Prefer not to say"];
@@ -83,6 +84,7 @@ const Discover = () => {
   const resumeIndex = (location.state as any)?.resumeIndex;
   const [profiles, setProfiles] = useState<DiscoverProfile[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
+  const [showHearts, setShowHearts] = useState(false);
   const [minCompatScore, setMinCompatScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
@@ -166,6 +168,7 @@ const Discover = () => {
         .maybeSingle();
 
       if (mutualLike) {
+        setShowHearts(true);
         toast.success("💕 It's a Match!");
         // Send push notification to the other user
         supabase.functions.invoke("send-match-notification", {
@@ -234,6 +237,7 @@ const Discover = () => {
 
   return (
     <AppLayout>
+      {showHearts && <HeartsCelebration onComplete={() => setShowHearts(false)} />}
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-serif text-2xl font-bold">
