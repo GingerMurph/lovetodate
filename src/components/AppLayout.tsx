@@ -53,7 +53,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <span>{item.label}</span>
                 </Button>
                 {item.badge > 0 && (
-                  <span className="absolute -top-1 -right-1 gradient-gold text-primary-foreground text-[10px] font-bold rounded-full h-4 min-w-4 flex items-center justify-center px-1">
+                  <span className="absolute -top-1 -right-1 gradient-gold text-primary-foreground text-[10px] font-bold rounded-full h-4 min-w-4 flex items-center justify-center px-1 animate-badge-pulse">
                     {item.badge > 99 ? "99+" : item.badge}
                   </span>
                 )}
@@ -88,7 +88,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <item.icon className="h-5 w-5" />
                 <span className="text-[10px] font-medium">{item.label}</span>
                 {item.badge > 0 && (
-                  <span className="absolute top-1.5 left-1/2 ml-2 gradient-gold text-primary-foreground text-[10px] font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1">
+                  <span className="absolute top-1.5 left-1/2 ml-2 gradient-gold text-primary-foreground text-[10px] font-bold rounded-full h-5 min-w-5 flex items-center justify-center px-1 animate-badge-pulse">
                     {item.badge > 99 ? "99+" : item.badge}
                   </span>
                 )}

@@ -77,11 +77,16 @@ export default {
           "10%": { opacity: "1", transform: "translateY(0) scale(1)" },
           "100%": { opacity: "0", transform: "translateY(100vh) scale(0.5)" },
         },
+        "badge-pulse": {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.25)", opacity: "0.85" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "hearts-fall": "hearts-fall ease-out forwards",
+        "badge-pulse": "badge-pulse 1.5s ease-in-out infinite",
       },
     },
   },
