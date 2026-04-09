@@ -53,21 +53,28 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { data: profiles } = await adminClient
-      .from("profiles")
-      .select("user_id, display_name, avatar_url, date_of_birth, location_city, nationality, is_verified")
-      .in("user_id", allIds);
+    const [profilesRes, subCacheRes, privateDataRes] = await Promise.all([
+      adminClient
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, location_city, nationality, is_verified")
+        .in("user_id", allIds),
+      adminClient
+        .from("subscriber_cache")
+        .select("user_id, is_subscribed")
+        .in("user_id", allIds),
+      adminClient
+        .from("profile_private_data")
+        .select("user_id, date_of_birth")
+        .in("user_id", allIds),
+    ]);
 
-    // Fetch subscription status
-    const { data: subCache } = await adminClient
-      .from("subscriber_cache")
-      .select("user_id, is_subscribed")
-      .in("user_id", allIds);
-    const subMap = new Map((subCache || []).map((s) => [s.user_id, s.is_subscribed]));
+    const profiles = profilesRes.data || [];
+    const subMap = new Map((subCacheRes.data || []).map((s) => [s.user_id, s.is_subscribed]));
+    const dobMap = new Map((privateDataRes.data || []).map((d) => [d.user_id, d.date_of_birth]));
 
     // Sign avatar URLs and compute age
     const signedProfiles = await Promise.all(
-      (profiles || []).map(async ({ date_of_birth, avatar_url, ...rest }) => {
+      profiles.map(async ({ avatar_url, ...rest }) => {
         let signedAvatarUrl: string | null = null;
         if (avatar_url) {
           const path = avatar_url.includes("/object/public/")
@@ -78,12 +85,13 @@ Deno.serve(async (req) => {
             .createSignedUrl(path, 3600);
           signedAvatarUrl = signedData?.signedUrl || null;
         }
+        const dob = dobMap.get(rest.user_id) || null;
         return {
           ...rest,
           avatar_url: signedAvatarUrl,
           is_subscribed: subMap.get(rest.user_id) || false,
-          age: date_of_birth
-            ? Math.floor((Date.now() - new Date(date_of_birth).getTime()) / 31557600000)
+          age: dob
+            ? Math.floor((Date.now() - new Date(dob).getTime()) / 31557600000)
             : null,
         };
       })
