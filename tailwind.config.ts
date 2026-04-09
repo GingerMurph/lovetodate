@@ -78,8 +78,8 @@ export default {
           "100%": { opacity: "0", transform: "translateY(100vh) scale(0.5)" },
         },
         "badge-pulse": {
-          "0%, 100%": { transform: "scale(1)", opacity: "1" },
-          "50%": { transform: "scale(1.25)", opacity: "0.85" },
+          "0%, 100%": { transform: "scale(1)", opacity: "1", boxShadow: "0 0 0 0 hsl(var(--primary) / 0.6)" },
+          "50%": { transform: "scale(1.25)", opacity: "0.85", boxShadow: "0 0 8px 4px hsl(var(--primary) / 0.35)" },
         },
       },
       animation: {
