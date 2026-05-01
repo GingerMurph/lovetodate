@@ -195,18 +195,26 @@ Rules:
       );
     }
 
-    // Mark profile as verified
-    const { error: updateErr } = await adminClient
-      .from("profiles")
-      .update({
-        is_verified: true,
-        verification_selfie_url: selfie_path,
-        verified_at: new Date().toISOString(),
-      })
-      .eq("user_id", user.id);
+    const verifiedAt = new Date().toISOString();
 
-    if (updateErr) {
-      console.error("Verification update error:", updateErr);
+    const [{ error: updateErr }, { error: privateErr }] = await Promise.all([
+      adminClient
+        .from("profiles")
+        .update({
+          is_verified: true,
+          verified_at: verifiedAt,
+        })
+        .eq("user_id", user.id),
+      adminClient
+        .from("profile_private_data")
+        .upsert({
+          user_id: user.id,
+          verification_selfie_url: selfie_path,
+        }, { onConflict: "user_id" }),
+    ]);
+
+    if (updateErr || privateErr) {
+      console.error("Verification update error:", updateErr || privateErr);
       return new Response(JSON.stringify({ error: "Failed to update verification status" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
