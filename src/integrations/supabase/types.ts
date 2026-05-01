@@ -228,25 +228,34 @@ export type Database = {
       }
       profile_private_data: {
         Row: {
+          age_verified_at: string | null
           created_at: string
           date_of_birth: string | null
+          date_of_birth_verified: string | null
           phone_number: string | null
+          phone_verified_at: string | null
           updated_at: string
           user_id: string
           verification_selfie_url: string | null
         }
         Insert: {
+          age_verified_at?: string | null
           created_at?: string
           date_of_birth?: string | null
+          date_of_birth_verified?: string | null
           phone_number?: string | null
+          phone_verified_at?: string | null
           updated_at?: string
           user_id: string
           verification_selfie_url?: string | null
         }
         Update: {
+          age_verified_at?: string | null
           created_at?: string
           date_of_birth?: string | null
+          date_of_birth_verified?: string | null
           phone_number?: string | null
+          phone_verified_at?: string | null
           updated_at?: string
           user_id?: string
           verification_selfie_url?: string | null
@@ -292,8 +301,6 @@ export type Database = {
           body_build: Database["public"]["Enums"]["body_build"] | null
           children: string | null
           created_at: string
-          date_of_birth: string | null
-          date_of_birth_verified: string | null
           diet: string | null
           display_name: string
           drinking: string | null
@@ -310,10 +317,8 @@ export type Database = {
           is_paused: boolean
           is_verified: boolean
           languages: string[] | null
-          latitude: number | null
           location_city: string | null
           location_country: string | null
-          longitude: number | null
           looking_for: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles: number | null
           min_compatibility_score: number | null
@@ -322,7 +327,6 @@ export type Database = {
           occupation: string | null
           personality_type: string | null
           pets: string | null
-          phone_number: string | null
           phone_verified: boolean
           photo_urls: string[] | null
           political_beliefs: string | null
@@ -331,7 +335,6 @@ export type Database = {
           smoking: string | null
           updated_at: string
           user_id: string
-          verification_selfie_url: string | null
           verified_at: string | null
           voice_intro_url: string | null
           weight_kg: number | null
@@ -344,8 +347,6 @@ export type Database = {
           body_build?: Database["public"]["Enums"]["body_build"] | null
           children?: string | null
           created_at?: string
-          date_of_birth?: string | null
-          date_of_birth_verified?: string | null
           diet?: string | null
           display_name?: string
           drinking?: string | null
@@ -362,10 +363,8 @@ export type Database = {
           is_paused?: boolean
           is_verified?: boolean
           languages?: string[] | null
-          latitude?: number | null
           location_city?: string | null
           location_country?: string | null
-          longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles?: number | null
           min_compatibility_score?: number | null
@@ -374,7 +373,6 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
-          phone_number?: string | null
           phone_verified?: boolean
           photo_urls?: string[] | null
           political_beliefs?: string | null
@@ -383,7 +381,6 @@ export type Database = {
           smoking?: string | null
           updated_at?: string
           user_id: string
-          verification_selfie_url?: string | null
           verified_at?: string | null
           voice_intro_url?: string | null
           weight_kg?: number | null
@@ -396,8 +393,6 @@ export type Database = {
           body_build?: Database["public"]["Enums"]["body_build"] | null
           children?: string | null
           created_at?: string
-          date_of_birth?: string | null
-          date_of_birth_verified?: string | null
           diet?: string | null
           display_name?: string
           drinking?: string | null
@@ -414,10 +409,8 @@ export type Database = {
           is_paused?: boolean
           is_verified?: boolean
           languages?: string[] | null
-          latitude?: number | null
           location_city?: string | null
           location_country?: string | null
-          longitude?: number | null
           looking_for?: Database["public"]["Enums"]["looking_for"] | null
           max_distance_miles?: number | null
           min_compatibility_score?: number | null
@@ -426,7 +419,6 @@ export type Database = {
           occupation?: string | null
           personality_type?: string | null
           pets?: string | null
-          phone_number?: string | null
           phone_verified?: boolean
           photo_urls?: string[] | null
           political_beliefs?: string | null
@@ -435,7 +427,6 @@ export type Database = {
           smoking?: string | null
           updated_at?: string
           user_id?: string
-          verification_selfie_url?: string | null
           verified_at?: string | null
           voice_intro_url?: string | null
           weight_kg?: number | null

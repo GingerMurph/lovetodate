@@ -189,15 +189,23 @@ REASON: Could not read date of birth from document.`,
     });
 
     if (passed) {
-      // Update profile
-      await adminClient
-        .from("profiles")
-        .update({
-          age_verified: true,
-          age_verified_at: new Date().toISOString(),
-          date_of_birth_verified: extractedDob,
-        })
-        .eq("user_id", user.id);
+      const verifiedAt = new Date().toISOString();
+
+      await Promise.all([
+        adminClient
+          .from("profiles")
+          .update({
+            age_verified: true,
+          })
+          .eq("user_id", user.id),
+        adminClient
+          .from("profile_private_data")
+          .upsert({
+            user_id: user.id,
+            age_verified_at: verifiedAt,
+            date_of_birth_verified: extractedDob,
+          }, { onConflict: "user_id" }),
+      ]);
 
       return new Response(JSON.stringify({ success: true, message: "Age verified successfully" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

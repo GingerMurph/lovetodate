@@ -136,7 +136,10 @@ const ProfileSetup = () => {
         (pos) => {
           const { latitude, longitude } = pos.coords;
           if (user) {
-            supabase.from("profiles").update({ latitude, longitude } as any).eq("user_id", user.id).then();
+            supabase
+              .from("user_locations")
+              .upsert({ user_id: user.id, latitude, longitude } as any, { onConflict: "user_id" })
+              .then();
           }
         },
         () => { /* user denied or unavailable, no-op */ }
@@ -154,7 +157,7 @@ const ProfileSetup = () => {
       if (data) {
         setForm({
           display_name: data.display_name || "",
-          date_of_birth: (privateData as any)?.date_of_birth || data.date_of_birth || "",
+          date_of_birth: (privateData as any)?.date_of_birth || "",
           gender: data.gender || "",
           looking_for: data.looking_for || "everyone",
           relationship_goal: (data.relationship_goal as string[] | null) || [],
@@ -289,7 +292,6 @@ const ProfileSetup = () => {
 
       const { error } = await supabase.from("profiles").update({
         display_name: form.display_name,
-        date_of_birth: form.date_of_birth || null,
         gender: (form.gender || null) as any,
         looking_for: (form.looking_for || null) as any,
         relationship_goal: (form.relationship_goal.length > 0 ? form.relationship_goal : null) as any,
@@ -326,13 +328,10 @@ const ProfileSetup = () => {
 
       if (error) throw error;
 
-      // Also save DOB to profile_private_data
-      if (form.date_of_birth) {
-        await supabase.from("profile_private_data" as any).upsert({
-          user_id: user.id,
-          date_of_birth: form.date_of_birth,
-        }, { onConflict: "user_id" });
-      }
+      await supabase.from("profile_private_data" as any).upsert({
+        user_id: user.id,
+        date_of_birth: form.date_of_birth || null,
+      }, { onConflict: "user_id" });
 
       toast.success("Profile updated!");
       navigate("/discover");
