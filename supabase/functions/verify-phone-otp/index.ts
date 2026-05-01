@@ -78,11 +78,19 @@ Deno.serve(async (req) => {
     // Mark as used
     await adminClient.from("phone_verifications").update({ used: true }).eq("id", otpRecord.id);
 
-    // Update profile
-    await adminClient
-      .from("profiles")
-      .update({ phone_number, phone_verified: true })
-      .eq("user_id", user.id);
+    await Promise.all([
+      adminClient
+        .from("profiles")
+        .update({ phone_verified: true })
+        .eq("user_id", user.id),
+      adminClient
+        .from("profile_private_data")
+        .upsert({
+          user_id: user.id,
+          phone_number,
+          phone_verified_at: new Date().toISOString(),
+        }, { onConflict: "user_id" }),
+    ]);
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
