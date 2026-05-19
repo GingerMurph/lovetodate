@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEO from "@/components/SEO";
 
 interface BlogPost {
   title: string;
@@ -44,7 +45,9 @@ export default function Blog() {
   }, []);
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Dating Blog — Stories & Insights | LoveToDate" description="Read the LoveToDate blog for modern dating stories, relationship insights, and tips on finding someone you genuinely love to date." path="/blog" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -84,5 +87,6 @@ export default function Blog() {
         </div>
       </main>
     </div>
+  </>
   );
 }

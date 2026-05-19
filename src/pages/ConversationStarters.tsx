@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
+import SEO from "@/components/SEO";
 import {
   Dialog,
   DialogContent,
@@ -115,7 +116,9 @@ export default function ConversationStarters() {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="AI Conversation Starters for Dating | LoveToDate" description="AI-generated icebreakers and conversation starters tailored to your matches. Never run out of things to say on LoveToDate." path="/conversation-starters" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -214,5 +217,6 @@ export default function ConversationStarters() {
         </DialogContent>
       </Dialog>
     </div>
+  </>
   );
 }

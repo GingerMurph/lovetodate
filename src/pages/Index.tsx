@@ -23,6 +23,7 @@ import GameStatsSection from "@/components/GameStatsSection";
 import logo from "@/assets/logo.png";
 import BackgroundImage from "@/components/BackgroundImage";
 import PendingGameInvites from "@/components/PendingGameInvites";
+import SEO from "@/components/SEO";
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -34,7 +35,9 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="LoveToDate — UK Dating, Only Pay When You Find a Match" description="Free profile browsing and likes, AI-powered compatibility, and pay only when you find someone you would love to date. Premium UK dating without subscriptions." path="/" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
 
       {/* Nav */}
@@ -414,6 +417,7 @@ const Index = () => {
         </footer>
       </main>
     </div>
+  </>
   );
 };
 

@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEO from "@/components/SEO";
 
 const TESTIMONIAL_PROMPTS = [
   "Write a short, heartfelt testimonial from a fictional person who found love on a dating app. Include their first name, age, and city. Keep it under 40 words. Make it feel genuine and specific.",
@@ -54,7 +55,9 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Success Stories & Testimonials | LoveToDate" description="Real success stories from LoveToDate members who found meaningful relationships through AI-powered matching and authentic profiles." path="/testimonials" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -95,5 +98,6 @@ export default function Testimonials() {
         </div>
       </main>
     </div>
+  </>
   );
 }

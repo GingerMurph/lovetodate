@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import SEO from "@/components/SEO";
 
 interface Tip {
   title: string;
@@ -45,7 +46,9 @@ export default function DatingAdvice() {
   }, []);
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Dating Advice — Expert Tips | LoveToDate" description="Practical dating advice and expert tips on first dates, communication, and building healthy relationships from the LoveToDate team." path="/dating-advice" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -84,5 +87,6 @@ export default function DatingAdvice() {
         </div>
       </main>
     </div>
+  </>
   );
 }

@@ -2,12 +2,15 @@ import { ArrowLeft, Home } from "lucide-react";
 import BackgroundImage from "@/components/BackgroundImage";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 
 export default function PrivacyPolicy() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Privacy Policy | LoveToDate" description="How LoveToDate collects, uses, and protects your personal data under UK GDPR. Read our full privacy commitments." path="/privacy" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -117,5 +120,6 @@ export default function PrivacyPolicy() {
         <p className="text-muted-foreground">Data Controller: lovetodate.co.uk<br/>Email: <a href="mailto:support@lovetodate.co.uk" className="text-gold hover:underline">support@lovetodate.co.uk</a></p>
       </main>
     </div>
+  </>
   );
 }

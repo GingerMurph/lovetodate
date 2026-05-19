@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Crown, Heart, Shield, Loader2, Gift, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
 
 const tiers = [
   {
@@ -87,7 +88,9 @@ const Subscription = () => {
     : null;
 
   return (
-    <AppLayout>
+    <>
+      <SEO title="Pricing & Premium Plans | LoveToDate" description="Choose a LoveToDate plan: pay-per-match or affordable subscriptions from £9.99. First month free. Cancel anytime." path="/subscription" />
+      <AppLayout>
       <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Hero */}
         <div className="text-center mb-10">
@@ -263,6 +266,7 @@ const Subscription = () => {
         </div>
       </div>
     </AppLayout>
+  </>
   );
 };
 

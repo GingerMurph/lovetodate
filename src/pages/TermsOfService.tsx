@@ -2,12 +2,15 @@ import { ArrowLeft, Home } from "lucide-react";
 import BackgroundImage from "@/components/BackgroundImage";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 
 export default function TermsOfService() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Terms of Service | LoveToDate" description="The terms governing use of LoveToDate — eligibility, account rules, payments, and your rights as a UK dating platform member." path="/terms" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -78,5 +81,6 @@ export default function TermsOfService() {
         <p className="text-muted-foreground">For questions about these terms, contact us at <a href="mailto:support@lovetodate.co.uk" className="text-gold hover:underline">support@lovetodate.co.uk</a>.</p>
       </main>
     </div>
+  </>
   );
 }
