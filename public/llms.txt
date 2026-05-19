@@ -1,0 +1,21 @@
+# LoveToDate
+
+> LoveToDate is a UK dating platform where browsing, likes, and AI compatibility insights are free — you only pay when you find someone you'd genuinely love to date.
+
+LoveToDate uses an advanced AI engine to score compatibility across 15+ dimensions (values, lifestyle, goals, personality, interests). Users can see who liked them and view full profiles before deciding to unlock messaging. Hybrid monetization: free discovery, pay-per-connection or subscription.
+
+## Pages
+
+- [Home](/): Overview of LoveToDate, how it works, and AI-powered matching.
+- [Blog](/blog): Articles on modern dating, relationships, and the LoveToDate journey.
+- [Dating Advice](/dating-advice): Expert tips on dating, communication, and building healthy relationships.
+- [Testimonials](/testimonials): Real success stories from LoveToDate members.
+- [Conversation Starters](/conversation-starters): AI-generated icebreakers and conversation prompts.
+- [Fun Stuff](/fun): Turn-based games members play together to discover compatibility.
+- [Subscription](/subscription): Pricing plans and premium features.
+
+## Optional
+
+- [Terms of Service](/terms): Legal terms governing use of LoveToDate.
+- [Privacy Policy](/privacy): How we handle and protect user data (UK GDPR).
+- [Cookie Policy](/cookies): Cookie usage and consent details.
