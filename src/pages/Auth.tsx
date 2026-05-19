@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import BackgroundImage from "@/components/BackgroundImage";
+import SEO from "@/components/SEO";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -109,7 +110,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <>
+      <SEO title="Sign In or Join Free | LoveToDate" description="Create your free LoveToDate account or sign in. Browse profiles, see who likes you, and only pay when you find someone you love to date." path="/auth" />
+      <div className="flex min-h-screen items-center justify-center px-4">
       <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center relative">
@@ -251,6 +254,7 @@ const Auth = () => {
         )}
       </div>
     </div>
+  </>
   );
 };
 

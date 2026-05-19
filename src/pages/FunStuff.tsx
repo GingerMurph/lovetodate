@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import SEO from "@/components/SEO";
 
 const GAMES = [
   {
@@ -70,7 +71,9 @@ export default function FunStuff() {
   }, [user]);
 
   return (
-    <div className="min-h-screen relative">
+    <>
+      <SEO title="Dating Games — Play & Connect | LoveToDate" description="Play Noughts & Crosses, Connect 4, 8 Ball Pool and more with your matches. Turn-based games that reveal real compatibility." path="/fun" />
+      <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -128,5 +131,6 @@ export default function FunStuff() {
         </div>
       </main>
     </div>
+  </>
   );
 }
