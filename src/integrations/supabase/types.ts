@@ -169,7 +169,6 @@ export type Database = {
           email_notifications: boolean
           id: string
           in_app_sound: boolean
-          phone_number: string | null
           sms_notifications: boolean
           updated_at: string
           user_id: string
@@ -179,7 +178,6 @@ export type Database = {
           email_notifications?: boolean
           id?: string
           in_app_sound?: boolean
-          phone_number?: string | null
           sms_notifications?: boolean
           updated_at?: string
           user_id: string
@@ -189,7 +187,6 @@ export type Database = {
           email_notifications?: boolean
           id?: string
           in_app_sound?: boolean
-          phone_number?: string | null
           sms_notifications?: boolean
           updated_at?: string
           user_id?: string
