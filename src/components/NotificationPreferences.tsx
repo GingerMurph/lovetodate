@@ -4,15 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Bell, Mail, Phone, Volume2 } from "lucide-react";
 import { toast } from "sonner";
-
-const E164_REGEX = /^\+[1-9]\d{1,14}$/;
-
-const isValidPhoneNumber = (phone: string): boolean => {
-  return E164_REGEX.test(phone.replace(/\s/g, ""));
-};
 
 export default function NotificationPreferences() {
   const { user } = useAuth();
@@ -20,7 +13,6 @@ export default function NotificationPreferences() {
     in_app_sound: true,
     email_notifications: true,
     sms_notifications: false,
-    phone_number: "",
   });
   const [loaded, setLoaded] = useState(false);
 
@@ -37,7 +29,6 @@ export default function NotificationPreferences() {
             in_app_sound: data.in_app_sound,
             email_notifications: data.email_notifications,
             sms_notifications: data.sms_notifications,
-            phone_number: data.phone_number || "",
           });
         }
         setLoaded(true);
@@ -46,27 +37,12 @@ export default function NotificationPreferences() {
 
   const savePrefs = async (updated: typeof prefs) => {
     if (!user) return;
-
-    // Validate phone number if SMS is enabled and a number is provided
-    if (updated.sms_notifications && updated.phone_number) {
-      const cleaned = updated.phone_number.replace(/\s/g, "");
-      if (!isValidPhoneNumber(cleaned)) {
-        toast.error("Please enter a valid phone number in international format (e.g. +447700900000)");
-        return;
-      }
-      updated = { ...updated, phone_number: cleaned };
-    }
-
     setPrefs(updated);
 
     const { error } = await supabase
       .from("notification_preferences")
       .upsert(
-        {
-          user_id: user.id,
-          ...updated,
-          phone_number: updated.phone_number || null,
-        },
+        { user_id: user.id, ...updated },
         { onConflict: "user_id" }
       );
 
@@ -112,28 +88,22 @@ export default function NotificationPreferences() {
           />
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <Label htmlFor="sms" className="cursor-pointer">SMS notifications</Label>
-            </div>
-            <Switch
-              id="sms"
-              checked={prefs.sms_notifications}
-              onCheckedChange={(v) => savePrefs({ ...prefs, sms_notifications: v })}
-            />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Phone className="h-4 w-4 text-muted-foreground" />
+            <Label htmlFor="sms" className="cursor-pointer">SMS notifications</Label>
           </div>
-          {prefs.sms_notifications && (
-            <Input
-              placeholder="+44 7700 900000"
-              value={prefs.phone_number}
-              onChange={(e) => setPrefs({ ...prefs, phone_number: e.target.value })}
-              onBlur={() => savePrefs(prefs)}
-              className="ml-7"
-            />
-          )}
+          <Switch
+            id="sms"
+            checked={prefs.sms_notifications}
+            onCheckedChange={(v) => savePrefs({ ...prefs, sms_notifications: v })}
+          />
         </div>
+        {prefs.sms_notifications && (
+          <p className="text-xs text-muted-foreground ml-7">
+            SMS will be sent to your verified phone number on file.
+          </p>
+        )}
       </CardContent>
     </Card>
   );
