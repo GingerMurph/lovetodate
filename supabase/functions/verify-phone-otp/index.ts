@@ -47,19 +47,29 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Find valid OTP
+    // Find latest unused OTP for this user+phone, then verify hash
     const { data: otpRecord, error: otpErr } = await adminClient
       .from("phone_verifications")
       .select("*")
       .eq("user_id", user.id)
       .eq("phone_number", phone_number)
-      .eq("otp_code", otp_code)
       .eq("used", false)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (otpErr || !otpRecord) {
+      return new Response(JSON.stringify({ error: "Invalid verification code" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { data: matches, error: verifyErr } = await adminClient.rpc("verify_otp", {
+      _otp: otp_code,
+      _hash: otpRecord.otp_code,
+    });
+    if (verifyErr || !matches) {
       return new Response(JSON.stringify({ error: "Invalid verification code" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

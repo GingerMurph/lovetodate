@@ -74,11 +74,19 @@ Deno.serve(async (req) => {
     const otp = generateOTP();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 min expiry
 
-    // Store OTP
+    // Store OTP as a bcrypt hash (never store plaintext)
+    const { data: hashRow, error: hashErr } = await adminClient.rpc("hash_otp", { _otp: otp });
+    if (hashErr) {
+      console.error("Failed to hash OTP:", hashErr);
+      return new Response(JSON.stringify({ error: "Failed to generate code" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     await adminClient.from("phone_verifications").insert({
       user_id: user.id,
       phone_number,
-      otp_code: otp,
+      otp_code: hashRow as unknown as string,
       expires_at: expiresAt,
     });
 

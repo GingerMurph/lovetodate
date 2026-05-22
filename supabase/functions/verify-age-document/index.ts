@@ -207,10 +207,16 @@ REASON: Could not read date of birth from document.`,
           }, { onConflict: "user_id" }),
       ]);
 
+      // Delete the uploaded ID document — DOB is now stored, image no longer needed
+      await adminClient.storage.from("profile-photos").remove([document_path]);
+
       return new Response(JSON.stringify({ success: true, message: "Age verified successfully" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // On failure, also delete to minimize PII retention; user re-uploads on retry
+    await adminClient.storage.from("profile-photos").remove([document_path]);
 
     return new Response(
       JSON.stringify({ error: `Age verification failed: ${reason}` }),
