@@ -12,6 +12,16 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Require shared secret so only the scheduler can trigger bulk notifications
+    const cronSecret = Deno.env.get("CRON_SECRET");
+    const incoming = req.headers.get("x-cron-secret");
+    if (!cronSecret || !incoming || incoming !== cronSecret) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const body = await req.json().catch(() => ({}));
     const digestType: "morning" | "evening" = body.type === "evening" ? "evening" : "morning";
 
