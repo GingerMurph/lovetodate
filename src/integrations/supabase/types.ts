@@ -511,6 +511,42 @@ export type Database = {
         }
         Relationships: []
       }
+      security_scans: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          fail_count: number
+          findings: Json
+          id: string
+          pass_count: number
+          status: string
+          triggered_by: string
+          warn_count: number
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          fail_count?: number
+          findings?: Json
+          id?: string
+          pass_count?: number
+          status?: string
+          triggered_by: string
+          warn_count?: number
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          fail_count?: number
+          findings?: Json
+          id?: string
+          pass_count?: number
+          status?: string
+          triggered_by?: string
+          warn_count?: number
+        }
+        Relationships: []
+      }
       subscriber_cache: {
         Row: {
           checked_at: string
@@ -638,6 +674,7 @@ export type Database = {
     Functions: {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       hash_otp: { Args: { _otp: string }; Returns: string }
+      is_security_admin: { Args: { _user_id: string }; Returns: boolean }
       verify_otp: { Args: { _hash: string; _otp: string }; Returns: boolean }
     }
     Enums: {
