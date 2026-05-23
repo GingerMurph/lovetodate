@@ -674,7 +674,6 @@ export type Database = {
     Functions: {
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       hash_otp: { Args: { _otp: string }; Returns: string }
-      is_security_admin: { Args: { _user_id: string }; Returns: boolean }
       verify_otp: { Args: { _hash: string; _otp: string }; Returns: boolean }
     }
     Enums: {
