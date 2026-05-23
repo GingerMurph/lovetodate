@@ -511,6 +511,42 @@ export type Database = {
         }
         Relationships: []
       }
+      security_scans: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          fail_count: number
+          findings: Json
+          id: string
+          pass_count: number
+          status: string
+          triggered_by: string
+          warn_count: number
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          fail_count?: number
+          findings?: Json
+          id?: string
+          pass_count?: number
+          status?: string
+          triggered_by: string
+          warn_count?: number
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          fail_count?: number
+          findings?: Json
+          id?: string
+          pass_count?: number
+          status?: string
+          triggered_by?: string
+          warn_count?: number
+        }
+        Relationships: []
+      }
       subscriber_cache: {
         Row: {
           checked_at: string
