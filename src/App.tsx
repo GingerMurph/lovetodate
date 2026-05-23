@@ -88,6 +88,7 @@ const App = () => {
                   <Route path="/verify-account" element={<ProtectedRoute><VerifyAccount /></ProtectedRoute>} />
                   <Route path="/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
                   <Route path="/video-call/:userId" element={<ProtectedRoute><VideoCall /></ProtectedRoute>} />
+                  <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </SubscriptionProvider>
