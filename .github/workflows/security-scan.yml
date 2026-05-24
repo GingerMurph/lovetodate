@@ -1,0 +1,44 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Static security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Run security scan
+        id: scan
+        run: bun scripts/security-scan.ts > security-report.json
+        continue-on-error: false
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.json
+          retention-days: 30
+
+      - name: Summarize
+        if: always()
+        run: |
+          if [ -f security-report.json ]; then
+            echo "## Security scan results" >> "$GITHUB_STEP_SUMMARY"
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            jq '.counts' security-report.json >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            echo "### Failing findings" >> "$GITHUB_STEP_SUMMARY"
+            jq -r '.findings[] | select(.severity=="fail") | "- **\(.category)** — \(.title): \(.detail)"' security-report.json >> "$GITHUB_STEP_SUMMARY" || true
+          fi
