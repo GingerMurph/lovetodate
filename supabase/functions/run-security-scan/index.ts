@@ -34,6 +34,13 @@ Deno.serve(async (req) => {
     const email = (claims.claims.email as string | undefined)?.toLowerCase();
     if (email !== ADMIN_EMAIL) return json({ error: "Forbidden" }, 403);
 
+    // Allow lightweight admin check without running a full scan
+    let body: any = null;
+    try { body = await req.json(); } catch { /* no body */ }
+    if (body?.checkOnly === true) {
+      return json({ ok: true });
+    }
+
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,

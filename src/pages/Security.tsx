@@ -30,15 +30,14 @@ interface Scan {
   findings: Finding[];
 }
 
-const ADMIN_EMAIL = "ianwmurphy@gmail.com";
+
 
 export default function Security() {
   const { user, loading: authLoading } = useAuth();
   const [scans, setScans] = useState<Scan[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
-
-  const isAdmin = user?.email?.toLowerCase() === ADMIN_EMAIL;
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   const loadScans = async () => {
     const { data, error } = await supabase
@@ -51,13 +50,25 @@ export default function Security() {
     } else {
       setScans((data as unknown as Scan[]) ?? []);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    if (isAdmin) loadScans();
-    else setLoading(false);
-  }, [isAdmin]);
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke("run-security-scan", {
+        body: { checkOnly: true },
+      });
+      const ok = !error && (data as any)?.ok === true;
+      setIsAdmin(ok);
+      if (ok) await loadScans();
+      setLoading(false);
+    };
+    checkAdmin();
+  }, [user]);
 
   const runScan = async () => {
     setRunning(true);
