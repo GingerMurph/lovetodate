@@ -30,7 +30,7 @@ interface Scan {
   findings: Finding[];
 }
 
-const ADMIN_EMAIL = "ianwmurphy@gmail.com";
+
 
 export default function Security() {
   const { user, loading: authLoading } = useAuth();
