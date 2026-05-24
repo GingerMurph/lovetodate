@@ -30,6 +30,15 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Validate UUID format to prevent PostgREST filter injection
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (targetUserId.length > 36 || !uuidRegex.test(targetUserId)) {
+      return new Response(JSON.stringify({ error: "Invalid targetUserId format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
