@@ -48,8 +48,9 @@ Deno.serve(async (req) => {
 
     const { recipientId, messagePreview } = await req.json();
 
-    if (!recipientId) {
-      return new Response(JSON.stringify({ error: "Missing recipientId" }), {
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!recipientId || typeof recipientId !== "string" || !UUID_REGEX.test(recipientId) || recipientId === senderId) {
+      return new Response(JSON.stringify({ error: "Invalid recipientId" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -57,6 +58,20 @@ Deno.serve(async (req) => {
 
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceKey);
+
+    // Verify a messaging relationship (unlocked connection) exists between sender and recipient
+    const { data: conn } = await adminClient
+      .from("unlocked_connections")
+      .select("id")
+      .or(`and(unlocker_id.eq.${senderId},target_id.eq.${recipientId}),and(unlocker_id.eq.${recipientId},target_id.eq.${senderId})`)
+      .limit(1)
+      .maybeSingle();
+    if (!conn) {
+      return new Response(JSON.stringify({ error: "No messaging relationship" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Fetch sender's display name server-side to prevent spoofing
     const { data: senderProfile } = await adminClient

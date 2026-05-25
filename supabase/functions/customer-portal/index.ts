@@ -34,7 +34,10 @@ serve(async (req) => {
       throw new Error("No customer found");
     }
 
-    const origin = req.headers.get("origin") || "https://lovetodate.lovable.app";
+    const rawOrigin = req.headers.get("origin") || "";
+    const isLovableApp = /^https:\/\/[\w-]+\.lovable\.app$/.test(rawOrigin);
+    const isLocalhost = rawOrigin === "http://localhost:8080";
+    const origin = (isLovableApp || isLocalhost) ? rawOrigin : "https://lovetodate.lovable.app";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customers.data[0].id,
       return_url: `${origin}/subscription`,
