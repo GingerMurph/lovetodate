@@ -75,7 +75,7 @@ Deno.serve(async (req) => {
     ]);
     const connectionRes = { data: connForward.data || connReverse.data };
 
-    if (!profileRes.data) {
+    if (!profileRes.data || (profileRes.data.is_paused && user.id !== userId)) {
       return new Response(JSON.stringify({ error: "Profile not found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
