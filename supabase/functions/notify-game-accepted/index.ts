@@ -54,8 +54,13 @@ Deno.serve(async (req) => {
 
     const { challengerId, gameType } = await req.json();
 
-    if (!challengerId || !gameType) {
-      return new Response(JSON.stringify({ error: "Missing challengerId or gameType" }), {
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const ALLOWED_GAME_TYPES = new Set(Object.keys(GAME_LABELS));
+    if (
+      !challengerId || typeof challengerId !== "string" || !UUID_REGEX.test(challengerId) ||
+      !gameType || typeof gameType !== "string" || !ALLOWED_GAME_TYPES.has(gameType)
+    ) {
+      return new Response(JSON.stringify({ error: "Invalid challengerId or gameType" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -63,6 +68,23 @@ Deno.serve(async (req) => {
 
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceKey);
+
+    // Verify an active game exists between these two users where accepter is the opponent
+    const { data: gameRow } = await adminClient
+      .from("games")
+      .select("id")
+      .eq("creator_id", challengerId)
+      .eq("opponent_id", accepterId)
+      .eq("game_type", gameType)
+      .in("status", ["active", "pending"])
+      .maybeSingle();
+    if (!gameRow) {
+      return new Response(JSON.stringify({ error: "No matching game found" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
 
     // Get accepter's display name
     const { data: accepterProfile } = await adminClient
