@@ -59,19 +59,15 @@ export default function PlayGame() {
 
   const updateGame = async (newState: any, newTurn: string | null, winnerId?: string | null) => {
     if (!gameId || !user) return;
-    const update: any = {
-      game_state: newState,
-      current_turn: newTurn,
-    };
-    if (winnerId !== undefined) {
-      update.winner_id = winnerId;
-      update.status = "completed";
-    }
-    await supabase.from("games").update(update).eq("id", gameId);
-    await supabase.from("game_moves").insert({
-      game_id: gameId,
-      player_id: user.id,
-      move_data: newState,
+    await supabase.functions.invoke("update-game-state", {
+      body: {
+        action: "move",
+        gameId,
+        gameState: newState,
+        currentTurn: newTurn,
+        winnerId: winnerId ?? null,
+        status: winnerId !== undefined ? "completed" : "active",
+      },
     });
   };
 
@@ -183,9 +179,6 @@ export default function PlayGame() {
                 allDone ? null : opponentId,
                 allDone ? null : undefined
               );
-              if (allDone) {
-                await supabase.from("games").update({ status: "completed" }).eq("id", gameId);
-              }
             }}
           />
         )}
@@ -240,9 +233,6 @@ export default function PlayGame() {
                 allDone ? null : opponentId,
                 winnerId
               );
-              if (allDone && bothAnsweredLast) {
-                await supabase.from("games").update({ status: "completed" }).eq("id", gameId);
-              }
             }}
           />
         )}
