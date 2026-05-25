@@ -72,13 +72,14 @@ export default function MyGames() {
   const respondToInvite = async (gameId: string, accept: boolean) => {
     if (!user) return;
     const newStatus = accept ? "active" : "declined";
-    const { error } = await supabase
-      .from("games")
-      .update({
+    const { error } = await supabase.functions.invoke("update-game-state", {
+      body: {
+        action: "respond",
+        gameId,
         status: newStatus,
-        ...(accept ? { current_turn: user.id } : {}),
-      })
-      .eq("id", gameId);
+        currentTurn: accept ? user.id : null,
+      },
+    });
 
     if (error) {
       toast({ title: "Error", description: error.message, variant: "destructive" });
