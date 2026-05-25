@@ -80,7 +80,7 @@ serve(async (req) => {
       cancel_url: `${baseUrl}/subscription`,
     };
 
-    if (trial) {
+    if (trialEligible) {
       sessionParams.subscription_data = { trial_period_days: 30 };
     }
 
