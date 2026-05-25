@@ -27,9 +27,7 @@ interface Finding {
 const ROOT = process.cwd();
 const findings: Finding[] = [];
 
-const PUBLIC_WEBHOOK_FNS = new Set<string>([
-  "check-email-exists",
-]);
+const PUBLIC_WEBHOOK_FNS = new Set<string>([]);
 const CRON_SECRET_FNS = new Set<string>([
   "scheduled-digest",
 ]);

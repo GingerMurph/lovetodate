@@ -178,7 +178,6 @@ Deno.serve(async (req) => {
 
     // 4) Edge function auth — manifest of functions and their required-auth posture
     const edgeFns: Record<string, "user-jwt" | "service-secret" | "public-webhook"> = {
-      "check-email-exists": "public-webhook",
       "check-subscription": "user-jwt",
       "claim-free-connection": "user-jwt",
       "compatibility-score": "user-jwt",
@@ -200,6 +199,7 @@ Deno.serve(async (req) => {
       "send-message-notification": "user-jwt",
       "send-phone-otp": "user-jwt",
       "submit-verification": "user-jwt",
+      "update-game-state": "user-jwt",
       "verify-age-document": "user-jwt",
       "verify-phone-otp": "user-jwt",
       "verify-unlock-payment": "user-jwt",

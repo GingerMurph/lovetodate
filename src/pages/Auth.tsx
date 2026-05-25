@@ -77,21 +77,6 @@ const Auth = () => {
         setLoading(false);
         return;
       }
-
-      // Check if email already exists before attempting signup
-      try {
-        const { data: checkData } = await supabase.functions.invoke("check-email-exists", {
-          body: { email },
-        });
-        if (checkData?.exists) {
-          toast.error("An account with this email already exists. Please sign in instead.");
-          setLoading(false);
-          return;
-        }
-      } catch {
-        // If the check fails, proceed with signup anyway
-      }
-
       const { error, data } = await signUp(email, password, displayName, phoneNumber, useMinCompat ? minCompatScore : null);
       if (error) {
         const msg = error.message?.toLowerCase() || "";

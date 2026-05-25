@@ -6,6 +6,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 /**
  * Build a Web Push payload and send it using the Web Push protocol.
  * Uses VAPID with the p256ecdsa algorithm (RFC 8292 / RFC 8291).
@@ -197,8 +199,36 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    if (!UUID_REGEX.test(matched_user_id) || matched_user_id === user.id) {
+      return new Response(JSON.stringify({ error: "Invalid matched_user_id" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const adminClient = createClient(supabaseUrl, serviceKey);
+
+    const [callerLike, matchedLike] = await Promise.all([
+      adminClient
+        .from("likes")
+        .select("id")
+        .eq("liker_id", user.id)
+        .eq("liked_id", matched_user_id)
+        .maybeSingle(),
+      adminClient
+        .from("likes")
+        .select("id")
+        .eq("liker_id", matched_user_id)
+        .eq("liked_id", user.id)
+        .maybeSingle(),
+    ]);
+
+    if (!callerLike.data || !matchedLike.data) {
+      return new Response(JSON.stringify({ error: "Match not found" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Get the caller's display name
     const { data: callerProfile } = await adminClient
