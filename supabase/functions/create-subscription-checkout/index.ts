@@ -26,11 +26,32 @@ serve(async (req) => {
 
     const body = await req.json();
     const { priceId, trial } = body;
-    if (!priceId || typeof priceId !== "string") {
-      return new Response(JSON.stringify({ error: "priceId is required" }), {
+    const ALLOWED_PRICE_IDS = new Set([
+      "price_1T8hYvQLBBTimpxJc5LhrWmx", // 1 week
+      "price_1T8hYwQLBBTimpxJICkGrYR2", // 1 month
+      "price_1T8hYwQLBBTimpxJQ5Izugkq", // 6 months
+      "price_1T8hYxQLBBTimpxJ7ifj1kHJ", // 12 months
+    ]);
+    if (!priceId || typeof priceId !== "string" || !ALLOWED_PRICE_IDS.has(priceId)) {
+      return new Response(JSON.stringify({ error: "Invalid price" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Server-side trial eligibility: only allow trial on first subscription
+    let trialEligible = false;
+    if (trial) {
+      const adminClient = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      );
+      const { data: cached } = await adminClient
+        .from("subscriber_cache")
+        .select("is_subscribed")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      trialEligible = !cached?.is_subscribed;
     }
 
     // Validate origin
