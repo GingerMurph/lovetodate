@@ -97,17 +97,12 @@ export default function GameLobby() {
       ? { currentRound: 0, questions: [], scores: {}, answers: {} }
       : { questionIndex: 0, answers: {}, questionOrder: shuffledOrder };
 
-    const { error } = await supabase.from("games").insert({
-      game_type: gameType,
-      creator_id: user.id,
-      opponent_id: opponentId,
-      status: "pending",
-      current_turn: user.id,
-      game_state: initialState as any,
-    } as any);
+    const { error } = await supabase.functions.invoke("create-game", {
+      body: { opponentId, gameType, initialState },
+    });
 
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: error.message || "Could not create game", variant: "destructive" });
     } else {
       const name = connections.find((c) => c.user_id === opponentId)?.display_name || "them";
       setInvitedName(name);
