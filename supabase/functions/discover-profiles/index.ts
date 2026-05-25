@@ -189,7 +189,8 @@ Deno.serve(async (req) => {
     }
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
+      console.error("discover-profiles query error:", error);
+      return new Response(JSON.stringify({ error: "An error occurred processing your request." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
