@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { logAuditRejection } from "../_shared/audit-log.ts";
+
+const FUNCTION_NAME = "update-game-state";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
