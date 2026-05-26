@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { logAuditRejection } from "../_shared/audit-log.ts";
+
+const FUNCTION_NAME = "update-game-state";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,6 +34,11 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: null,
+        reasonCode: "missing_auth_header",
+      });
       return json({ error: "Unauthorized" }, 401);
     }
 
@@ -44,12 +52,23 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: null,
+        reasonCode: "invalid_jwt",
+      });
       return json({ error: "Unauthorized" }, 401);
     }
 
     const body = await req.json();
     const validationError = validateBody(body, user.id);
     if (validationError) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "invalid_body",
+        details: { message: validationError },
+      });
       return json({ error: validationError }, 400);
     }
 
@@ -70,16 +89,34 @@ Deno.serve(async (req) => {
       .maybeSingle<GameRow>();
 
     if (gameError || !game) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "game_not_found",
+        details: { gameId, action },
+      });
       return json({ error: "Game not found" }, 404);
     }
 
     const isParticipant = game.creator_id === user.id || game.opponent_id === user.id;
     if (!isParticipant) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "not_participant",
+        details: { gameId, action },
+      });
       return json({ error: "Forbidden" }, 403);
     }
 
     if (action === "respond") {
       if (game.opponent_id !== user.id || game.status !== "pending") {
+        await logAuditRejection({
+          functionName: FUNCTION_NAME,
+          userId: user.id,
+          reasonCode: "respond_not_allowed",
+          details: { gameId, gameStatus: game.status, isOpponent: game.opponent_id === user.id },
+        });
         return json({ error: "Game cannot be responded to" }, 403);
       }
 
@@ -104,17 +141,41 @@ Deno.serve(async (req) => {
     }
 
     if (game.status !== "active") {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "game_not_active",
+        details: { gameId, gameStatus: game.status },
+      });
       return json({ error: "Game is not active" }, 403);
     }
     if (game.current_turn !== user.id) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "not_your_turn",
+        details: { gameId, currentTurn: game.current_turn },
+      });
       return json({ error: "Not your turn" }, 403);
     }
 
     if (winnerId && winnerId !== game.creator_id && winnerId !== game.opponent_id) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "invalid_winner",
+        details: { gameId, winnerId },
+      });
       return json({ error: "Invalid winner" }, 400);
     }
 
     if (currentTurn && currentTurn !== game.creator_id && currentTurn !== game.opponent_id) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "invalid_turn_owner",
+        details: { gameId, currentTurn },
+      });
       return json({ error: "Invalid turn owner" }, 400);
     }
 

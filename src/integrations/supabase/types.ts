@@ -511,6 +511,33 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_log: {
+        Row: {
+          created_at: string
+          details: Json
+          function_name: string
+          id: string
+          reason_code: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          function_name: string
+          id?: string
+          reason_code: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          function_name?: string
+          id?: string
+          reason_code?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       security_scans: {
         Row: {
           created_at: string
