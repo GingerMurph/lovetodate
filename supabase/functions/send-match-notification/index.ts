@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { logAuditRejection } from "../_shared/audit-log.ts";
+
+const FUNCTION_NAME = "send-match-notification";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
