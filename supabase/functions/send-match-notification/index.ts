@@ -172,6 +172,11 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: null,
+        reasonCode: "missing_auth_header",
+      });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -189,6 +194,11 @@ Deno.serve(async (req) => {
     });
     const { data: { user }, error: authError } = await userClient.auth.getUser(token);
     if (authError || !user) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: null,
+        reasonCode: "invalid_jwt",
+      });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -197,12 +207,23 @@ Deno.serve(async (req) => {
 
     const { matched_user_id } = await req.json();
     if (!matched_user_id || typeof matched_user_id !== "string") {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "missing_matched_user_id",
+      });
       return new Response(JSON.stringify({ error: "matched_user_id required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     if (!UUID_REGEX.test(matched_user_id) || matched_user_id === user.id) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: matched_user_id === user.id ? "self_target" : "invalid_matched_user_id",
+        details: { matched_user_id },
+      });
       return new Response(JSON.stringify({ error: "Invalid matched_user_id" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -227,6 +248,16 @@ Deno.serve(async (req) => {
     ]);
 
     if (!callerLike.data || !matchedLike.data) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "not_mutual_match",
+        details: {
+          matched_user_id,
+          caller_liked_target: !!callerLike.data,
+          target_liked_caller: !!matchedLike.data,
+        },
+      });
       return new Response(JSON.stringify({ error: "Match not found" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
