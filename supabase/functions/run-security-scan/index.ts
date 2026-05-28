@@ -1,7 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
-const ADMIN_EMAIL = "ianwmurphy@gmail.com";
 
 type Severity = "pass" | "warn" | "fail";
 interface Finding {
