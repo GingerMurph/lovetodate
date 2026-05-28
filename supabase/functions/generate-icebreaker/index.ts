@@ -65,7 +65,7 @@ Deno.serve(async (req) => {
     // Fetch both profiles in parallel
     const [partnerRes, senderRes] = await Promise.all([
       adminClient.from("profiles")
-        .select("display_name, bio, interests, favourite_music, favourite_film, favourite_sport, favourite_hobbies, occupation, pets, personality_type")
+        .select("display_name, bio, interests, favourite_music, favourite_film, favourite_sport, favourite_hobbies, occupation, pets, personality_type, is_paused")
         .eq("user_id", partnerId)
         .maybeSingle(),
       adminClient.from("profiles")
@@ -74,12 +74,13 @@ Deno.serve(async (req) => {
         .maybeSingle(),
     ]);
 
-    if (!partnerRes.data) {
+    if (!partnerRes.data || (partnerRes.data as any).is_paused) {
       return new Response(JSON.stringify({ error: "Profile not found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     const partner = partnerRes.data;
     const sender = senderRes.data;

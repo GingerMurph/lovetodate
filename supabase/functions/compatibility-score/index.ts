@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    const profileFields = "display_name, bio, interests, relationship_goal, looking_for, gender, smoking, drinking, children, religion, ethnicity, pets, political_beliefs, personality_type, favourite_music, favourite_film, favourite_sport, favourite_hobbies, occupation, education, languages, non_negotiables, body_build, height_cm";
+    const profileFields = "display_name, bio, interests, relationship_goal, looking_for, gender, smoking, drinking, children, religion, ethnicity, pets, political_beliefs, personality_type, favourite_music, favourite_film, favourite_sport, favourite_hobbies, occupation, education, languages, non_negotiables, body_build, height_cm, is_paused";
 
     const [partnerRes, selfRes, sharedGamesRes, promptsA, promptsB] = await Promise.all([
       adminClient.from("profiles").select(profileFields).eq("user_id", partnerId).maybeSingle(),
@@ -74,12 +74,13 @@ Deno.serve(async (req) => {
       adminClient.from("profile_prompts").select("prompt_text, answer_text").eq("user_id", partnerId).limit(3),
     ]);
 
-    if (!partnerRes.data || !selfRes.data) {
+    if (!partnerRes.data || !selfRes.data || (partnerRes.data as any).is_paused) {
       return new Response(JSON.stringify({ error: "Profile not found" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
 
     // Extract hypothetical question match data
     let gameMatchSummary = "";
