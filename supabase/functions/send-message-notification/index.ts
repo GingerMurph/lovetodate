@@ -121,8 +121,9 @@ Deno.serve(async (req) => {
                 },
                 {
                   role: "user",
-                  content: `Write a notification email. ${senderName} sent a new message: "${messagePreview?.substring(0, 50) || "a new message"}". Include a call to action to open the app.`
+                  content: `Write a notification email. ${senderName} sent a new message. Include a call to action to open the app.`
                 }
+
               ],
               max_tokens: 300,
             }),
