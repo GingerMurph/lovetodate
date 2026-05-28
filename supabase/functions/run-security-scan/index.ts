@@ -30,8 +30,19 @@ Deno.serve(async (req) => {
     );
     if (claimsErr || !claims?.claims) return json({ error: "Unauthorized" }, 401);
 
-    const email = (claims.claims.email as string | undefined)?.toLowerCase();
-    if (email !== ADMIN_EMAIL) return json({ error: "Forbidden" }, 403);
+    const admin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    // Check admin role via user_roles table (immutable UUID), not email
+    const { data: roleRow } = await admin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", claims.claims.sub)
+      .eq("role", "admin")
+      .maybeSingle();
+    if (!roleRow) return json({ error: "Forbidden" }, 403);
 
     // Allow lightweight admin check without running a full scan
     let body: any = null;
@@ -40,10 +51,6 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
-    const admin = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
 
     const started = Date.now();
     const findings: Finding[] = [];
