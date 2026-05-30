@@ -1,0 +1,2 @@
+CREATE POLICY "No client delete moves" ON public.game_moves FOR DELETE TO anon, authenticated USING (false);
+CREATE POLICY "No client insert games" ON public.games FOR INSERT TO anon, authenticated WITH CHECK (false);
