@@ -1,12 +1,23 @@
 // E2E test: verifies send-match-notification only succeeds when both users
-// have mutually liked each other. Hits the deployed function over HTTP.
+// have mutually liked each other. Hits the deployed function over HTTP and,
+// when a service role key is available, asserts security_audit_log rows are
+// written for every rejection path.
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { findAuditRow, hasServiceRoleKey } from "../_shared/audit-test-helpers.ts";
 
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
 const FN_URL = `${SUPABASE_URL}/functions/v1/send-match-notification`;
+const FUNCTION_NAME = "send-match-notification";
+
+async function assertAudited(reasonCode: string, userId: string | null, sinceIso: string) {
+  if (!hasServiceRoleKey()) return;
+  const row = await findAuditRow({ functionName: FUNCTION_NAME, reasonCode, userId, sinceIso });
+  assert(row, `expected security_audit_log row for ${FUNCTION_NAME}/${reasonCode} (user=${userId})`);
+}
+
 
 async function call(body: unknown, token?: string) {
   const headers: Record<string, string> = {
