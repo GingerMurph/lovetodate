@@ -1,12 +1,23 @@
 // E2E test: verifies send-match-notification only succeeds when both users
-// have mutually liked each other. Hits the deployed function over HTTP.
+// have mutually liked each other. Hits the deployed function over HTTP and,
+// when a service role key is available, asserts security_audit_log rows are
+// written for every rejection path.
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { findAuditRow, hasServiceRoleKey } from "../_shared/audit-test-helpers.ts";
 
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
 const FN_URL = `${SUPABASE_URL}/functions/v1/send-match-notification`;
+const FUNCTION_NAME = "send-match-notification";
+
+async function assertAudited(reasonCode: string, userId: string | null, sinceIso: string) {
+  if (!hasServiceRoleKey()) return;
+  const row = await findAuditRow({ functionName: FUNCTION_NAME, reasonCode, userId, sinceIso });
+  assert(row, `expected security_audit_log row for ${FUNCTION_NAME}/${reasonCode} (user=${userId})`);
+}
+
 
 async function call(body: unknown, token?: string) {
   const headers: Record<string, string> = {
@@ -44,6 +55,40 @@ Deno.test({
 });
 
 Deno.test({
+  name: "rejects unauthenticated callers and audits missing_auth_header",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const since = new Date().toISOString();
+    const res = await call({ matched_user_id: "00000000-0000-4000-8000-000000000000" });
+    assertEquals(res.status, 401);
+    await assertAudited("missing_auth_header", null, since);
+  },
+});
+
+Deno.test({
+  name: "rejects bogus bearer tokens and audits invalid_jwt",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const since = new Date().toISOString();
+    const headers = {
+      "Content-Type": "application/json",
+      apikey: ANON_KEY,
+      Authorization: "Bearer not.a.jwt",
+    };
+    const res = await fetch(FN_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ matched_user_id: crypto.randomUUID() }),
+    });
+    await res.text();
+    assertEquals(res.status, 401);
+    await assertAudited("invalid_jwt", null, since);
+  },
+});
+
+Deno.test({
   name: "rejects invalid matched_user_id format",
   sanitizeOps: false,
   sanitizeResources: false,
@@ -59,6 +104,26 @@ Deno.test({
     assertEquals(res.status, 400);
   },
 });
+
+Deno.test({
+  name: "rejects self-targeting and audits self_target",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const email = `mn-self-${crypto.randomUUID()}@example.com`;
+    const password = `Pw!${crypto.randomUUID()}`;
+    const { data, error } = await signUpUser(email, password);
+    if (error || !data.session || !data.user) {
+      console.warn("Skipping: signup unavailable —", error?.message);
+      return;
+    }
+    const since = new Date().toISOString();
+    const res = await call({ matched_user_id: data.user.id }, data.session.access_token);
+    assertEquals(res.status, 400);
+    await assertAudited("self_target", data.user.id, since);
+  },
+});
+
 
 Deno.test({
   name: "rejects one-sided like and accepts mutual like",
