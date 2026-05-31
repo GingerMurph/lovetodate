@@ -55,6 +55,40 @@ Deno.test({
 });
 
 Deno.test({
+  name: "rejects unauthenticated callers and audits missing_auth_header",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const since = new Date().toISOString();
+    const res = await call({ matched_user_id: "00000000-0000-4000-8000-000000000000" });
+    assertEquals(res.status, 401);
+    await assertAudited("missing_auth_header", null, since);
+  },
+});
+
+Deno.test({
+  name: "rejects bogus bearer tokens and audits invalid_jwt",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const since = new Date().toISOString();
+    const headers = {
+      "Content-Type": "application/json",
+      apikey: ANON_KEY,
+      Authorization: "Bearer not.a.jwt",
+    };
+    const res = await fetch(FN_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ matched_user_id: crypto.randomUUID() }),
+    });
+    await res.text();
+    assertEquals(res.status, 401);
+    await assertAudited("invalid_jwt", null, since);
+  },
+});
+
+Deno.test({
   name: "rejects invalid matched_user_id format",
   sanitizeOps: false,
   sanitizeResources: false,
@@ -70,6 +104,26 @@ Deno.test({
     assertEquals(res.status, 400);
   },
 });
+
+Deno.test({
+  name: "rejects self-targeting and audits self_target",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const email = `mn-self-${crypto.randomUUID()}@example.com`;
+    const password = `Pw!${crypto.randomUUID()}`;
+    const { data, error } = await signUpUser(email, password);
+    if (error || !data.session || !data.user) {
+      console.warn("Skipping: signup unavailable —", error?.message);
+      return;
+    }
+    const since = new Date().toISOString();
+    const res = await call({ matched_user_id: data.user.id }, data.session.access_token);
+    assertEquals(res.status, 400);
+    await assertAudited("self_target", data.user.id, since);
+  },
+});
+
 
 Deno.test({
   name: "rejects one-sided like and accepts mutual like",
