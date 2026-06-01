@@ -88,8 +88,11 @@ Deno.serve(async (req) => {
           senderNames = (senderProfiles || []).map((p) => p.display_name);
         }
 
-        // Build notification content
-        const { subject, textBody, smsBody } = buildDigestContent(
+        // Build notification content. `aiTextBody` MUST NOT contain user-controlled
+        // display names — it's the only version forwarded to the AI to avoid
+        // prompt injection. `textBody` (with names) is reserved for the final
+        // rendered output and is injected after AI generation.
+        const { subject, textBody, aiTextBody, smsBody } = buildDigestContent(
           digestType,
           totalUnread,
           totalLikes,
@@ -103,7 +106,7 @@ Deno.serve(async (req) => {
 
         // Send email if preferred
         if (pref.email_notifications && email) {
-          await sendDigestEmail(email, subject, textBody);
+          await sendDigestEmail(email, subject, aiTextBody, textBody);
           sentCount++;
         }
 
@@ -138,11 +141,14 @@ function buildDigestContent(
   senderNames: string[]
 ) {
   const greeting = type === "morning" ? "Good morning" : "Good evening";
-  const parts: string[] = [];
+  const parts: string[] = []; // contains user-controlled names — for final output only
+  const aiParts: string[] = []; // safe for AI prompts — no user-controlled content
   const smsParts: string[] = [];
 
   if (likesCount > 0) {
-    parts.push(`💕 ${likesCount} new person${likesCount > 1 ? "s" : ""} would LoveToDate you`);
+    const line = `💕 ${likesCount} new person${likesCount > 1 ? "s" : ""} would LoveToDate you`;
+    parts.push(line);
+    aiParts.push(line);
     smsParts.push(`${likesCount} new like${likesCount > 1 ? "s" : ""}`);
   }
 
@@ -152,11 +158,15 @@ function buildDigestContent(
         ? `${senderNames.slice(0, 2).join(", ")} and ${senderNames.length - 2} other${senderNames.length - 2 > 1 ? "s" : ""}`
         : senderNames.join(" and ");
     parts.push(`💬 You have ${unreadCount} unread message${unreadCount > 1 ? "s" : ""} from ${namesList}`);
+    // AI version omits names to prevent prompt injection via display_name
+    aiParts.push(`💬 You have ${unreadCount} unread message${unreadCount > 1 ? "s" : ""}`);
     smsParts.push(`${unreadCount} unread msg${unreadCount > 1 ? "s" : ""}`);
   }
 
   if (pendingGames > 0) {
-    parts.push(`🎮 ${pendingGames} game invite${pendingGames > 1 ? "s" : ""} waiting for you`);
+    const line = `🎮 ${pendingGames} game invite${pendingGames > 1 ? "s" : ""} waiting for you`;
+    parts.push(line);
+    aiParts.push(line);
     smsParts.push(`${pendingGames} game invite${pendingGames > 1 ? "s" : ""}`);
   }
 
@@ -165,20 +175,20 @@ function buildDigestContent(
       ? `☀️ ${greeting}! Your LoveToDate morning summary`
       : `🌙 ${greeting}! Don't miss out on LoveToDate`;
 
-  const textBody =
+  const buildBody = (lines: string[]) =>
     type === "morning"
-      ? `${greeting}! Here's your morning summary from LoveToDate:\n\n${parts.join("\n")}\n\nOpen the app to see what's waiting for you! 💕`
-      : `${greeting}! You still have activity waiting on LoveToDate:\n\n${parts.join("\n")}\n\nDon't keep them waiting — check the app now! 💕`;
+      ? `${greeting}! Here's your morning summary from LoveToDate:\n\n${lines.join("\n")}\n\nOpen the app to see what's waiting for you! 💕`
+      : `${greeting}! You still have activity waiting on LoveToDate:\n\n${lines.join("\n")}\n\nDon't keep them waiting — check the app now! 💕`;
 
   const smsBody =
     type === "morning"
       ? `☀️ LoveToDate: ${smsParts.join(", ")}. Check the app!`
       : `🌙 LoveToDate: Still have ${smsParts.join(", ")} waiting. Don't miss out!`;
 
-  return { subject, textBody, smsBody };
+  return { subject, textBody: buildBody(parts), aiTextBody: buildBody(aiParts), smsBody };
 }
 
-async function sendDigestEmail(email: string, subject: string, textBody: string) {
+async function sendDigestEmail(email: string, subject: string, aiTextBody: string, textBody: string) {
   try {
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!lovableApiKey) {
@@ -186,7 +196,10 @@ async function sendDigestEmail(email: string, subject: string, textBody: string)
       return;
     }
 
-    // Generate styled email HTML using AI
+    // Generate styled email HTML using AI. Only `aiTextBody` (free of any
+    // user-controlled display names) is forwarded to the AI. The full
+    // `textBody` with sender names is reserved for the deterministic
+    // fallback rendering and is never sent to the model.
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -203,7 +216,7 @@ async function sendDigestEmail(email: string, subject: string, textBody: string)
           },
           {
             role: "user",
-            content: `Create an email with subject: "${subject}"\n\nContent: ${textBody}`,
+            content: `Create an email with subject: "${subject}"\n\nContent: ${aiTextBody}`,
           },
         ],
         max_tokens: 500,
