@@ -1,0 +1,147 @@
+name: Nightly Security Scan
+
+on:
+  schedule:
+    # 02:17 UTC every day (off-the-hour to avoid GitHub cron congestion)
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    name: Nightly static security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Run security scan
+        id: scan
+        continue-on-error: true
+        run: |
+          set +e
+          bun scripts/security-scan.ts > security-report.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Restore previous baseline
+        id: baseline
+        uses: actions/cache@v4
+        with:
+          path: .security-baseline.json
+          key: security-baseline-v1
+          restore-keys: |
+            security-baseline-v1
+
+      - name: Diff against baseline
+        id: diff
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          report = json.loads(pathlib.Path("security-report.json").read_text())
+          findings = [f for f in report.get("findings", []) if f.get("severity") in ("fail","warn")]
+          current_ids = {f["id"] for f in findings}
+
+          baseline_path = pathlib.Path(".security-baseline.json")
+          baseline_ids = set()
+          if baseline_path.exists():
+              try:
+                  baseline_ids = set(json.loads(baseline_path.read_text()).get("ids", []))
+              except Exception:
+                  baseline_ids = set()
+
+          new_ids = sorted(current_ids - baseline_ids)
+          new_findings = [f for f in findings if f["id"] in new_ids]
+
+          lines = []
+          for f in new_findings:
+              lines.append(f"- **[{f['severity'].upper()}] {f['category']}** — {f['title']}\n  {f.get('detail','').strip()}")
+          body = "\n".join(lines) if lines else "_No new findings._"
+
+          out = os.environ["GITHUB_OUTPUT"]
+          with open(out, "a") as fh:
+              fh.write(f"new_count={len(new_ids)}\n")
+              fh.write("body<<EOF\n" + body + "\nEOF\n")
+
+          # Refresh baseline so the next run only flags net-new issues
+          baseline_path.write_text(json.dumps({"ids": sorted(current_ids)}, indent=2))
+          PY
+
+      - name: Save updated baseline
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .security-baseline.json
+          key: security-baseline-v1
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report-${{ github.run_id }}
+          path: |
+            security-report.json
+            .security-baseline.json
+          retention-days: 30
+
+      - name: Summarize
+        if: always()
+        run: |
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          {
+            echo "## Nightly security scan"
+            echo ""
+            echo "[View full logs and artifact]($RUN_URL)"
+            echo ""
+            if [ -f security-report.json ]; then
+              echo '### Counts'
+              echo '```json'
+              jq '.counts' security-report.json
+              echo '```'
+            fi
+            echo ''
+            echo "### New findings since last run (${{ steps.diff.outputs.new_count }})"
+            cat <<'BODY'
+          ${{ steps.diff.outputs.body }}
+          BODY
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open issue for new findings
+        if: steps.diff.outputs.new_count != '0'
+        uses: actions/github-script@v7
+        env:
+          NEW_COUNT: ${{ steps.diff.outputs.new_count }}
+          NEW_BODY: ${{ steps.diff.outputs.body }}
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const today = new Date().toISOString().slice(0,10);
+            const title = `Nightly security scan: ${process.env.NEW_COUNT} new finding(s) — ${today}`;
+            const body = [
+              `The nightly security scan detected **${process.env.NEW_COUNT}** new finding(s).`,
+              ``,
+              `**Run logs:** ${runUrl}`,
+              `**Artifact:** \`security-report-${context.runId}\` (attached to the run)`,
+              ``,
+              `### New findings`,
+              process.env.NEW_BODY || '_(none)_',
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['security', 'nightly-scan'],
+            });
+
+      - name: Fail job if scan exited non-zero
+        if: steps.scan.outputs.exit_code != '0'
+        run: |
+          echo "::error::Security scan reported critical findings (exit ${{ steps.scan.outputs.exit_code }}). See run logs."
+          exit 1
