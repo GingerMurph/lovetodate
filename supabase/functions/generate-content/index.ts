@@ -55,6 +55,30 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
+    // Validate type against allowlist
+    const ALLOWED_TYPES = ["testimonial", "dating_advice", "blog", "conversation_starters"] as const;
+    if (typeof type !== "string" || !ALLOWED_TYPES.includes(type as typeof ALLOWED_TYPES[number])) {
+      return new Response(JSON.stringify({ error: "Invalid type" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate prompt: must be string, max 500 chars
+    if (typeof prompt !== "string" || prompt.length === 0 || prompt.length > 500) {
+      return new Response(JSON.stringify({ error: "Prompt must be a non-empty string of 500 characters or fewer" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Strip role markers / control chars to mitigate prompt injection
+    const sanitizedPrompt = prompt
+      .replace(/[\u0000-\u001F\u007F]/g, " ")
+      .replace(/<\|.*?\|>/g, " ")
+      .replace(/\b(system|assistant|user)\s*:/gi, " ")
+      .trim();
+
     let systemPrompt = "";
     if (type === "testimonial") {
       systemPrompt = "You generate realistic dating app testimonials. Return JSON: {\"content\": \"...\", \"name\": \"FirstName, Age, City\"}. Keep testimonials warm and genuine.";
@@ -64,8 +88,6 @@ serve(async (req) => {
       systemPrompt = "You generate dating blog post ideas. Return JSON: {\"items\": [{\"title\": \"...\", \"excerpt\": \"...\", \"category\": \"...\"}]}.";
     } else if (type === "conversation_starters") {
       systemPrompt = "You generate conversation starters for dating. Return JSON: {\"items\": [\"question1\", \"question2\", ...]}. Make them fun and creative.";
-    } else {
-      systemPrompt = "You are a helpful assistant for a dating app. Return JSON.";
     }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -78,7 +100,7 @@ serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
+          { role: "user", content: sanitizedPrompt },
         ],
         response_format: { type: "json_object" },
       }),

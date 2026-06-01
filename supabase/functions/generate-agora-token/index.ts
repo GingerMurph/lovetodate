@@ -33,7 +33,13 @@ serve(async (req) => {
     const userId = userData.user.id;
 
     const { partnerId } = await req.json();
-    if (!partnerId) throw new Error("partnerId is required");
+    const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!partnerId || typeof partnerId !== "string" || !UUID_REGEX.test(partnerId) || partnerId === userId) {
+      return new Response(JSON.stringify({ error: "Invalid partnerId" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Verify mutual match (both liked each other)
     const [likeA, likeB] = await Promise.all([

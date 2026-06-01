@@ -117,11 +117,11 @@ Deno.serve(async (req) => {
               messages: [
                 {
                   role: "system",
-                  content: "You are writing a short, friendly email notification for a dating app called 'LoveToDate'. Keep it brief and warm. Return ONLY the email body HTML, no subject line. Use inline styles. Keep it under 100 words."
+                  content: "You are writing a short, friendly email notification for a dating app called 'LoveToDate'. Keep it brief and warm. Return ONLY the email body HTML, no subject line. Use inline styles. Keep it under 100 words. Refer to the sender as 'someone' — the real name will be inserted afterwards."
                 },
                 {
                   role: "user",
-                  content: `Write a notification email. ${senderName} sent a new message. Include a call to action to open the app.`
+                  content: "Write a notification email letting the recipient know that someone sent them a new message. Include a call to action to open the app."
                 }
 
               ],
@@ -129,10 +129,20 @@ Deno.serve(async (req) => {
             }),
           });
 
+          // Escape sender name (it's user-controlled) before injecting into HTML
+          const escapedName = senderName
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+
           if (aiResponse.ok) {
             const aiData = await aiResponse.json();
-            const emailBody = aiData.choices?.[0]?.message?.content || 
-              `<p>Hi! <strong>${senderName}</strong> sent you a new message on LoveToDate.</p><p>Open the app to read and reply!</p>`;
+            const aiBody = aiData.choices?.[0]?.message?.content || "";
+            // Replace generic "someone" placeholder with the escaped real name; never feed the name to the AI
+            const emailBody = aiBody
+              ? aiBody.replace(/\bsomeone\b/gi, `<strong>${escapedName}</strong>`)
+              : `<p>Hi! <strong>${escapedName}</strong> sent you a new message on LoveToDate.</p><p>Open the app to read and reply!</p>`;
 
             // Send via Supabase Auth (magic link email as a workaround for simple email)
             // For production, integrate a proper email service
