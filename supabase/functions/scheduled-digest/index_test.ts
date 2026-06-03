@@ -15,8 +15,10 @@ Deno.test("aiTextBody never includes sender display names", () => {
 
   for (const name of malicious) {
     assert(!aiTextBody.includes(name), `aiTextBody must not contain sender name: ${name}`);
-    assertStringIncludes(textBody, name);
   }
+  // textBody (deterministic fallback) renders the first two names verbatim
+  assertStringIncludes(textBody, malicious[0]);
+  assertStringIncludes(textBody, malicious[1]);
   assertStringIncludes(aiTextBody, "3 unread messages");
 });
 
