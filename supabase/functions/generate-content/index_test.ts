@@ -101,3 +101,49 @@ Deno.test({
     assertEquals(res.status, 400);
   },
 });
+
+Deno.test({
+  name: "generate-content: rejects empty-string type",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call(
+      { type: "", prompt: "valid prompt here" },
+      data.session.access_token,
+    );
+    assertEquals(res.status, 400);
+    assertEquals(res.json?.error, "Invalid type");
+  },
+});
+
+Deno.test({
+  name: "generate-content: rejects malformed JSON body",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const headers: Record<string, string> = { "Content-Type": "application/json", apikey: ANON_KEY, Authorization: `Bearer ${data.session.access_token}` };
+    const res = await fetch(FN_URL, { method: "POST", headers, body: "{not json" });
+    await res.text();
+    assertEquals(res.status, 500);
+  },
+});
+
+Deno.test({
+  name: "generate-content: rejects oversized type payload",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call(
+      { type: "testimonial".repeat(1000), prompt: "hi" },
+      data.session.access_token,
+    );
+    assertEquals(res.status, 400);
+    assertEquals(res.json?.error, "Invalid type");
+  },
+});
