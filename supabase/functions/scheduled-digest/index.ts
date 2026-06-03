@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
   }
 });
 
-function buildDigestContent(
+export function buildDigestContent(
   type: "morning" | "evening",
   unreadCount: number,
   likesCount: number,
