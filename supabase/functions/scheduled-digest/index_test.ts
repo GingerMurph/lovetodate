@@ -26,12 +26,12 @@ Deno.test("aiTextBody and textBody agree on counts but differ on names", () => {
   assertStringIncludes(textBody, "from Alice");
   assert(!aiTextBody.includes("Alice"));
   // Likes + games lines (deterministic) are identical
-  assertStringIncludes(aiTextBody, "2 new people would LoveToDate you");
+  assertStringIncludes(aiTextBody, "2 new persons would LoveToDate you");
   assertStringIncludes(aiTextBody, "1 game invite waiting");
 });
 
 Deno.test("empty senderNames produces safe content for AI", () => {
   const { aiTextBody } = buildDigestContent("morning", 0, 5, 0, []);
-  assertStringIncludes(aiTextBody, "5 new people would LoveToDate you");
+  assertStringIncludes(aiTextBody, "5 new persons would LoveToDate you");
   assert(!aiTextBody.includes("undefined"));
 });
