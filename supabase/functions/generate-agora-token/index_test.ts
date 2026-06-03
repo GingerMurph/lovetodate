@@ -77,3 +77,43 @@ Deno.test({
     assertEquals(res.json?.error, "Invalid partnerId");
   },
 });
+
+Deno.test({
+  name: "generate-agora-token: rejects empty-string partnerId",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call({ partnerId: "" }, data.session.access_token);
+    assertEquals(res.status, 400);
+    assertEquals(res.json?.error, "Invalid partnerId");
+  },
+});
+
+Deno.test({
+  name: "generate-agora-token: rejects malformed JSON body",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const headers: Record<string, string> = { "Content-Type": "application/json", apikey: ANON_KEY, Authorization: `Bearer ${data.session.access_token}` };
+    const res = await fetch(FN_URL, { method: "POST", headers, body: "{not json" });
+    await res.text();
+    assertEquals(res.status, 500);
+  },
+});
+
+Deno.test({
+  name: "generate-agora-token: rejects oversized partnerId payload",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call({ partnerId: "x".repeat(10000) }, data.session.access_token);
+    assertEquals(res.status, 400);
+    assertEquals(res.json?.error, "Invalid partnerId");
+  },
+});
