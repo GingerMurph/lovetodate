@@ -53,6 +53,7 @@ jobs:
             supabase/functions/update-game-state/index_test.ts \
             supabase/functions/generate-agora-token/index_test.ts \
             supabase/functions/generate-content/index_test.ts \
+            supabase/functions/generate-content/sanitize_test.ts \
             supabase/functions/send-message-notification/index_test.ts \
             supabase/functions/scheduled-digest/index_test.ts
 
