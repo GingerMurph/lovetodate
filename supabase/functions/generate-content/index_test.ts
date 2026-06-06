@@ -5,7 +5,7 @@
 // - enforces prompt length / non-empty
 // - accepts a well-formed request (or surfaces upstream AI error, not a 400)
 import "https://deno.land/std@0.224.0/dotenv/load.ts";
-import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assertEquals, assertNotEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
