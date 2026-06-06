@@ -71,3 +71,35 @@ Deno.test("sanitizePrompt: does not strip 'system' / 'user' when not used as a r
   assertStringIncludes(out, "user");
   assertStringIncludes(out, "system");
 });
+
+Deno.test("sanitizePrompt: strips Unicode control characters (zero-width, RTL marks)", () => {
+  const evil = "hello\u200Bworld\u200C!\u202E secret admin";
+  const out = sanitizePrompt(evil);
+  assertEquals(out.includes("\u200B"), false, "zero-width space leaked");
+  assertEquals(out.includes("\u200C"), false, "zero-width non-joiner leaked");
+  assertEquals(out.includes("\u202E"), false, "RTL override leaked");
+  assertStringIncludes(out, "hello");
+  assertStringIncludes(out, "world");
+  assertStringIncludes(out, "secret");
+});
+
+Deno.test("sanitizePrompt: strips literal Unicode escape sequences like \\u0000 and \\u202E", () => {
+  const inputs = [
+    "start \\u0000 end",
+    "inject \\u202E hidden",
+    "mixed \\u0041 \\u00E9 text",
+  ];
+  for (const i of inputs) {
+    const out = sanitizePrompt(i);
+    assertEquals(out.includes("\\u"), false, `leaked literal escape in: ${out}`);
+  }
+});
+
+Deno.test("sanitizePrompt: preserves legitimate Unicode (emoji, accented chars)", () => {
+  const out = sanitizePrompt("café 🎉 naïve résumé 日本語");
+  assertStringIncludes(out, "café");
+  assertStringIncludes(out, "🎉");
+  assertStringIncludes(out, "naïve");
+  assertStringIncludes(out, "résumé");
+  assertStringIncludes(out, "日本語");
+});
