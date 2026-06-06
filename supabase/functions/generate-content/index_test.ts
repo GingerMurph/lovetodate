@@ -88,6 +88,38 @@ Deno.test({
 });
 
 Deno.test({
+  name: "generate-content: accepts prompt of exactly 1 char",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call(
+      { type: "testimonial", prompt: "x" },
+      data.session.access_token,
+    );
+    assertNotEquals(res.status, 400);
+    assertNotEquals(res.status, 401);
+  },
+});
+
+Deno.test({
+  name: "generate-content: accepts prompt of exactly 500 chars",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    const { data, error } = await signUp();
+    if (error || !data.session) { console.warn("skip: signup unavailable"); return; }
+    const res = await call(
+      { type: "testimonial", prompt: "a".repeat(500) },
+      data.session.access_token,
+    );
+    assertNotEquals(res.status, 400);
+    assertNotEquals(res.status, 401);
+  },
+});
+
+Deno.test({
   name: "generate-content: rejects non-string prompt",
   sanitizeOps: false,
   sanitizeResources: false,
