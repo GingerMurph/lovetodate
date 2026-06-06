@@ -73,11 +73,7 @@ serve(async (req) => {
     }
 
     // Strip role markers / control chars to mitigate prompt injection
-    const sanitizedPrompt = prompt
-      .replace(/[\u0000-\u001F\u007F]/g, " ")
-      .replace(/<\|.*?\|>/g, " ")
-      .replace(/\b(system|assistant|user)\s*:/gi, " ")
-      .trim();
+    const sanitizedPrompt = sanitizePrompt(prompt);
 
     let systemPrompt = "";
     if (type === "testimonial") {
