@@ -6,6 +6,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+export function sanitizePrompt(prompt: string): string {
+  return prompt
+    .replace(/[\u0000-\u001F\u007F]/g, " ")
+    .replace(/<\|.*?\|>/g, " ")
+    .replace(/\b(system|assistant|user)\s*:/gi, " ")
+    .trim();
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -73,11 +81,7 @@ serve(async (req) => {
     }
 
     // Strip role markers / control chars to mitigate prompt injection
-    const sanitizedPrompt = prompt
-      .replace(/[\u0000-\u001F\u007F]/g, " ")
-      .replace(/<\|.*?\|>/g, " ")
-      .replace(/\b(system|assistant|user)\s*:/gi, " ")
-      .trim();
+    const sanitizedPrompt = sanitizePrompt(prompt);
 
     let systemPrompt = "";
     if (type === "testimonial") {
