@@ -8,7 +8,7 @@ const corsHeaders = {
 
 export function sanitizePrompt(prompt: string): string {
   return prompt
-    .replace(/\p{Cc}/gu, " ") // all Unicode control characters (ASCII + zero-width, RTL marks, etc.)
+    .replace(/[\p{Cc}\p{Cf}]/gu, " ") // all Unicode control & format chars (ASCII controls, zero-width, RTL marks, etc.)
     .replace(/\\u[0-9a-fA-F]{4}/g, " ") // literal Unicode escape sequences like \u0000, \u202E
     .replace(/<\|.*?\|>/g, " ")
     .replace(/\b(system|assistant|user)\s*:/gi, " ")
