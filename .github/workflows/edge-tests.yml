@@ -55,7 +55,8 @@ jobs:
             supabase/functions/generate-content/index_test.ts \
             supabase/functions/generate-content/sanitize_test.ts \
             supabase/functions/send-message-notification/index_test.ts \
-            supabase/functions/scheduled-digest/index_test.ts
+            supabase/functions/scheduled-digest/index_test.ts \
+            supabase/tests/user_roles_rls_test.ts
 
       - name: Cleanup
         if: always()
