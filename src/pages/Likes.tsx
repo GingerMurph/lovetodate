@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
+
 import { AvatarImage } from "@/components/AvatarImage";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriberBadge from "@/components/SubscriberBadge";
