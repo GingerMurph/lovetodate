@@ -47,7 +47,21 @@ export default function DatingAdvice() {
 
   return (
     <>
-      <SEO title="Dating Advice — Expert Tips | LoveToDate" description="Practical dating advice and expert tips on first dates, communication, and building healthy relationships from the LoveToDate team." path="/dating-advice" />
+      <SEO
+        title="Dating Advice — Expert Tips | LoveToDate"
+        description="Practical dating advice and expert tips on first dates, communication, and building healthy relationships from the LoveToDate team."
+        path="/dating-advice"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: tips.map((t) => ({
+            "@type": "Question",
+            name: t.title,
+            acceptedAnswer: { "@type": "Answer", text: t.content },
+          })),
+        }}
+      />
+
       <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
