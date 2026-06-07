@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, MessageSquare, Sparkles, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
+
 import { AvatarImage } from "@/components/AvatarImage";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriberBadge from "@/components/SubscriberBadge";
