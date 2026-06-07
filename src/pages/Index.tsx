@@ -36,7 +36,7 @@ const Index = () => {
 
   return (
     <>
-      <SEO title="LoveToDate — UK Dating, Only Pay When You Find a Match" description="Free profile browsing and likes, AI-powered compatibility, and pay only when you find someone you would love to date. Premium UK dating without subscriptions." path="/" />
+      <SEO title="LoveToDate — UK Dating, Only Pay When You Find a Match" description="Free browsing and likes with AI-powered compatibility. Pay only when you find someone you'd LoveToDate. Premium UK dating, no subscriptions." path="/" />
       <div className="min-h-screen relative">
       <BackgroundImage />
 
