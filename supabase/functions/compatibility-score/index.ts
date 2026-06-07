@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
+import { sanitizePrompt, sanitizeList } from "../_shared/sanitize-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -110,35 +111,36 @@ This is CRITICAL data - it reveals how they actually think and make decisions to
 
     const formatProfile = (p: Record<string, unknown>, prompts: any[]) => {
       const lines: string[] = [];
-      if (p.bio) lines.push(`Bio: ${(p.bio as string).substring(0, 300)}`);
-      if (p.interests && (p.interests as string[]).length) lines.push(`Interests: ${(p.interests as string[]).join(", ")}`);
-      if (p.relationship_goal) lines.push(`Relationship goal: ${Array.isArray(p.relationship_goal) ? (p.relationship_goal as string[]).join(", ") : p.relationship_goal}`);
-      if (p.looking_for) lines.push(`Looking for: ${p.looking_for}`);
-      if (p.smoking) lines.push(`Smoking: ${p.smoking}`);
-      if (p.drinking) lines.push(`Drinking: ${p.drinking}`);
-      if (p.children) lines.push(`Children: ${p.children}`);
-      if (p.religion) lines.push(`Religion: ${p.religion}`);
-      if (p.pets) lines.push(`Pets: ${p.pets}`);
-      if (p.political_beliefs) lines.push(`Politics: ${p.political_beliefs}`);
-      if (p.personality_type) lines.push(`Personality type: ${p.personality_type}`);
-      if (p.favourite_music && (p.favourite_music as string[]).length) lines.push(`Music taste: ${(p.favourite_music as string[]).join(", ")}`);
-      if (p.favourite_film && (p.favourite_film as string[]).length) lines.push(`Film preferences: ${(p.favourite_film as string[]).join(", ")}`);
-      if (p.favourite_sport && (p.favourite_sport as string[]).length) lines.push(`Sports: ${(p.favourite_sport as string[]).join(", ")}`);
-      if (p.favourite_hobbies && (p.favourite_hobbies as string[]).length) lines.push(`Hobbies: ${(p.favourite_hobbies as string[]).join(", ")}`);
-      if (p.occupation) lines.push(`Career: ${p.occupation}`);
-      if (p.education) lines.push(`Education: ${p.education}`);
-      if (p.languages && (p.languages as string[]).length) lines.push(`Languages: ${(p.languages as string[]).join(", ")}`);
-      if (p.ethnicity) lines.push(`Ethnicity: ${p.ethnicity}`);
-      if (p.non_negotiables && (p.non_negotiables as string[]).length) lines.push(`Deal-breakers: ${(p.non_negotiables as string[]).join(", ")}`);
-      
-      // Add profile prompts for deeper personality insight
+      const sList = (v: unknown) => sanitizeList(v as unknown).join(", ");
+      if (p.bio) lines.push(`Bio: ${sanitizePrompt(p.bio, 300)}`);
+      if (p.interests && (p.interests as string[]).length) lines.push(`Interests: ${sList(p.interests)}`);
+      if (p.relationship_goal) lines.push(`Relationship goal: ${Array.isArray(p.relationship_goal) ? sList(p.relationship_goal) : sanitizePrompt(p.relationship_goal, 80)}`);
+      if (p.looking_for) lines.push(`Looking for: ${sanitizePrompt(p.looking_for, 80)}`);
+      if (p.smoking) lines.push(`Smoking: ${sanitizePrompt(p.smoking, 40)}`);
+      if (p.drinking) lines.push(`Drinking: ${sanitizePrompt(p.drinking, 40)}`);
+      if (p.children) lines.push(`Children: ${sanitizePrompt(p.children, 40)}`);
+      if (p.religion) lines.push(`Religion: ${sanitizePrompt(p.religion, 60)}`);
+      if (p.pets) lines.push(`Pets: ${sanitizePrompt(p.pets, 80)}`);
+      if (p.political_beliefs) lines.push(`Politics: ${sanitizePrompt(p.political_beliefs, 80)}`);
+      if (p.personality_type) lines.push(`Personality type: ${sanitizePrompt(p.personality_type, 40)}`);
+      if (p.favourite_music && (p.favourite_music as string[]).length) lines.push(`Music taste: ${sList(p.favourite_music)}`);
+      if (p.favourite_film && (p.favourite_film as string[]).length) lines.push(`Film preferences: ${sList(p.favourite_film)}`);
+      if (p.favourite_sport && (p.favourite_sport as string[]).length) lines.push(`Sports: ${sList(p.favourite_sport)}`);
+      if (p.favourite_hobbies && (p.favourite_hobbies as string[]).length) lines.push(`Hobbies: ${sList(p.favourite_hobbies)}`);
+      if (p.occupation) lines.push(`Career: ${sanitizePrompt(p.occupation, 80)}`);
+      if (p.education) lines.push(`Education: ${sanitizePrompt(p.education, 80)}`);
+      if (p.languages && (p.languages as string[]).length) lines.push(`Languages: ${sList(p.languages)}`);
+      if (p.ethnicity) lines.push(`Ethnicity: ${sanitizePrompt(p.ethnicity, 60)}`);
+      if (p.non_negotiables && (p.non_negotiables as string[]).length) lines.push(`Deal-breakers: ${sList(p.non_negotiables)}`);
+
+      // Add profile prompts for deeper personality insight (sanitized)
       if (prompts.length > 0) {
         lines.push("\nPersonality prompts (these reveal character and values):");
         for (const prompt of prompts) {
-          lines.push(`  Q: ${prompt.prompt_text}\n  A: ${prompt.answer_text}`);
+          lines.push(`  Q: ${sanitizePrompt(prompt.prompt_text, 160)}\n  A: ${sanitizePrompt(prompt.answer_text, 400)}`);
         }
       }
-      
+
       return lines.join("\n");
     };
 
@@ -186,7 +188,7 @@ OUTPUT: Return an overall score (0-100), dimension scores, a fun summary (120 ch
 ===== PERSON A (the viewer) =====
 ${formatProfile(selfRes.data, promptsA.data || [])}
 
-===== PERSON B (${partnerRes.data.display_name}) =====
+===== PERSON B (${sanitizePrompt(partnerRes.data.display_name, 60)}) =====
 ${formatProfile(partnerRes.data, promptsB.data || [])}
 ${gameMatchSummary}
 

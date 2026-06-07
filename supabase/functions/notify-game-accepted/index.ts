@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
+import { sanitizePrompt } from "../_shared/sanitize-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -93,7 +94,7 @@ Deno.serve(async (req) => {
       .eq("user_id", accepterId)
       .single();
 
-    const accepterName = accepterProfile?.display_name || "Your opponent";
+    const accepterName = sanitizePrompt(accepterProfile?.display_name || "Your opponent", 60);
     const gameName = GAME_LABELS[gameType] || "a game";
 
     // Get challenger's notification preferences

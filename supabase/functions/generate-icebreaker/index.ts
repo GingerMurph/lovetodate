@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
+import { sanitizePrompt, sanitizeList } from "../_shared/sanitize-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -85,23 +86,24 @@ Deno.serve(async (req) => {
     const partner = partnerRes.data;
     const sender = senderRes.data;
 
-    // Build context about the partner
+    // Build context about the partner — sanitize all user-controlled fields
+    // to prevent prompt-injection attacks against the AI model.
     const profileDetails: string[] = [];
-    if (partner.bio) profileDetails.push(`Bio: ${partner.bio.substring(0, 200)}`);
-    if (partner.interests?.length) profileDetails.push(`Interests: ${partner.interests.join(", ")}`);
-    if (partner.favourite_music?.length) profileDetails.push(`Music: ${partner.favourite_music.join(", ")}`);
-    if (partner.favourite_film?.length) profileDetails.push(`Films: ${partner.favourite_film.join(", ")}`);
-    if (partner.favourite_sport?.length) profileDetails.push(`Sports: ${partner.favourite_sport.join(", ")}`);
-    if (partner.favourite_hobbies?.length) profileDetails.push(`Hobbies: ${partner.favourite_hobbies.join(", ")}`);
-    if (partner.occupation) profileDetails.push(`Occupation: ${partner.occupation}`);
-    if (partner.pets) profileDetails.push(`Pets: ${partner.pets}`);
-    if (partner.personality_type) profileDetails.push(`Personality: ${partner.personality_type}`);
+    if (partner.bio) profileDetails.push(`Bio: ${sanitizePrompt(partner.bio, 200)}`);
+    if (partner.interests?.length) profileDetails.push(`Interests: ${sanitizeList(partner.interests).join(", ")}`);
+    if (partner.favourite_music?.length) profileDetails.push(`Music: ${sanitizeList(partner.favourite_music).join(", ")}`);
+    if (partner.favourite_film?.length) profileDetails.push(`Films: ${sanitizeList(partner.favourite_film).join(", ")}`);
+    if (partner.favourite_sport?.length) profileDetails.push(`Sports: ${sanitizeList(partner.favourite_sport).join(", ")}`);
+    if (partner.favourite_hobbies?.length) profileDetails.push(`Hobbies: ${sanitizeList(partner.favourite_hobbies).join(", ")}`);
+    if (partner.occupation) profileDetails.push(`Occupation: ${sanitizePrompt(partner.occupation, 80)}`);
+    if (partner.pets) profileDetails.push(`Pets: ${sanitizePrompt(partner.pets, 80)}`);
+    if (partner.personality_type) profileDetails.push(`Personality: ${sanitizePrompt(partner.personality_type, 40)}`);
 
     // Find shared interests
     const sharedInterests: string[] = [];
     if (sender?.interests && partner.interests) {
       const shared = sender.interests.filter((i: string) => partner.interests?.includes(i));
-      if (shared.length) sharedInterests.push(`Shared interests: ${shared.join(", ")}`);
+      if (shared.length) sharedInterests.push(`Shared interests: ${sanitizeList(shared).join(", ")}`);
     }
 
     const profileContext = profileDetails.length > 0
@@ -135,7 +137,7 @@ Deno.serve(async (req) => {
           },
           {
             role: "user",
-            content: `Match's name: ${partner.display_name}\n\nTheir profile:\n${profileContext}${sharedContext}`,
+            content: `Match's name: ${sanitizePrompt(partner.display_name, 60)}\n\nTheir profile:\n${profileContext}${sharedContext}`,
           },
         ],
         max_tokens: 400,
