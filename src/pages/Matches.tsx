@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Heart, MapPin, MessageSquare, Sparkles, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
+
 import { AvatarImage } from "@/components/AvatarImage";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriberBadge from "@/components/SubscriberBadge";
@@ -113,8 +115,10 @@ const Matches = () => {
 
   return (
     <AppLayout>
+      <SEO title="Your Matches — LoveToDate" description="See who LoveToDate'd you back. Start meaningful conversations with mutual matches on the UK's premium dating app." path="/matches" />
       <div className="container mx-auto max-w-2xl px-4 py-6">
         <h1 className="mb-2 font-serif text-2xl font-bold">
+
           Your <span className="text-gold">Matches</span>
         </h1>
         <p className="mb-6 text-sm text-muted-foreground">

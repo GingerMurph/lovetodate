@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Heart, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
+
 import { AvatarImage } from "@/components/AvatarImage";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import SubscriberBadge from "@/components/SubscriberBadge";
@@ -75,7 +77,9 @@ const Likes = () => {
 
   return (
     <AppLayout>
+      <SEO title="Your Likes — LoveToDate" description="Review the people you've LoveToDate'd and those who've LoveToDate'd you back on the UK's premium dating app." path="/likes" />
       <div className="container mx-auto max-w-2xl px-4 py-6">
+
         <h1 className="mb-6 font-serif text-2xl font-bold">
           Love To <span className="text-gold">Date</span>
         </h1>

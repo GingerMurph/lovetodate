@@ -46,7 +46,25 @@ export default function Blog() {
 
   return (
     <>
-      <SEO title="Dating Blog — Stories & Insights | LoveToDate" description="Read the LoveToDate blog for modern dating stories, relationship insights, and tips on finding someone you genuinely love to date." path="/blog" />
+      <SEO
+        title="Dating Blog — Stories & Insights | LoveToDate"
+        description="Read the LoveToDate blog for modern dating stories, relationship insights, and tips on finding someone you genuinely love to date."
+        path="/blog"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: "LoveToDate Blog",
+          url: "https://lovetodate.lovable.app/blog",
+          description: "Modern dating stories, relationship insights, and tips from LoveToDate.",
+          blogPost: posts.map((p) => ({
+            "@type": "BlogPosting",
+            headline: p.title,
+            description: p.excerpt,
+            articleSection: p.category,
+          })),
+        }}
+      />
+
       <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
