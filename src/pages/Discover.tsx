@@ -15,6 +15,8 @@ import { AvatarImage } from "@/components/AvatarImage";
 import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import SEO from "@/components/SEO";
+
 import SwipeCard from "@/components/SwipeCard";
 import { PhotoCarousel } from "@/components/PhotoCarousel";
 import ProfilePromptDisplay from "@/components/ProfilePromptDisplay";
