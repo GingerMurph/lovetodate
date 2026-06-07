@@ -237,8 +237,10 @@ const Discover = () => {
 
   return (
     <AppLayout>
+      <SEO title="Discover People — LoveToDate" description="Browse AI-matched profiles of singles in the UK. Like for free and only pay when you find someone you'd LoveToDate." path="/discover" />
       {showHearts && <HeartsCelebration onComplete={() => setShowHearts(false)} />}
       <div className="container mx-auto px-4 py-6">
+
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-serif text-2xl font-bold">
             Discover <span className="text-gold">People</span>
