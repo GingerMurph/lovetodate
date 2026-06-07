@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { logAuditRejection } from "../_shared/audit-log.ts";
+import { validateGameUpdate } from "../_shared/game-validators.ts";
 
 const FUNCTION_NAME = "update-game-state";
 
@@ -177,6 +178,29 @@ Deno.serve(async (req) => {
         details: { gameId, currentTurn },
       });
       return json({ error: "Invalid turn owner" }, 400);
+    }
+
+    // Server-side validation of the proposed game state — prevents a
+    // malicious client from self-declaring a win without a legitimate board.
+    const validation = validateGameUpdate({
+      gameType: game.game_type,
+      previousState: game.game_state,
+      nextState: gameState!,
+      status: status!,
+      winnerId: winnerId ?? null,
+      currentTurn: currentTurn ?? null,
+      movingPlayerId: user.id,
+      creatorId: game.creator_id,
+      opponentId: game.opponent_id,
+    });
+    if (!validation.ok) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "game_state_validation_failed",
+        details: { gameId, gameType: game.game_type, reason: validation.reason },
+      });
+      return json({ error: validation.reason ?? "Invalid game state" }, 400);
     }
 
     const updatePayload = {
