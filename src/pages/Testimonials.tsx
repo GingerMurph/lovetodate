@@ -56,7 +56,25 @@ export default function Testimonials() {
 
   return (
     <>
-      <SEO title="Success Stories & Testimonials | LoveToDate" description="Real success stories from LoveToDate members who found meaningful relationships through AI-powered matching and authentic profiles." path="/testimonials" />
+      <SEO
+        title="Success Stories & Testimonials | LoveToDate"
+        description="Real success stories from LoveToDate members who found meaningful relationships through AI-powered matching and authentic profiles."
+        path="/testimonials"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "LoveToDate Success Stories",
+          url: "https://lovetodate.lovable.app/testimonials",
+          hasPart: testimonials.map((t) => ({
+            "@type": "Review",
+            reviewBody: t.text,
+            author: { "@type": "Person", name: t.name },
+            reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
+            itemReviewed: { "@type": "Organization", name: "LoveToDate" },
+          })),
+        }}
+      />
+
       <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
