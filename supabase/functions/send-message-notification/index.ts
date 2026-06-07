@@ -28,9 +28,8 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: authError } = await userClient.auth.getClaims(token);
-    if (authError || !claimsData?.claims) {
+    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    if (authError || !user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -38,7 +37,7 @@ Deno.serve(async (req) => {
     }
 
     // Rate limit: 100 requests per hour
-    const senderId = claimsData.claims.sub as string;
+    const senderId = user.id;
     const rateCheck = await checkRateLimit(senderId, {
       functionName: "send-message-notification",
       maxRequests: 100,
