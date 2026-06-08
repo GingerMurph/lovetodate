@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
       .eq("user_id", senderId)
       .single();
 
-    const senderName = senderProfile?.display_name || "Someone";
+    const senderName = sanitizePrompt(senderProfile?.display_name || "Someone", 60) || "Someone";
     const gameName = GAME_LABELS[gameType] || "a game";
 
     // Get recipient's notification preferences
