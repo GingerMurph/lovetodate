@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://lovetodate.lovable.app/sitemap.xml
+Sitemap: https://lovetodate-co-uk.lovable.app/sitemap.xml
