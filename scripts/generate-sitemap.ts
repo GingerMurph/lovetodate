@@ -3,7 +3,7 @@
 import { writeFileSync } from "fs";
 import { resolve } from "path";
 
-const BASE_URL = "https://lovetodate.lovable.app";
+const BASE_URL = "https://lovetodate-co-uk.lovable.app";
 
 interface SitemapEntry {
   path: string;
@@ -17,11 +17,14 @@ const today = new Date().toISOString().split("T")[0];
 const entries: SitemapEntry[] = [
   { path: "/", changefreq: "weekly", priority: "1.0", lastmod: today },
   { path: "/auth", changefreq: "monthly", priority: "0.5", lastmod: today },
+  { path: "/reset-password", changefreq: "yearly", priority: "0.2", lastmod: today },
   { path: "/blog", changefreq: "weekly", priority: "0.8", lastmod: today },
   { path: "/dating-advice", changefreq: "weekly", priority: "0.8", lastmod: today },
   { path: "/testimonials", changefreq: "monthly", priority: "0.7", lastmod: today },
   { path: "/conversation-starters", changefreq: "monthly", priority: "0.7", lastmod: today },
+  { path: "/discover", changefreq: "daily", priority: "0.8", lastmod: today },
   { path: "/fun", changefreq: "monthly", priority: "0.6", lastmod: today },
+  { path: "/fun/my-games", changefreq: "weekly", priority: "0.4", lastmod: today },
   { path: "/subscription", changefreq: "monthly", priority: "0.7", lastmod: today },
   { path: "/terms", changefreq: "yearly", priority: "0.3", lastmod: today },
   { path: "/privacy", changefreq: "yearly", priority: "0.3", lastmod: today },
