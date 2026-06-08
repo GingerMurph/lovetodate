@@ -77,7 +77,7 @@ export default function FunStuff() {
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" aria-label="Go back" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
            <h1 className="font-serif text-xl text-gold">Fun Stuff</h1>
@@ -87,7 +87,7 @@ export default function FunStuff() {
               </span>
             )}
             <Link to="/" className="ml-auto">
-              <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+              <Button variant="ghost" size="icon" aria-label="Go to home"><Home className="h-5 w-5" /></Button>
             </Link>
         </div>
       </header>
