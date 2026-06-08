@@ -101,6 +101,7 @@ const Index = () => {
             <h1 className="mb-6 font-serif text-5xl font-bold leading-tight md:text-7xl lg:text-8xl">
               <span className="text-sky-700">Love To </span>
               <span className="text-gradient-gold">Date</span>
+              <span className="sr-only"> — UK Dating, only pay when you find a match</span>
             </h1>
             <p className="mx-auto mb-10 max-w-xl text-lg text-muted-foreground md:text-xl font-light">
               Only pay when you find someone you would

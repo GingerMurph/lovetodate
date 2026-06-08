@@ -101,7 +101,8 @@ const Auth = () => {
       <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
         <div className="mb-8 text-center relative">
-          <button onClick={() => navigate(-1)} className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+          <h1 className="sr-only">{isForgotPassword ? "Reset your LoveToDate password" : isLogin ? "Sign in to LoveToDate" : "Join LoveToDate"}</h1>
+          <button onClick={() => navigate(-1)} aria-label="Go back" className="absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-5 w-5" />
           </button>
           <Link to="/" className="font-serif text-3xl text-gold">LoveToDate</Link>
