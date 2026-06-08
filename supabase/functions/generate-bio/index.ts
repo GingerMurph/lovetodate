@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
+import { sanitizePrompt, sanitizeList } from "../_shared/sanitize-prompt.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -60,19 +61,19 @@ Deno.serve(async (req) => {
     // Build context from profile
     const details: string[] = [];
     if (profile) {
-      if (profile.display_name) details.push(`Name: ${profile.display_name}`);
-      if (profile.gender) details.push(`Gender: ${profile.gender}`);
-      if (profile.occupation) details.push(`Job: ${profile.occupation}`);
-      if (profile.education) details.push(`Education: ${profile.education}`);
-      if (profile.interests?.length) details.push(`Interests: ${profile.interests.join(", ")}`);
-      if (profile.favourite_music?.length) details.push(`Music: ${profile.favourite_music.join(", ")}`);
-      if (profile.favourite_film?.length) details.push(`Films: ${profile.favourite_film.join(", ")}`);
-      if (profile.favourite_sport?.length) details.push(`Sports: ${profile.favourite_sport.join(", ")}`);
-      if (profile.favourite_hobbies?.length) details.push(`Hobbies: ${profile.favourite_hobbies.join(", ")}`);
-      if (profile.pets) details.push(`Pets: ${profile.pets}`);
-      if (profile.personality_type) details.push(`Personality: ${profile.personality_type}`);
-      if (profile.relationship_goal?.length) details.push(`Looking for: ${profile.relationship_goal.join(", ")}`);
-      if (profile.location_city) details.push(`City: ${profile.location_city}`);
+      if (profile.display_name) details.push(`Name: ${sanitizePrompt(profile.display_name, 60)}`);
+      if (profile.gender) details.push(`Gender: ${sanitizePrompt(profile.gender, 40)}`);
+      if (profile.occupation) details.push(`Job: ${sanitizePrompt(profile.occupation, 80)}`);
+      if (profile.education) details.push(`Education: ${sanitizePrompt(profile.education, 80)}`);
+      if (profile.interests?.length) details.push(`Interests: ${sanitizeList(profile.interests).join(", ")}`);
+      if (profile.favourite_music?.length) details.push(`Music: ${sanitizeList(profile.favourite_music).join(", ")}`);
+      if (profile.favourite_film?.length) details.push(`Films: ${sanitizeList(profile.favourite_film).join(", ")}`);
+      if (profile.favourite_sport?.length) details.push(`Sports: ${sanitizeList(profile.favourite_sport).join(", ")}`);
+      if (profile.favourite_hobbies?.length) details.push(`Hobbies: ${sanitizeList(profile.favourite_hobbies).join(", ")}`);
+      if (profile.pets) details.push(`Pets: ${sanitizePrompt(profile.pets, 60)}`);
+      if (profile.personality_type) details.push(`Personality: ${sanitizePrompt(profile.personality_type, 40)}`);
+      if (profile.relationship_goal?.length) details.push(`Looking for: ${sanitizeList(profile.relationship_goal).join(", ")}`);
+      if (profile.location_city) details.push(`City: ${sanitizePrompt(profile.location_city, 60)}`);
     }
 
     const profileContext = details.length > 0
