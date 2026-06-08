@@ -156,6 +156,7 @@ export default function ConversationStarters() {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Send to a match"
                       className="shrink-0 h-8 w-8 text-muted-foreground hover:text-gold"
                       onClick={() => openForward(s)}
                       title="Send to someone"
