@@ -69,12 +69,12 @@ export default function Blog() {
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="container mx-auto flex h-14 items-center gap-3 px-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
+          <Button variant="ghost" size="icon" aria-label="Go back" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="font-serif text-xl text-gold">Blog</h1>
           <Link to="/" className="ml-auto">
-            <Button variant="ghost" size="icon"><Home className="h-5 w-5" /></Button>
+            <Button variant="ghost" size="icon" aria-label="Go to home"><Home className="h-5 w-5" /></Button>
           </Link>
         </div>
       </header>
@@ -98,7 +98,7 @@ export default function Blog() {
                   <p className="text-sm text-muted-foreground leading-relaxed">{post.excerpt}</p>
                   <div className="mt-4 flex items-center gap-1.5 text-xs text-gold">
                     <BookOpen className="h-3.5 w-3.5" />
-                    <span>Read more</span>
+                    <span>Read full post</span>
                   </div>
                 </div>
               ))}
