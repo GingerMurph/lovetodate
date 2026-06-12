@@ -89,7 +89,12 @@ const Subscription = () => {
 
   return (
     <>
-      <SEO title="Pricing & Premium Plans | LoveToDate" description="Choose a LoveToDate plan: pay-per-match or affordable subscriptions from £9.99. First month free. Cancel anytime." path="/subscription" />
+      <SEO
+        title="Pricing — Free to Join, £1 Per Match | LoveToDate UK Dating"
+        description="LoveToDate is free to join and browse. Pay just £1 to unlock a match, or choose an affordable premium dating subscription from £9.99/month (first month free). A cheaper alternative to Match.com, Bumble Premium and Tinder Gold."
+        path="/subscription"
+        keywords="UK dating app pricing, cheap dating app, free dating site UK, dating subscription UK, pay per match dating, alternative to Match.com, alternative to Tinder Gold"
+      />
       <AppLayout>
       <div className="container mx-auto max-w-4xl px-4 py-8">
         {/* Hero */}

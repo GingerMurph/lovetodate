@@ -57,14 +57,16 @@ export default function Testimonials() {
   return (
     <>
       <SEO
-        title="Success Stories & Testimonials | LoveToDate"
-        description="Real success stories from LoveToDate members who found meaningful relationships through AI-powered matching and authentic profiles."
+        title="UK Dating Success Stories & Reviews | LoveToDate"
+        description="Real success stories and reviews from LoveToDate members across the UK who found a serious relationship through AI-powered matching and verified profiles."
         path="/testimonials"
+        keywords="UK dating success stories, dating app reviews UK, LoveToDate reviews, best dating app UK reviews, online dating success"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "CollectionPage",
           name: "LoveToDate Success Stories",
-          url: "https://lovetodate.lovable.app/testimonials",
+          url: "https://lovetodate-co-uk.lovable.app/testimonials",
+          inLanguage: "en-GB",
           hasPart: testimonials.map((t) => ({
             "@type": "Review",
             reviewBody: t.text,

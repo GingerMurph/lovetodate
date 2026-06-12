@@ -77,7 +77,12 @@ const Likes = () => {
 
   return (
     <AppLayout>
-      <SEO title="Your Likes — LoveToDate" description="Review the people you've LoveToDate'd and those who've LoveToDate'd you back on the UK's premium dating app." path="/likes" />
+      <SEO
+        title="See Who Likes You — Free Dating | LoveToDate"
+        description="See who's liked you back for free on LoveToDate, the UK dating app for serious relationships. Review your likes from verified UK singles and only pay when you find someone you'd love to date."
+        path="/likes"
+        keywords="see who likes you, free likes dating app, UK dating app likes, dating app for serious relationships"
+      />
       <div className="container mx-auto max-w-2xl px-4 py-6">
 
         <h1 className="mb-6 font-serif text-2xl font-bold">

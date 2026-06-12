@@ -36,7 +36,12 @@ const Index = () => {
 
   return (
     <>
-      <SEO title="LoveToDate — UK Dating, Only Pay When You Find a Match" description="Free browsing and likes with AI-powered compatibility. Pay only when you find someone you'd LoveToDate. Premium UK dating, no subscriptions." path="/" />
+      <SEO
+        title="LoveToDate — UK Dating App for Serious Relationships | Free to Join"
+        description="Free UK dating app with AI-powered matching. Browse verified UK singles, see who likes you, and only pay £1 when you find someone you'd truly love to date. A better alternative to Tinder, Hinge, Bumble and Match.com for serious relationships."
+        path="/"
+        keywords="UK dating app, dating app UK, free dating sites UK, free dating app, online dating UK, dating sites UK, best dating app UK, dating app for serious relationships, AI dating app, pay per match dating, verified UK singles, alternative to Tinder, alternative to Hinge, alternative to Bumble, alternative to Match.com"
+      />
       <div className="min-h-screen relative">
       <BackgroundImage />
 

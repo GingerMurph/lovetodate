@@ -72,7 +72,12 @@ export default function FunStuff() {
 
   return (
     <>
-      <SEO title="Dating Games — Play & Connect | LoveToDate" description="Play Noughts & Crosses, Connect 4, 8 Ball Pool and more with your matches. Turn-based games that reveal real compatibility." path="/fun" />
+      <SEO
+        title="Dating Games — Icebreakers for UK Singles | LoveToDate"
+        description="Play Noughts & Crosses, Connect 4, 8 Ball Pool and more with your matches. Fun dating icebreakers and turn-based games that reveal real compatibility on the UK's dating app for serious relationships."
+        path="/fun"
+        keywords="dating games, dating icebreakers, fun dating app, online dating games UK, UK dating app, dating app for serious relationships"
+      />
       <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">

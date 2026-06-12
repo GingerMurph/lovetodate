@@ -47,15 +47,17 @@ export default function Blog() {
   return (
     <>
       <SEO
-        title="Dating Blog — Stories & Insights | LoveToDate"
-        description="Read the LoveToDate blog for modern dating stories, relationship insights, and tips on finding someone you genuinely love to date."
+        title="UK Dating Blog — Stories, Advice & Insights | LoveToDate"
+        description="Real UK dating stories, modern relationship advice and online dating tips from LoveToDate. Learn how to find a serious relationship on a free UK dating app."
         path="/blog"
+        keywords="UK dating blog, online dating tips UK, modern dating advice, relationship advice UK, dating stories, first date tips"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Blog",
           name: "LoveToDate Blog",
-          url: "https://lovetodate.lovable.app/blog",
-          description: "Modern dating stories, relationship insights, and tips from LoveToDate.",
+          url: "https://lovetodate-co-uk.lovable.app/blog",
+          inLanguage: "en-GB",
+          description: "UK dating stories, modern relationship advice, and online dating tips from LoveToDate.",
           blogPost: posts.map((p) => ({
             "@type": "BlogPosting",
             headline: p.title,
