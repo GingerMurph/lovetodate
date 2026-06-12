@@ -239,7 +239,12 @@ const Discover = () => {
 
   return (
     <AppLayout>
-      <SEO title="Discover People — LoveToDate" description="Browse AI-matched profiles of singles in the UK. Like for free and only pay when you find someone you'd LoveToDate." path="/discover" />
+      <SEO
+        title="Discover UK Singles — Free Dating Feed | LoveToDate"
+        description="Browse AI-matched profiles of verified UK singles for free. Like as many people as you want and only pay when you find someone you'd love to date. The free dating app for serious relationships in the UK."
+        path="/discover"
+        keywords="UK singles, free dating UK, online dating UK, dating app for serious relationships, AI matching, verified dating profiles, browse singles UK"
+      />
       {showHearts && <HeartsCelebration onComplete={() => setShowHearts(false)} />}
       <div className="container mx-auto px-4 py-6">
 
