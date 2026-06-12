@@ -206,6 +206,20 @@ Deno.serve(async (req) => {
       });
     }
 
+    const rateCheck = await checkRateLimit(user.id, {
+      functionName: FUNCTION_NAME,
+      maxRequests: 10,
+      windowMinutes: 60,
+    });
+    if (!rateCheck.allowed) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "rate_limited",
+      });
+      return rateLimitResponse(corsHeaders);
+    }
+
     const { matched_user_id } = await req.json();
     if (!matched_user_id || typeof matched_user_id !== "string") {
       await logAuditRejection({
