@@ -115,7 +115,12 @@ const Matches = () => {
 
   return (
     <AppLayout>
-      <SEO title="Your Matches — LoveToDate" description="See who LoveToDate'd you back. Start meaningful conversations with mutual matches on the UK's premium dating app." path="/matches" />
+      <SEO
+        title="Your Mutual Matches — UK Dating | LoveToDate"
+        description="See who's matched with you on LoveToDate, the UK dating app for serious relationships. Start meaningful conversations with mutual matches verified UK singles."
+        path="/matches"
+        keywords="dating matches UK, mutual matches, UK dating app matches, online dating conversations"
+      />
       <div className="container mx-auto max-w-2xl px-4 py-6">
         <h1 className="mb-2 font-serif text-2xl font-bold">
 
