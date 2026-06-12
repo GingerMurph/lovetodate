@@ -96,7 +96,12 @@ const Auth = () => {
 
   return (
     <>
-      <SEO title="Sign In or Join Free | LoveToDate" description="Create your free LoveToDate account or sign in. Browse profiles, see who likes you, and only pay when you find someone you love to date." path="/auth" />
+      <SEO
+        title="Join Free or Sign In — UK Dating App | LoveToDate"
+        description="Create your free LoveToDate account and join thousands of verified UK singles looking for serious relationships. No subscription, no card required. Only pay £1 when you find someone you'd love to date."
+        path="/auth"
+        keywords="join free dating site UK, sign in dating app, free dating account UK, UK dating app signup, serious relationship dating app"
+      />
       <div className="flex min-h-screen items-center justify-center px-4">
       <BackgroundImage />
       <div className="relative z-10 w-full max-w-md">
