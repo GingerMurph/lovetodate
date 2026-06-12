@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { logAuditRejection } from "../_shared/audit-log.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rate-limiter.ts";
 
 const FUNCTION_NAME = "send-match-notification";
 
@@ -203,6 +204,20 @@ Deno.serve(async (req) => {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    const rateCheck = await checkRateLimit(user.id, {
+      functionName: FUNCTION_NAME,
+      maxRequests: 10,
+      windowMinutes: 60,
+    });
+    if (!rateCheck.allowed) {
+      await logAuditRejection({
+        functionName: FUNCTION_NAME,
+        userId: user.id,
+        reasonCode: "rate_limited",
+      });
+      return rateLimitResponse(corsHeaders);
     }
 
     const { matched_user_id } = await req.json();
