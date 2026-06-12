@@ -48,9 +48,10 @@ export default function DatingAdvice() {
   return (
     <>
       <SEO
-        title="Dating Advice — Expert Tips | LoveToDate"
-        description="Practical dating advice and expert tips on first dates, communication, and building healthy relationships from the LoveToDate team."
+        title="UK Dating Advice & Expert Tips | LoveToDate"
+        description="Free expert dating advice for UK singles: first date tips, online dating safety, conversation ideas and how to build a healthy serious relationship. From the LoveToDate team."
         path="/dating-advice"
+        keywords="UK dating advice, online dating tips UK, first date tips, online dating safety, how to start a relationship, dating advice for women, dating advice for men, dating advice over 30"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "FAQPage",
