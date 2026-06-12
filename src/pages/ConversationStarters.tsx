@@ -117,7 +117,12 @@ export default function ConversationStarters() {
 
   return (
     <>
-      <SEO title="AI Conversation Starters for Dating | LoveToDate" description="AI-generated icebreakers and conversation starters tailored to your matches. Never run out of things to say on LoveToDate." path="/conversation-starters" />
+      <SEO
+        title="AI Dating Conversation Starters & Icebreakers | LoveToDate"
+        description="Free AI-generated dating conversation starters and icebreakers tailored to your matches. Never run out of things to say on your first message — the UK dating app for serious relationships."
+        path="/conversation-starters"
+        keywords="dating conversation starters, dating icebreakers, AI dating app, first message ideas, online dating tips UK, what to say on a dating app"
+      />
       <div className="min-h-screen relative">
       <BackgroundImage />
       <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
