@@ -40,6 +40,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import Security from "./pages/Security";
+import UKDating from "./pages/UKDating";
+import CityDating from "./pages/CityDating";
 
 const queryClient = new QueryClient();
 
