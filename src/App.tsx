@@ -40,6 +40,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
 import CookieConsentBanner from "./components/CookieConsentBanner";
 import Security from "./pages/Security";
+import UKDating from "./pages/UKDating";
+import CityDating from "./pages/CityDating";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +74,8 @@ const App = () => {
                   <Route path="/terms" element={<TermsOfService />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
                   <Route path="/cookies" element={<CookiePolicy />} />
+                  <Route path="/dating" element={<UKDating />} />
+                  <Route path="/dating/:city" element={<CityDating />} />
                   <Route path="/fun" element={<ProtectedRoute><FunStuff /></ProtectedRoute>} />
                   <Route path="/fun/my-games" element={<ProtectedRoute><MyGames /></ProtectedRoute>} />
                   <Route path="/fun/:gameType" element={<ProtectedRoute><GameLobby /></ProtectedRoute>} />

@@ -13,6 +13,7 @@ LoveToDate uses an advanced AI engine to score compatibility across 15+ dimensio
 - [Conversation Starters](/conversation-starters): AI-generated icebreakers and conversation prompts.
 - [Fun Stuff](/fun): Turn-based games members play together to discover compatibility.
 - [Subscription](/subscription): Pricing plans and premium features.
+- [UK Dating by City](/dating): Local landing pages for 22 major UK cities (London, Manchester, Birmingham, Leeds, Liverpool, Bristol, Glasgow, Edinburgh, Sheffield, Newcastle, Nottingham, Cardiff, Belfast, Brighton, Oxford, Cambridge, Southampton, Leicester, Coventry, York, Aberdeen, Plymouth).
 
 ## Optional
 
