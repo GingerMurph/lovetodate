@@ -2,6 +2,7 @@
 
 import { writeFileSync } from "fs";
 import { resolve } from "path";
+import { UK_CITIES } from "../src/data/ukCities";
 
 const BASE_URL = "https://lovetodate-co-uk.lovable.app";
 
