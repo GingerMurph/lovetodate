@@ -30,6 +30,13 @@ const entries: SitemapEntry[] = [
   { path: "/terms", changefreq: "yearly", priority: "0.3", lastmod: today },
   { path: "/privacy", changefreq: "yearly", priority: "0.3", lastmod: today },
   { path: "/cookies", changefreq: "yearly", priority: "0.3", lastmod: today },
+  { path: "/dating", changefreq: "weekly", priority: "0.8", lastmod: today },
+  ...UK_CITIES.map((c) => ({
+    path: `/dating/${c.slug}`,
+    changefreq: "weekly" as const,
+    priority: "0.7",
+    lastmod: today,
+  })),
 ];
 
 function generateSitemap(entries: SitemapEntry[]) {
