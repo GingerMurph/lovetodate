@@ -63,53 +63,41 @@ Deno.serve(async (req) => {
 
     const adminClient = createClient(supabaseUrl, serviceKey);
 
-    // Check mutual like exists
-    const [likeForward, likeBack] = await Promise.all([
-      adminClient.from("likes").select("id").eq("liker_id", user.id).eq("liked_id", targetUserId).maybeSingle(),
-      adminClient.from("likes").select("id").eq("liker_id", targetUserId).eq("liked_id", user.id).maybeSingle(),
-    ]);
+    // Atomic claim via SECURITY DEFINER RPC (uses pg_advisory_xact_lock to
+    // prevent race conditions where concurrent requests could each pass the
+    // count=0 check and unlock multiple free connections).
+    const { data: result, error: rpcError } = await adminClient.rpc(
+      "claim_free_connection_atomic",
+      { _unlocker: user.id, _target: targetUserId },
+    );
 
-    if (!likeForward.data || !likeBack.data) {
+    if (rpcError) {
+      console.error("claim_free_connection_atomic error:", rpcError);
+      return new Response(JSON.stringify({ error: "Failed to create connection" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (result === "no_mutual_like") {
       return new Response(JSON.stringify({ error: "Mutual like required to claim free connection" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    // Check if already connected
-    const { data: existingConn } = await adminClient
-      .from("unlocked_connections")
-      .select("id")
-      .or(`and(unlocker_id.eq.${user.id},target_id.eq.${targetUserId}),and(unlocker_id.eq.${targetUserId},target_id.eq.${user.id})`)
-      .maybeSingle();
-
-    if (existingConn) {
+    if (result === "already_connected") {
       return new Response(JSON.stringify({ error: "Already connected" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    // Check how many connections the user has already unlocked (as unlocker)
-    const { count } = await adminClient
-      .from("unlocked_connections")
-      .select("id", { count: "exact", head: true })
-      .eq("unlocker_id", user.id);
-
-    if ((count ?? 0) > 0) {
+    if (result === "already_used") {
       return new Response(JSON.stringify({ error: "Free connection already used. Please subscribe to unlock more." }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    // Create the free connection
-    const { error: insertError } = await adminClient
-      .from("unlocked_connections")
-      .insert({ unlocker_id: user.id, target_id: targetUserId });
-
-    if (insertError) {
-      console.error("Failed to create free connection:", insertError);
+    if (result !== "ok") {
       return new Response(JSON.stringify({ error: "Failed to create connection" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

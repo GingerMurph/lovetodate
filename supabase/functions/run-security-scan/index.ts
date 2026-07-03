@@ -240,7 +240,10 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    if (insErr) return json({ error: insErr.message }, 500);
+    if (insErr) {
+      console.error("scan insert error:", insErr);
+      return json({ error: "Failed to save scan results" }, 500);
+    }
     return json({ scan: inserted });
   } catch (e) {
     console.error("scan error", e);
