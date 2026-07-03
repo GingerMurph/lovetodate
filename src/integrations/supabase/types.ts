@@ -720,6 +720,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_free_connection_atomic: {
+        Args: { _target: string; _unlocker: string }
+        Returns: string
+      }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
       has_role: {
         Args: {
