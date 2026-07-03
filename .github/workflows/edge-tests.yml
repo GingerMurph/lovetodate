@@ -54,6 +54,8 @@ jobs:
             supabase/functions/generate-agora-token/index_test.ts \
             supabase/functions/generate-content/index_test.ts \
             supabase/functions/generate-content/sanitize_test.ts \
+            supabase/functions/claim-free-connection/index_test.ts \
+            supabase/functions/run-security-scan/index_test.ts \
             supabase/functions/send-message-notification/index_test.ts \
             supabase/functions/scheduled-digest/index_test.ts \
             supabase/tests/user_roles_rls_test.ts
