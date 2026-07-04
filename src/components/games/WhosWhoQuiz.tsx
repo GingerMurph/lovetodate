@@ -63,9 +63,12 @@ export async function generateWhosWhoQuestions(
   creatorId: string,
   opponentId: string
 ): Promise<QuizQuestion[]> {
+  // Sensitive fields (religion, nationality, ethnicity) are intentionally
+  // excluded — they are no longer bulk-readable via RLS and are only exposed
+  // through the view-profile edge function to connected users.
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("user_id, display_name, occupation, education, location_city, smoking, drinking, children, religion, personality_type, pets, nationality, ethnicity, body_build, bio, interests, favourite_music, favourite_sport, favourite_hobbies, favourite_film")
+    .select("user_id, display_name, occupation, education, location_city, smoking, drinking, children, personality_type, pets, body_build, bio, interests, favourite_music, favourite_sport, favourite_hobbies, favourite_film")
     .in("user_id", [creatorId, opponentId]);
 
   if (!profiles || profiles.length < 2) return [];

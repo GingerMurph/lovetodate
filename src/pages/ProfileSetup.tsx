@@ -150,10 +150,11 @@ const ProfileSetup = () => {
   useEffect(() => {
     if (!user) return;
     const loadProfile = async () => {
-      const [{ data }, { data: privateData }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("user_id", user.id).maybeSingle(),
+      const [{ data: profileRows }, { data: privateData }] = await Promise.all([
+        supabase.rpc("get_own_profile" as any),
         supabase.from("profile_private_data" as any).select("date_of_birth").eq("user_id", user.id).maybeSingle(),
       ]);
+      const data = Array.isArray(profileRows) ? profileRows[0] : (profileRows as any);
       if (data) {
         setForm({
           display_name: data.display_name || "",

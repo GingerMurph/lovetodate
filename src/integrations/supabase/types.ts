@@ -725,6 +725,61 @@ export type Database = {
         Returns: string
       }
       cleanup_old_rate_limits: { Args: never; Returns: undefined }
+      get_own_profile: {
+        Args: never
+        Returns: {
+          age_verified: boolean
+          age_verified_at: string | null
+          avatar_url: string | null
+          bio: string | null
+          body_build: Database["public"]["Enums"]["body_build"] | null
+          children: string | null
+          created_at: string
+          diet: string | null
+          display_name: string
+          drinking: string | null
+          education: string | null
+          ethnicity: string | null
+          favourite_film: string[] | null
+          favourite_hobbies: string[] | null
+          favourite_music: string[] | null
+          favourite_sport: string[] | null
+          gender: Database["public"]["Enums"]["gender"] | null
+          height_cm: number | null
+          id: string
+          interests: string[] | null
+          is_paused: boolean
+          is_verified: boolean
+          languages: string[] | null
+          location_city: string | null
+          location_country: string | null
+          looking_for: Database["public"]["Enums"]["looking_for"] | null
+          max_distance_miles: number | null
+          min_compatibility_score: number | null
+          nationality: string | null
+          non_negotiables: string[] | null
+          occupation: string | null
+          personality_type: string | null
+          pets: string | null
+          phone_verified: boolean
+          photo_urls: string[] | null
+          political_beliefs: string | null
+          relationship_goal: string[] | null
+          religion: string | null
+          smoking: string | null
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+          voice_intro_url: string | null
+          weight_kg: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
