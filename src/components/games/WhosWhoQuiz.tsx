@@ -42,11 +42,10 @@ const QUIZ_FIELDS: {
   { key: "smoking", template: (v) => `Who ${v === "Never" ? "never smokes" : v === "Socially" ? "smokes socially" : "smokes regularly"}?`, category: "Lifestyle" },
   { key: "drinking", template: (v) => `Who ${v === "Never" ? "never drinks" : v === "Socially" ? "drinks socially" : "drinks regularly"}?`, category: "Lifestyle" },
   { key: "children", template: (v) => `Who ${v === "Has children" ? "has children" : v === "Wants children" ? "wants children" : "doesn't want children"}?`, category: "Family" },
-  { key: "religion", template: (v) => `Who identifies as ${v}?`, category: "Beliefs" },
+  // religion, nationality, ethnicity intentionally omitted — sensitive columns
+  // revoked from RLS bulk reads; never render even if server data leaks them.
   { key: "personality_type", template: (v) => `Who has the ${v} personality type?`, category: "Personality" },
   { key: "pets", template: (v) => `Who ${v === "Has pets" ? "has pets" : v === "Wants pets" ? "wants pets" : "has no pets"}?`, category: "Lifestyle" },
-  { key: "nationality", template: (v) => `Whose nationality is ${v}?`, category: "Background" },
-  { key: "ethnicity", template: (v) => `Who identifies as ${v}?`, category: "Background" },
   { key: "body_build", template: (v) => `Who describes their build as ${v}?`, category: "About" },
   { key: "bio", template: () => `Who wrote this bio?`, category: "Profile" },
 ];
