@@ -65,7 +65,7 @@ const ReportBlockOverlay = ({ partnerId, onEndCall }: ReportBlockOverlayProps) =
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <p className="text-xs text-white/50">Select a reason:</p>
+        <p className="text-xs text-white/90">Select a reason:</p>
         <div className="space-y-1.5">
           {REPORT_REASONS.map((reason) => (
             <Button
@@ -106,7 +106,7 @@ const ReportBlockOverlay = ({ partnerId, onEndCall }: ReportBlockOverlayProps) =
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start gap-2 text-white/50 hover:text-white/70 text-xs"
+          className="w-full justify-start gap-2 text-white/90 hover:text-white text-xs"
           onClick={() => setShowMenu(false)}
         >
           <X className="h-4 w-4" /> Cancel
