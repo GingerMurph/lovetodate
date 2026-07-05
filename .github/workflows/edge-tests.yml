@@ -59,7 +59,8 @@ jobs:
             supabase/functions/send-message-notification/index_test.ts \
             supabase/functions/scheduled-digest/index_test.ts \
             supabase/tests/user_roles_rls_test.ts \
-            supabase/tests/profiles_sensitive_columns_test.ts
+            supabase/tests/profiles_sensitive_columns_test.ts \
+            supabase/tests/signed_url_path_injection_test.ts
 
       - name: Cleanup
         if: always()
