@@ -212,11 +212,16 @@ Deno.serve(async (req) => {
         const loc = locationMap.get(rest.user_id);
         const latitude = loc?.latitude ?? null;
         const longitude = loc?.longitude ?? null;
+        const ownerId: string = rest.user_id;
         const signUrl = async (rawPath: string | null): Promise<string | null> => {
           if (!rawPath) return null;
           const path = rawPath.includes("/object/public/")
             ? rawPath.split("/object/public/profile-photos/")[1]
             : rawPath;
+          // Path validation: only sign storage paths that belong to the profile owner.
+          // This prevents users from setting avatar_url/photo_urls to another user's
+          // private storage path and having the server hand out a signed URL for it.
+          if (!path || !path.startsWith(`${ownerId}/`)) return null;
           const { data: signedData } = await adminClient.storage
             .from("profile-photos")
             .createSignedUrl(path, 3600);

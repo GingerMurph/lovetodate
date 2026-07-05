@@ -80,10 +80,14 @@ Deno.serve(async (req) => {
           const path = avatar_url.includes("/object/public/")
             ? avatar_url.split("/object/public/profile-photos/")[1]
             : avatar_url;
-          const { data: signedData } = await adminClient.storage
-            .from("profile-photos")
-            .createSignedUrl(path, 3600);
-          signedAvatarUrl = signedData?.signedUrl || null;
+          // Path validation: only sign storage paths owned by the profile row's user.
+          // Prevents attackers from putting another user's private path in their avatar_url.
+          if (path && path.startsWith(`${rest.user_id}/`)) {
+            const { data: signedData } = await adminClient.storage
+              .from("profile-photos")
+              .createSignedUrl(path, 3600);
+            signedAvatarUrl = signedData?.signedUrl || null;
+          }
         }
         const dob = dobMap.get(rest.user_id) || null;
         return {

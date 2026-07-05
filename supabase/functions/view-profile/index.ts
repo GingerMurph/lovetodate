@@ -92,6 +92,10 @@ Deno.serve(async (req) => {
       const path = rawPath.includes("/object/public/")
         ? rawPath.split("/object/public/profile-photos/")[1]
         : rawPath;
+      // Path validation: only sign storage paths that belong to the profile owner.
+      // Prevents an attacker from pointing avatar_url/photo_urls at another user's
+      // private storage path and getting a service-role signed URL for it.
+      if (!path || !path.startsWith(`${userId}/`)) return null;
       const { data: signedData } = await adminClient.storage
         .from("profile-photos")
         .createSignedUrl(path, 3600);
@@ -102,9 +106,9 @@ Deno.serve(async (req) => {
     const extraPhotos: string[] = Array.isArray(photo_urls) ? photo_urls : [];
     const signedPhotoUrls = await Promise.all(extraPhotos.map(signUrl));
 
-    // Sign voice intro URL
+    // Sign voice intro URL (also validate ownership prefix)
     let signedVoiceIntroUrl: string | null = null;
-    if (voice_intro_url) {
+    if (voice_intro_url && typeof voice_intro_url === "string" && voice_intro_url.startsWith(`${userId}/`)) {
       const { data: voiceSigned } = await adminClient.storage
         .from("voice-intros")
         .createSignedUrl(voice_intro_url, 3600);
