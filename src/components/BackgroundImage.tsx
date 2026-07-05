@@ -6,6 +6,10 @@ export default function BackgroundImage() {
       <img
         src={heroBg}
         alt=""
+        width={1920}
+        height={1080}
+        fetchPriority="high"
+        decoding="async"
         className="fixed inset-0 w-full h-full object-cover pointer-events-none"
         style={{ zIndex: -1 }}
       />
