@@ -16,14 +16,105 @@ export default function CityDating() {
   const keywords = `${data.name} dating, dating in ${data.name}, ${data.name} singles, ${data.name} dating app, free dating ${data.name}, meet singles ${data.name}, ${data.region} dating`;
   const path = `/dating/${data.slug}`;
 
+  const url = `https://lovetodate-co-uk.lovable.app${path}`;
+
   const jsonLd = [
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
       name: title,
       description,
-      url: `https://lovetodate-co-uk.lovable.app${path}`,
-      about: { "@type": "Place", name: data.name, address: { "@type": "PostalAddress", addressLocality: data.name, addressRegion: data.region, addressCountry: "GB" } },
+      url,
+      inLanguage: "en-GB",
+      isPartOf: {
+        "@type": "WebSite",
+        name: "LoveToDate",
+        url: "https://lovetodate-co-uk.lovable.app",
+      },
+      about: {
+        "@type": "Place",
+        name: data.name,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: data.name,
+          addressRegion: data.region,
+          addressCountry: "GB",
+        },
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: `LoveToDate Dating in ${data.name}`,
+      serviceType: "Online Dating",
+      description,
+      url,
+      provider: {
+        "@type": "Organization",
+        name: "LoveToDate",
+        url: "https://lovetodate-co-uk.lovable.app",
+      },
+      areaServed: {
+        "@type": "City",
+        name: data.name,
+        containedInPlace: { "@type": "AdministrativeArea", name: data.region },
+      },
+      audience: {
+        "@type": "PeopleAudience",
+        audienceType: `Singles in ${data.name}`,
+        geographicArea: {
+          "@type": "City",
+          name: data.name,
+        },
+      },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "GBP",
+        description: `Free to browse, like and view verified ${data.name} singles`,
+        url,
+        availability: "https://schema.org/InStock",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `Is LoveToDate free to use in ${data.name}?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Yes — discovering, liking and viewing full ${data.name} profiles is completely free. You only pay when you decide to unlock messaging with someone you'd genuinely love to date.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: `How many singles use LoveToDate in ${data.name}?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `LoveToDate is growing fast across ${data.region}, with verified members in every postcode of ${data.name}. Sign up free to see who's nearby.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: `Is it safe to date in ${data.name} online?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `Every LoveToDate profile is photo, ID and phone verified, with report and block tools built in. Always meet in public for first dates around ${data.name}.`,
+          },
+        },
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: `Popular date spots in ${data.name}`,
+      itemListElement: data.landmarks.map((l, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: l,
+      })),
     },
     {
       "@context": "https://schema.org",
@@ -31,10 +122,11 @@ export default function CityDating() {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: "https://lovetodate-co-uk.lovable.app/" },
         { "@type": "ListItem", position: 2, name: "UK Dating", item: "https://lovetodate-co-uk.lovable.app/dating" },
-        { "@type": "ListItem", position: 3, name: `Dating in ${data.name}`, item: `https://lovetodate-co-uk.lovable.app${path}` },
+        { "@type": "ListItem", position: 3, name: `Dating in ${data.name}`, item: url },
       ],
     },
   ];
+
 
   return (
     <>
