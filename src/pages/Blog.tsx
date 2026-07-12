@@ -96,7 +96,7 @@ export default function Blog() {
             : posts.map((post, i) => (
                 <div key={i} className="rounded-2xl border border-border bg-card p-6 transition-all hover:border-gold/30 hover:shadow-lg hover:shadow-gold/5 cursor-pointer">
                   <span className="inline-block text-[10px] font-semibold uppercase tracking-widest text-gold mb-2">{post.category}</span>
-                  <h3 className="font-serif text-lg font-semibold text-foreground mb-2">{post.title}</h3>
+                  <h2 className="font-serif text-lg font-semibold text-foreground mb-2">{post.title}</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed">{post.excerpt}</p>
                   <div className="mt-4 flex items-center gap-1.5 text-xs text-gold">
                     <BookOpen className="h-3.5 w-3.5" />
