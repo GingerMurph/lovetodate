@@ -94,7 +94,7 @@ export default function DatingAdvice() {
                     <Lightbulb className="h-4 w-4 text-gold" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-base font-semibold text-foreground mb-1">{tip.title}</h3>
+                    <h2 className="font-serif text-base font-semibold text-foreground mb-1">{tip.title}</h2>
                     <p className="text-sm text-muted-foreground leading-relaxed">{tip.content}</p>
                   </div>
                 </div>

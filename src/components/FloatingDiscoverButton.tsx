@@ -15,12 +15,13 @@ export default function FloatingDiscoverButton() {
   if (HIDDEN_PREFIXES.some((p) => location.pathname.startsWith(p))) return null;
 
   return (
-    <Link to="/discover" className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50">
+    <Link to="/discover" aria-label="Discover profiles" className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50">
       <Button
         size="lg"
+        aria-label="Discover profiles"
         className="gradient-gold text-primary-foreground rounded-full shadow-lg shadow-gold/20 h-12 w-12 p-0 sm:w-auto sm:px-5 sm:gap-2"
       >
-        <Search className="h-5 w-5" />
+        <Search className="h-5 w-5" aria-hidden="true" />
         <span className="hidden sm:inline text-sm font-semibold">Discover</span>
       </Button>
     </Link>
