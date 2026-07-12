@@ -1,0 +1,54 @@
+name: Dependency Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    # 03:23 UTC daily (off-the-hour to avoid GitHub cron congestion)
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: bun audit (high+)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (frozen lockfile)
+        run: bun install --frozen-lockfile
+
+      - name: Run bun audit
+        id: audit
+        run: |
+          set +e
+          bun audit --audit-level=high --json > audit-report.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          echo "## Dependency audit (high + critical)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          jq '.metadata // .' audit-report.json >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || cat audit-report.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit-${{ github.run_id }}
+          path: audit-report.json
+          retention-days: 30
+
+      - name: Fail on high or critical vulnerabilities
+        if: steps.audit.outputs.exit_code != '0'
+        run: |
+          echo "::error::bun audit found high or critical vulnerabilities. See job summary and audit-report.json artifact."
+          exit 1
