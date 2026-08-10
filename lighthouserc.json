@@ -1,0 +1,58 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "bunx vite preview --port 4173 --strictPort",
+      "startServerReadyPattern": "Local:",
+      "startServerReadyTimeout": 60000,
+      "url": [
+        "http://localhost:4173/",
+        "http://localhost:4173/uk-dating",
+        "http://localhost:4173/blog",
+        "http://localhost:4173/dating-advice",
+        "http://localhost:4173/testimonials"
+      ],
+      "numberOfRuns": 1,
+      "settings": {
+        "onlyCategories": ["accessibility", "seo"],
+        "preset": "desktop"
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:accessibility": ["error", { "minScore": 0.9 }],
+        "categories:seo": ["error", { "minScore": 0.9 }],
+
+        "document-title": "error",
+        "meta-description": "error",
+        "html-has-lang": "error",
+        "http-status-code": "error",
+        "is-crawlable": "error",
+        "hreflang": "error",
+        "canonical": "error",
+        "link-text": "error",
+        "crawlable-anchors": "error",
+
+        "button-name": "error",
+        "link-name": "error",
+        "image-alt": "error",
+        "aria-allowed-attr": "error",
+        "aria-required-attr": "error",
+        "aria-valid-attr": "error",
+        "aria-valid-attr-value": "error",
+        "aria-hidden-focus": "error",
+        "duplicate-id-aria": "error",
+        "label": "error",
+        "html-lang-valid": "error",
+        "meta-viewport": "error",
+
+        "color-contrast": "warn",
+        "heading-order": "warn",
+        "tap-targets": "warn"
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
+    }
+  }
+}
