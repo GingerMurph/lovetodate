@@ -31,6 +31,18 @@ jobs:
       - name: Build production bundle
         run: bun run build
 
+      - name: Validate sitemap.xml and robots.txt
+        run: bun run seo:validate
+
+      - name: Check sitemap is up to date with routes
+        run: |
+          bun scripts/generate-sitemap.ts
+          if ! git diff --quiet -- public/sitemap.xml; then
+            echo "::error::public/sitemap.xml is out of date. Run 'bun scripts/generate-sitemap.ts' and commit the result."
+            git --no-pager diff -- public/sitemap.xml
+            exit 1
+          fi
+
       - name: Run Lighthouse CI
         id: lhci
         run: npx --yes @lhci/cli@0.14.x autorun --config=./lighthouserc.json

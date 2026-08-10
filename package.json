@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "security:scan": "bun scripts/security-scan.ts"
+    "security:scan": "bun scripts/security-scan.ts",
+    "seo:validate": "bun scripts/validate-seo-files.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
