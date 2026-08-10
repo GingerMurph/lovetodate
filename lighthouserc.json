@@ -6,10 +6,18 @@
       "startServerReadyTimeout": 60000,
       "url": [
         "http://localhost:4173/",
-        "http://localhost:4173/uk-dating",
+        "http://localhost:4173/dating",
+        "http://localhost:4173/dating/london",
+        "http://localhost:4173/dating/manchester",
+        "http://localhost:4173/dating/edinburgh",
         "http://localhost:4173/blog",
         "http://localhost:4173/dating-advice",
-        "http://localhost:4173/testimonials"
+        "http://localhost:4173/conversation-starters",
+        "http://localhost:4173/testimonials",
+        "http://localhost:4173/auth",
+        "http://localhost:4173/terms",
+        "http://localhost:4173/privacy",
+        "http://localhost:4173/cookies"
       ],
       "numberOfRuns": 1,
       "settings": {
